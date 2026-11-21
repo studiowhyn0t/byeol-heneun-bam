@@ -1,4 +1,4 @@
-import { redis, pipeline, kstDay, isDay, clientIp, allow, safeEqual, publicStar, send, parseHash } from './_lib.js';
+import { redis, pipeline, kstDay, isDay, clientIp, safeEqual, publicStar, send, parseHash, count, bump, fail } from './_lib.js';
 
 // 관리자 기능: 비밀번호는 Vercel 환경변수 ADMIN_PASSWORD 에만 저장됩니다.
 export default async function handler(req, res) {
@@ -8,10 +8,12 @@ export default async function handler(req, res) {
     const ip = clientIp(req);
     const secret = process.env.ADMIN_PASSWORD;
     if (!secret) return send(res, 500, { error: 'ADMIN_PASSWORD not set' });
-    const fails = Number(await redis('GET', 'rl:adminfail:' + ip)) || 0;
-    if (fails >= 8) return send(res, 429, { error: 'too_many_attempts' });
+    // 한 접속지 30분 8회, 전체 1시간 40회 실패하면 잠시 잠금
+    if ((await count('adminfail:' + ip)) >= 8 || (await count('adminfail:all')) >= 40)
+      return send(res, 429, { error: 'too_many_attempts' });
     if (!safeEqual(String(b.password || ''), secret)) {
-      await allow('adminfail:' + ip, 1000, 1800);
+      await bump('adminfail:' + ip, 1800);
+      await bump('adminfail:all', 3600);
       return send(res, 403, { error: 'forbidden' });
     }
 
@@ -48,6 +50,6 @@ export default async function handler(req, res) {
 
     send(res, 400, { error: 'unknown_action' });
   } catch (e) {
-    send(res, 500, { error: String(e.message || e) });
+    fail(res, e);
   }
 }

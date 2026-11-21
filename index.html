@@ -376,9 +376,9 @@ async function loadState(){try{const j=await api('/api/state');const seen=new Se
     onConfig();updJar();if(base==='jar'&&!jarClosing)buildJar(false);}catch(e){if(!loadState.warned){loadState.warned=1;toast('하늘을 불러오지 못했어요');}}}
 const wq={};function queue(key,fn){wq[key]=(wq[key]||Promise.resolve()).then(fn,fn);return wq[key];}
 async function saveStar(item,pin){try{const j=await api('/api/stars',{text:item.text,color:item.color,x:item.x,y:item.y,rot:item.rot,tx:item.tx,ty:item.ty,pin});
-    MINE.add(j.id);saveMine();return j;}catch(e){toast(e.status===429?'잠시 후 다시 보내주세요':'별을 저장하지 못했어요');return null;}}
+    MINE.add(j.id);saveMine();return j;}catch(e){toast(e.status===429?((e.data&&e.data.error)==='full'?'오늘 하늘이 가득 찼어요':'잠시 후 다시 보내주세요'):'별을 저장하지 못했어요');return null;}}
 async function deleteMine(st,pin){try{await api('/api/delete',{day:st.day,id:st.id,pin});stars.delete(st.key);MINE.delete(st.id);saveMine();updJar();return true;}
-  catch(e){return e.status===403?'비밀번호가 맞지 않아요':'지우지 못했어요';}}
+  catch(e){return e.status===403?'비밀번호가 맞지 않아요':e.status===429?'비밀번호를 여러 번 틀려서 1시간 동안 잠겼어요':'지우지 못했어요';}}
 async function adminCall(action,extra){return api('/api/admin',{password:adminPw,action,...(extra||{})});}
 async function saveConfig(c){try{await adminCall('config',{config:c});config=c;onConfig();return true;}catch(e){return false;}}
 async function adminDelete(st){try{await adminCall('delete',{items:[{day:st.day,id:st.id}]});stars.delete(st.key);return true;}catch(e){return'지우지 못했어요';}}
@@ -397,9 +397,18 @@ addEventListener('visibilitychange',()=>{if(!document.hidden)loadState();});
 const SKY={x0:0.04,x1:0.96,y0:0.09,y1:0.74};
 const npc={key:'npc',kind:'npc',color:NPC_COLOR,x:0.5,y:0.5,rot:0.1,tx:0,ty:0};
 const layoutKey=()=>VW/VH>=1?'wide':'narrow';let arrange=null;
-function poemPx(st){const L=layoutKey();const q=arrange?arrange.pts[st.i]:(config.pos&&Array.isArray(config.pos[L])&&config.pos[L][st.i]);
-  if(q&&isFinite(q[0])&&isFinite(q[1]))return[q[0]*VW,q[1]*VH];if(VW/VH>=1)return[st.ix*VW,st.iy*VH];
-  const w=VW*0.92,Y=Math.min(w*0.617*1.25,(VH*0.36-80)/0.45);const top=Math.max(80,(VH*0.4-0.45*Y)/2);return[VW*0.04+(st.ix-0.1)/0.82*w,top+(st.iy-0.119)*Y];}
+function poemSrc(st){const w=config.pos&&Array.isArray(config.pos.wide)&&config.pos.wide[st.i];return(w&&isFinite(w[0])&&isFinite(w[1]))?w:[st.ix,st.iy];}
+function poemPx(st){const L=layoutKey();
+  if(arrange){const q=arrange.pts[st.i];return[q[0]*VW,q[1]*VH];}
+  const q=config.pos&&Array.isArray(config.pos[L])&&config.pos[L][st.i];
+  if(q&&isFinite(q[0])&&isFinite(q[1]))return[q[0]*VW,q[1]*VH];
+  if(L==='wide'){const w=poemSrc(st);return[w[0]*VW,w[1]*VH];}
+  // 휴대폰: 넓은 화면 배치(저장된 것 또는 기본)를 모양 그대로 줄여서 제목 위에 놓기
+  const pts=landingStars.map(poemSrc).map(p=>[p[0]*1.62,p[1]]);let x0=1e9,x1=-1e9,y0=1e9,y1=-1e9;
+  for(const p of pts){x0=Math.min(x0,p[0]);x1=Math.max(x1,p[0]);y0=Math.min(y0,p[1]);y1=Math.max(y1,p[1]);}
+  const bw=Math.max(0.01,x1-x0),bh=Math.max(0.01,y1-y0);const BX=VW*0.06,BW=VW*0.88,BY=Math.max(72,VH*0.09),BH=VH*0.38-BY;
+  const sc=Math.min(BW/bw,BH/bh);const ox=BX+(BW-bw*sc)/2,oy=BY+(BH-bh*sc)/2;const p=poemSrc(st);
+  return[ox+(p[0]*1.62-x0)*sc,oy+(p[1]-y0)*sc];}
 const toPx=st=>st.kind==='poem'?poemPx(st):[(SKY.x0+st.x*(SKY.x1-SKY.x0))*VW,(SKY.y0+st.y*(SKY.y1-SKY.y0))*VH];
 function visibleStars(){if(base==='landing')return landingStars;
   if(base==='today'){const k=dayKey();const a=[...stars.values()].filter(s=>s.day===k);if(mode==='idle'||mode==='read')a.push(npc);return a;}
@@ -470,7 +479,7 @@ function syncSlots(id){const el=$(id);const v=el.value;el.parentElement.querySel
 ['pin','rPin'].forEach(id=>['input','focus','blur'].forEach(ev=>$(id).addEventListener(ev,()=>syncSlots(id))));
 function shake(id){const el=$(id);el.classList.remove('shake');void el.offsetWidth;el.classList.add('shake');}
 $('foldLbl').onclick=()=>{const t=inp.value.trim(),p=$('pin').value;if(!t)return;
-  if(t==='관리'&&/^\d{4,}$/.test(p)){adminPw=p;adminCall('check').then(()=>{inp.value='';$('pin').value='';syncSlots('pin');onType();openAdmin();}).catch(e=>{adminPw=null;toast(e.status===429?'잠시 후 다시 시도해주세요':'관리자 비밀번호가 맞지 않아요');shake('pinRow');});return;}
+  if(t==='관리'&&/^\d{4}$/.test(p)){adminPw=p;adminCall('check').then(()=>{inp.value='';$('pin').value='';syncSlots('pin');onType();openAdmin();}).catch(e=>{adminPw=null;toast(e.status===429?'잠시 후 다시 시도해주세요':'관리자 비밀번호가 맞지 않아요');shake('pinRow');});return;}
   if(!/^\d{4}$/.test(p)){shake('pinRow');$('pin').focus();return;}
   work.text=t;work.pin=p;work.G=geomOfText(t);drawText(work.G,t);inp.blur();$('pin').blur();
   ['stripInput','foldLbl','pinRow','theme'].forEach(id=>show(id,false));mode='fold';work.target=KS;setHint();};
