@@ -7,6 +7,7 @@ Vercel(무료)과 Upstash Redis(무료 저장소)를 사용해요.
 
 - `index.html`: 화면 전체
 - `fonts/gyuri.ttf`: 나눔손글씨 규리의 일기
+- `sound/musicbox_loop.mp3`: 배경 음악 (오른쪽 위 '소리 켜기'로 재생)
 - `api/`: 서버 기능 (별 저장, 비밀번호 확인, 관리자 기능)
 - `vercel.json`, `package.json`: Vercel 설정
 
@@ -15,7 +16,7 @@ Vercel(무료)과 Upstash Redis(무료 저장소)를 사용해요.
 1. github.com에 로그인한 뒤 오른쪽 위 **+** 버튼을 누르고 **New repository**를 고르세요.
 2. 이름은 `byeol-heneun-bam`처럼 아무거나 정하고 **Create repository**를 누르세요.
 3. 만든 저장소 화면에서 **uploading an existing file**을 누르세요.
-4. 이 폴더 안의 파일과 폴더(`index.html`, `fonts`, `api`, `package.json`, `vercel.json`, `README.md`)를 전부 끌어다 놓으세요.
+4. 이 폴더 안의 파일과 폴더(`index.html`, `fonts`, `sound`, `api`, `package.json`, `vercel.json`, `README.md`)를 전부 끌어다 놓으세요.
 5. **Commit changes**를 누르세요.
 
 ## 2. Vercel에 연결하기

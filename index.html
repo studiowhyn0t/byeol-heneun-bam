@@ -24,6 +24,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 #jarBtn{width:30px;height:36px;transition:transform .5s}
 #jarBtn.tilt{transform:rotate(-38deg) translate(2px,4px)}
 #jarBtn.tilt polygon{display:none}
+#sndBtn{font-size:22px;color:rgba(255,255,255,.72);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
 #backBtn{font-size:25px;text-decoration:underline;text-underline-offset:4px}
 #delTag{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:5;font-size:19px;color:#ff9c9c;text-decoration:underline;text-underline-offset:4px}
 #theme{position:fixed;left:0;right:0;z-index:3;text-align:center;font-size:clamp(28px,5.2vw,40px);pointer-events:none;padding:0 14px}
@@ -88,6 +89,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 <div id="landing" class="fade"><h1>별 헤는 밤</h1><p>색지를 골라 글을 시작하세요.</p></div>
 <button id="hTitle" class="hide">별 헤는 밤</button>
 <div id="topR">
+  <button id="sndBtn">소리 켜기</button>
   <button id="jarBtn" class="hide" aria-label="지난 별 보기"><svg viewBox="0 0 30 36" width="30" height="36"><rect x="9" y="1.5" width="12" height="5" rx="1" fill="#9a9a9a"/><path d="M8 7h14v3c3 1 5 3 5 7v13c0 3-2 5-5 5H8c-3 0-5-2-5-5V17c0-4 2-6 5-7z" fill="rgba(255,255,255,.14)" stroke="rgba(255,255,255,.65)" stroke-width="1.2"/><polygon points="11.50,24.64 12.00,26.53 13.87,27.10 12.23,28.15 12.27,30.11 10.76,28.87 8.91,29.51 9.62,27.69 8.44,26.14 10.39,26.25" fill="#ffd8e0"/><polygon points="16.90,26.66 18.07,28.23 20.01,28.05 18.88,29.65 19.66,31.44 17.79,30.86 16.32,32.15 16.29,30.20 14.62,29.20 16.47,28.57" fill="#bff6f6"/><polygon points="21.46,21.37 21.61,23.25 23.30,24.10 21.56,24.83 21.27,26.69 20.04,25.26 18.18,25.57 19.16,23.95 18.29,22.28 20.13,22.71" fill="#e6d1f7"/><polygon points="12.76,19.21 13.69,20.85 15.58,20.91 14.31,22.30 14.84,24.11 13.12,23.34 11.56,24.40 11.76,22.53 10.27,21.37 12.12,20.99" fill="#ffefc4"/><polygon points="17.15,16.09 17.43,17.74 19.00,18.37 17.51,19.15 17.40,20.83 16.19,19.66 14.56,20.07 15.30,18.56 14.40,17.14 16.07,17.38" fill="#d9f6bd"/></svg></button>
   <button id="backBtn" class="hide">돌아가기</button>
 </div>
@@ -318,6 +320,7 @@ const TH=72;const tcv=document.createElement('canvas');tcv.width=64;tcv.height=T
 function measureW1(s){tctx.font=`100px ${FONT}`;return tctx.measureText(s||'').width/100;}
 const PLACEHOLDER='여기에 적으세요.';
 function geomOfText(s){const[nw,tf]=geomParams(measureW1(s||PLACEHOLDER));return geomFor(nw,tf);}
+function measureUI(t){tctx.font=`${clamp(VW*0.052,28,40)}px ${FONT}`;return tctx.measureText(t||'').width+40;}
 function drawText(G,s){const cw=Math.max(64,Math.round(G.LEN/WID*TH));if(tcv.width!==cw)tcv.width=cw;tctx.clearRect(0,0,cw,TH);
   if(s){tctx.font=`${TXT.font*TH}px ${FONT}`;tctx.fillStyle='#000';tctx.textBaseline='middle';tctx.fillText(s,G.tailU0*cw+TXT.pad0*TH,TH*0.54);}
   gl.bindTexture(gl.TEXTURE_2D,textTex);gl.pixelStorei(gl.UNPACK_FLIP_Y_WEBGL,!G.textFlip);gl.texImage2D(gl.TEXTURE_2D,0,gl.RGBA,gl.RGBA,gl.UNSIGNED_BYTE,tcv);}
@@ -463,7 +466,7 @@ function buildJar(animate){const jv=$('jarView');jv.innerHTML='';jarCols=[];cons
 const inp=$('stripInput');
 function pickPaper(i){if(['fold','unfold','send','read'].includes(mode)||(work&&mode==='made'))return;
   if(base!=='today')setBase('today');selPaper(i);
-  if(mode==='compose'){work.color=COLORS[i];return;}
+  if(mode==='compose'){if(work.color===COLORS[i]){cancelCompose();return;}work.color=COLORS[i];return;}
   const G=geomOfText('');mode='compose';work={color:COLORS[i],P:KS,G,text:'',lastValid:''};drawText(G,'');inp.value='';$('pin').value='';syncSlots('pin');
   const t=composeTarget(G);work.view={...t};
   $('theme').textContent='오늘의 주제: '+themeOf(dayKey());show('theme',true);show('stripInput',true);show('pinRow',true);updFoldLbl();
@@ -575,18 +578,56 @@ addEventListener('keydown',e=>{if(e.key==='Escape'){if(mode==='read')closeRead()
 /* =================== 그리기 =================== */
 let last=performance.now(),time=0;
 function place(el,x,y){const w=el.offsetWidth||44;let X=x,Y=y;if(X+w>VW-10){X=VW-10-w;Y=y+30;}el.style.left=X+'px';el.style.top=Math.max(54,Y)+'px';}
-function drawSkyStar(st,now){let[px,py]=toPx(st);const sway=Math.sin(time*0.6+(st.x*13))*0.05;let size=sizeOf(st),rot=st.rot,tx=st.tx,ty=st.ty;
+let uiRect=null,uiRectNext=null,frameDt=0.016;
+function avoidUI(st,px,py,size){let target=0;const r=uiRect;
+  if(r&&st.kind!=='npc'){const m=size*0.6+10;
+    if(px>r.L-m&&px<r.R+m&&py>r.T-m&&py<r.B+m){const up=r.T-m,down=r.B+m,minY=62,maxY=VH-175;
+      const canUp=up>=minY,canDown=down<=maxY;let ny;
+      if(canUp&&(!canDown||py-r.T<r.B-py))ny=up-(r.T-py>0?0:Math.min(40,(py-r.T)*0.3));else if(canDown)ny=down+Math.min(40,(r.B-py)*0.3);else ny=minY;
+      target=ny-py;}}
+  st._dy=(st._dy||0)+(target-(st._dy||0))*Math.min(1,frameDt*5);if(Math.abs(st._dy)<0.3&&!target)st._dy=0;return py+st._dy;}
+/* ---- 별똥별 / 반짝임 효과 (잔잔하게, 첫 화면 제외) ---- */
+const FX=new Map();let fxNextFall=performance.now()+9000,fxNextGlow=performance.now()+3000;
+function scheduleFx(now){if(base==='landing'||base==='jar'||!(mode==='idle'||mode==='read')){if(base==='landing')FX.clear();return;}
+  const list=visibleStars().filter(st=>!(reading&&reading.st===st)&&!FX.has(st.key));if(!list.length)return;
+  if(now>fxNextFall){const c=list.filter(st=>st.kind!=='npc');if(c.length&&FX.size<3){const st=c[Math.floor(Math.random()*c.length)];
+      const ang=(Math.random()<0.5?1:-1)*(0.3+Math.random()*0.3);FX.set(st.key,{type:'fall',t0:now,dx:Math.sin(ang),dy:Math.cos(ang)});}
+    fxNextFall=now+14000+Math.random()*12000;}
+  if(now>fxNextGlow){const st=list[Math.floor(Math.random()*list.length)];FX.set(st.key,{type:'glow',t0:now,spin:(Math.random()<0.5?1:-1)});fxNextGlow=now+2200+Math.random()*2800;}}
+function glowAt(px,py,r,color,a){if(a<=0.01)return;const[cr,cg,cb]=hex2(color).map(v=>v*255|0);const g=bx.createRadialGradient(px,py,0,px,py,r);
+  g.addColorStop(0,`rgba(255,255,248,${0.22*a})`);g.addColorStop(0.35,`rgba(${cr},${cg},${cb},${0.16*a})`);g.addColorStop(1,`rgba(${cr},${cg},${cb},0)`);bx.fillStyle=g;bx.fillRect(px-r,py-r,2*r,2*r);}
+function applyFx(st,now,px,py,size){const f=FX.get(st.key);if(!f)return{px,py,size,dim:1,rot:0};const el=(now-f.t0)/1000;
+  if(f.type==='glow'){const T_=3.4;if(el>T_){FX.delete(st.key);return{px,py,size,dim:1,rot:0};}const a=Math.sin(PI*el/T_);const ea=a*a*(3-2*a);
+    glowAt(px,py,size*1.5,st.color,ea);return{px,py,size:size*(1+0.04*ea),dim:1+0.16*ea,rot:f.spin*0.22*ea};}
+  // fall: 3초 동안 천천히 떨어지며 사라짐 → 2.4초에 걸쳐 제자리에서 다시 생김
+  const FALL=3.0,BACK=2.4,dist=Math.min(VW,VH)*0.3;
+  if(el<FALL){const u=el/FALL,e=u*u*(3-2*u);const x=px+f.dx*dist*e,y=py+f.dy*dist*e;
+    const[cr,cg,cb]=hex2(st.color).map(v=>v*255|0);const tl=Math.min(e,0.25+u*0.25)*dist;const sx=x-f.dx*tl,sy=y-f.dy*tl;
+    const g=bx.createLinearGradient(sx,sy,x,y);g.addColorStop(0,`rgba(${cr},${cg},${cb},0)`);g.addColorStop(0.6,`rgba(${cr},${cg},${cb},${0.35*(1-u)})`);g.addColorStop(1,`rgba(255,255,245,${0.75*(1-u)})`);
+    bx.strokeStyle=g;bx.lineWidth=Math.max(1.2,size*0.12*(1-u*0.5));bx.lineCap='round';bx.beginPath();bx.moveTo(sx,sy);bx.lineTo(x,y);bx.stroke();
+    // 꼬리의 반짝이 가루
+    for(let k=0;k<9;k++){const q=((k*0.137+f.t0*0.0003)%1);const d=q*tl;const jx=x-f.dx*d+(Math.sin(k*12.9+el*3)*size*0.18),jy=y-f.dy*d+(Math.cos(k*7.3+el*3)*size*0.18);
+      const tw=Math.max(0,Math.sin(el*9+k*2.1))*(1-q)*(1-u*0.7);if(tw<0.05)continue;const rr=(0.6+1.6*tw)*Math.max(1,size/22);
+      bx.fillStyle=`rgba(255,255,240,${0.75*tw})`;bx.beginPath();bx.arc(jx,jy,rr*0.55,0,6.283);bx.fill();
+      bx.strokeStyle=`rgba(255,255,240,${0.45*tw})`;bx.lineWidth=0.8;bx.beginPath();bx.moveTo(jx-rr*1.6,jy);bx.lineTo(jx+rr*1.6,jy);bx.moveTo(jx,jy-rr*1.6);bx.lineTo(jx,jy+rr*1.6);bx.stroke();}
+    glowAt(x,y,size*1.9,st.color,1.6*(1-u*0.8));return{px:x,py:y,size:size*Math.max(0.02,1-0.95*u*u),dim:1.4-0.2*u,rot:u*1.2};}
+  if(el<FALL+BACK){const u=(el-FALL)/BACK;const e=1-Math.pow(1-u,3);glowAt(px,py,size*1.4,st.color,Math.sin(PI*u)*0.6);
+    return{px,py,size:size*Math.max(0.01,e),dim:1+0.12*Math.sin(PI*u),rot:(1-e)*0.8};}
+  FX.delete(st.key);return{px,py,size,dim:1,rot:0};}
+function drawSkyStar(st,now){let[px,py]=toPx(st);py=avoidUI(st,px,py,sizeOf(st));const sway=Math.sin(time*0.6+(st.x*13))*0.05;let size=sizeOf(st),rot=st.rot,tx=st.tx,ty=st.ty;
   if(spread&&base==='day'){const el=(now-spread.t0)/1000;const f=spread.from.get(st.key);
     if(f){const idx=[...spread.from.keys()].indexOf(st.key);const u=clamp((el-idx*0.02)/1.1,0,1),e=ease(u);if(u<1){const cx=(f.px+px)/2,cy=Math.min(f.py,py)-VH*0.06;
       px=(1-e)*(1-e)*f.px+2*(1-e)*e*cx+e*e*px;py=(1-e)*(1-e)*f.py+2*(1-e)*e*cy+e*e*py;size=f.size+(size-f.size)*e;rot=f.rot+(rot-f.rot)*e;tx=f.tx+(tx-f.tx)*e;ty=f.ty+(ty-f.ty)*e;}}
     else if(st.kind==='npc'){const u=clamp((el-0.5)/0.6,0,1);if(u<=0)return;size*=ease(u);}}
-  drawMesh(STD,STDM,starM(px,py,size,rot,tx,ty+sway),hex2(st.color),false,1);}
-function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;
+  const fx=applyFx(st,now,px,py,size);if(fx.size<0.5)return;
+  drawMesh(STD,STDM,starM(fx.px,fx.py,fx.size,rot+fx.rot,tx,ty+sway),hex2(st.color),false,fx.dim);}
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;frameDt=dt;uiRect=uiRectNext;uiRectNext=null;
   bx.setTransform(DPR,0,0,DPR,0,0);bx.fillStyle='#000';bx.fillRect(0,0,VW,VH);
   gl.viewport(0,0,glc.width,glc.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);
   gl.uniformMatrix4fv(loc.uVP,false,VP);
   gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,paperTex);gl.uniform1i(loc.uPaper,0);
   gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,textTex);gl.uniform1i(loc.uText,1);
+  scheduleFx(now);
   for(const st of visibleStars()){if(reading&&reading.st===st)continue;drawSkyStar(st,now);}
   if(base==='jar'&&jarClosing){const sp=starPx()*0.62;const tt=(now-jarClosing)/1000;
     for(const pile of jarCols)for(const p of pile){const u=clamp((tt-p.rdelay)/0.6,0,1);if(u>=1)continue;const e=u*u;
@@ -608,8 +649,12 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;
     if(mode==='compose'){const u0=G.tailU0+TXT.pad0*WID/G.LEN;const s=stripScreen(G,Mw,u0,1);const px=stripH();
       inp.style.left=s.a[0]+'px';inp.style.top=s.a[1]+'px';inp.style.width=(s.len+60)+'px';inp.style.height=(px*0.9)+'px';inp.style.fontSize=(px*TXT.font)+'px';
       inp.style.transform=`translateY(-46%) rotate(${s.ang}rad)`;place($('foldLbl'),s.b[0]+12,s.b[1]);
-      $('pinRow').style.top=Math.min(VH-150,s.a[1]+Math.max(48,px*1.7))+'px';$('theme').style.top=Math.max(60,s.a[1]-Math.max(78,px*2.6))+'px';}
-    if(mode==='fold'||mode==='made'){const fv=foldView();const yb=fv.cy+foldSize()*0.42;$('hint').style.top=yb+'px';$('madeBtns').style.top=yb+'px';}
+      const pinTop=Math.min(VH-150,s.a[1]+Math.max(48,px*1.7)),thTop=Math.max(60,s.a[1]-Math.max(78,px*2.6));
+      $('pinRow').style.top=pinTop+'px';$('theme').style.top=thTop+'px';
+      const k=mProj(Mw,0,0,0);const thW=Math.min(VW,($('theme').firstChild?measureUI($('theme').textContent):300));
+      uiRectNext={L:Math.min(k[0]-px*1.8,VW/2-thW/2,VW/2-140),R:Math.max(s.b[0]+80,VW/2+thW/2,VW/2+140),T:thTop-12,B:pinTop+30};}
+    if(mode==='fold'||mode==='made'||mode==='unfold'){const fv=foldView();const fs=foldSize();const yb=fv.cy+fs*0.42;$('hint').style.top=yb+'px';$('madeBtns').style.top=yb+'px';
+      if(!uiRectNext)uiRectNext={L:fv.cx-Math.max(fs*0.6,150),R:fv.cx+Math.max(fs*0.6,150),T:fv.cy-fs*0.6,B:yb+40};}
     drawMesh(G,m,Mw,hex2(work.color),1,1,textCut(G,work.P));}
   if(mode==='send'&&sending){const el=(now-sending.t0)/1000,T_=1.6;const u=clamp(el/T_,0,1),e=ease(u);
     const[tx_,ty_]=toPx({x:sending.x,y:sending.y});const px=sending.from[0]+(tx_-sending.from[0])*e,py=sending.from[1]+(ty_-sending.from[1])*e-Math.sin(PI*u)*VH*0.08;
@@ -637,12 +682,42 @@ async function land(){const s=sending;sending=null;const id=Date.now().toString(
   const pin=work.pin;work=null;mode='idle';selPaper(-1);
   const j=await saveStar(item,pin);stars.delete(key);
   if(j){const st=normStar({...item,id:j.id,day:j.day,t:j.t});st.local=true;stars.set(st.key,st);setTimeout(()=>{const x=stars.get(st.key);if(x)delete x.local;},60000);}updJar();}
+/* =================== 음악 =================== */
+// 1) 누르는 즉시 <audio>로 재생 → 2) 이음매 없는 반복용 버퍼가 준비되면 부드럽게 넘겨받음
+const SND_URL='sound/musicbox_loop.mp3',VOL=0.55;
+let actx=null,abuf=null,asrc=null,again=null,soundOn=false,bufLoading=null;
+const audioEl=new Audio(SND_URL);audioEl.loop=true;audioEl.preload='auto';audioEl.volume=0;
+function decode(ab){return new Promise((ok,no)=>{try{const p=actx.decodeAudioData(ab,ok,no);if(p&&p.then)p.then(ok,no);}catch(e){no(e);}});}
+function loadBuf(){if(bufLoading)return bufLoading;bufLoading=(async()=>{try{
+    if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();
+    const r=await fetch(SND_URL);abuf=await decode(await r.arrayBuffer());}catch(e){abuf=null;}})();return bufLoading;}
+function fadeEl(to,ms){const from=audioEl.volume,t0=performance.now();clearInterval(fadeEl.t);
+  fadeEl.t=setInterval(()=>{const u=Math.min(1,(performance.now()-t0)/ms);audioEl.volume=Math.max(0,Math.min(1,from+(to-from)*u));if(u>=1){clearInterval(fadeEl.t);if(to===0)audioEl.pause();}},40);}
+function startBuffer(offset){if(!abuf||!actx||actx.state!=='running'||asrc)return false;
+  again=actx.createGain();const t=actx.currentTime;again.gain.setValueAtTime(0,t);again.gain.linearRampToValueAtTime(VOL,t+1.2);again.connect(actx.destination);
+  asrc=actx.createBufferSource();asrc.buffer=abuf;asrc.loop=true;asrc.loopStart=0;asrc.loopEnd=Math.min(abuf.duration,60);asrc.connect(again);
+  asrc.start(0,(offset||0)%asrc.loopEnd);return true;}
+function stopBuffer(){if(!asrc)return;const t=actx.currentTime,g=again,s=asrc;g.gain.cancelScheduledValues(t);g.gain.setValueAtTime(g.gain.value,t);g.gain.linearRampToValueAtTime(0,t+0.5);
+  try{s.stop(t+0.55);}catch{}asrc=null;again=null;}
+function soundOnNow(){soundOn=true;$('sndBtn').textContent='소리 끄기';
+  try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();actx.resume().catch(()=>{});}catch{}
+  if(startBuffer(0))return;
+  audioEl.volume=0;const pr=audioEl.play();if(pr&&pr.catch)pr.catch(()=>{if(!asrc){soundOn=false;$('sndBtn').textContent='소리 켜기';toast('소리를 재생하지 못했어요');}});
+  fadeEl(VOL,1200);
+  loadBuf().then(()=>{if(!soundOn||asrc)return;const tryHand=(n)=>{if(!soundOn||asrc)return;
+      if(actx&&actx.state==='running'&&abuf){if(startBuffer(audioEl.currentTime))fadeEl(0,1200);}else if(n>0)setTimeout(()=>tryHand(n-1),500);};tryHand(10);});}
+function soundOffNow(){soundOn=false;$('sndBtn').textContent='소리 켜기';stopBuffer();fadeEl(0,500);}
+$('sndBtn').addEventListener('pointerdown',e=>e.stopPropagation());
+$('sndBtn').onclick=()=>{soundOn?soundOffNow():soundOnNow();};
+setTimeout(()=>loadBuf(),2500);
+document.addEventListener('visibilitychange',()=>{if(!soundOn)return;if(document.hidden){if(actx)actx.suspend();if(!audioEl.paused)audioEl.pause();}
+  else{if(actx)actx.resume().catch(()=>{});if(!asrc)audioEl.play().catch(()=>{});}});
 resize();setBase('landing');requestAnimationFrame(frame);
 const refont=()=>{geomCache.clear();if(reading)drawText(reading.G=geomOfText(readText(reading.st)),readText(reading.st));
   else if(work){work.G=geomOfText(mode==='compose'?inp.value:work.text);if(mode!=='compose')drawText(work.G,work.text);}};
 document.fonts&&document.fonts.load(`40px ${FONT}`).then(refont).catch(()=>{});
 window.__dbg={mode:()=>mode,pick:i=>pickPaper(i),type:(t,p)=>{inp.value=t;$('pin').value=p||'';syncSlots('pin');onType();},fold:()=>$('foldLbl').click(),step:()=>foldStep(),
-  send:()=>$('sendBtn').click(),readFirst:(i)=>{const v=visibleStars();if(v.length)startRead(v[i||0]);},setBase:(b,d)=>setBase(b,d),clickDay:i=>document.querySelectorAll('.day')[i].click(),dayKey:o=>dayKey(o),P:()=>work&&work.P};
+  send:()=>$('sendBtn').click(),fall:()=>{fxNextFall=0;},readFirst:(i)=>{const v=visibleStars();if(v.length)startRead(v[i||0]);},setBase:(b,d)=>setBase(b,d),clickDay:i=>document.querySelectorAll('.day')[i].click(),dayKey:o=>dayKey(o),P:()=>work&&work.P};
 })();
 </script>
 </body>
