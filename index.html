@@ -672,7 +672,7 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;fra
       drawMesh(G,m,Mx,hex2(st.color),1,1,textCut(G,r.P));
       if(r.dir>0&&r.P<=KS+0.01){const s=stripScreen(G,Mx,G.tailU0,1);const k=mProj(Mx,0,0,0);const spx=readViews(r).vA.spx;
         const left=k[0]+(G.bbKS.cx-G.bbKS.w/2)*spx,right=s.b[0];const by=Math.max(s.a[1],s.b[1],k[1])+WID*spx*0.5+26;
-        const canDel=!!st.owner&&st.owner===me();show('rDel',canDel);if(canDel)place($('rDel'),s.b[0]+14,s.b[1]);
+        const canDel=!!st.owner;show('rDel',canDel);if(canDel)place($('rDel'),s.b[0]+14,s.b[1]);
         $('rPinRow').style.top=(by+48)+'px';}}}
   requestAnimationFrame(frame);}
 async function land(){const s=sending;sending=null;const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);const step=2*PI/5;
