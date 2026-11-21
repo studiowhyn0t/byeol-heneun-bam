@@ -361,23 +361,24 @@ function layoutFan(){const f=$('fan');if(!f.children.length){COLORS.forEach((c,i
 function selPaper(i){[...$('fan').children].forEach((b,j)=>b.classList.toggle('sel',j===i));}
 /* =================== 데이터 (서버) =================== */
 const clamp01=v=>isFinite(v)?clamp(v,0,1):0.5;
-let MINE=new Set();try{MINE=new Set(JSON.parse(localStorage.getItem('byeol-mine')||'[]'));}catch{}
+const gone=new Map();let MINE=new Set();try{MINE=new Set(JSON.parse(localStorage.getItem('byeol-mine')||'[]'));}catch{}
 const saveMine=()=>{try{localStorage.setItem('byeol-mine',JSON.stringify([...MINE]));}catch{}};
 const me=()=>'me';online=true;
 let adminPw=null;
-async function api(path,body){const r=await fetch(path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{cache:'no-store'});
+async function api(path,body){const r=await fetch(path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{});
   let j=null;try{j=await r.json();}catch{}if(!r.ok)throw Object.assign(new Error((j&&j.error)||'error'),{status:r.status,data:j});return j;}
 function normStar(it){const t=+it.t||0;return{key:it.day+':'+it.id,owner:MINE.has(it.id)?'me':'x',id:String(it.id),text:String(it.text||'').slice(0,60),
   color:/^#[0-9a-f]{6}$/i.test(it.color)?it.color:COLORS[0],x:clamp01(+it.x),y:clamp01(+it.y),rot:+it.rot||0,tx:+it.tx||0,ty:+it.ty||0,t,day:String(it.day)};}
 async function loadState(){try{const j=await api('/api/state');const seen=new Set();
-    for(const it of j.stars||[]){const st=normStar(it);seen.add(st.key);stars.set(st.key,st);}
+    const now_=Date.now();for(const[k,t]of[...gone])if(now_-t>90000)gone.delete(k);
+    for(const it of j.stars||[]){const st=normStar(it);if(gone.has(st.key))continue;seen.add(st.key);stars.set(st.key,st);}
     for(const k of[...stars.keys()])if(!seen.has(k)&&!stars.get(k).local)stars.delete(k);
     config={lines:Array.isArray(j.config&&j.config.lines)?j.config.lines:[],themes:(j.config&&j.config.themes)||{},pos:(j.config&&j.config.pos)||{}};
     onConfig();updJar();if(base==='jar'&&!jarClosing)buildJar(false);}catch(e){if(!loadState.warned){loadState.warned=1;toast('하늘을 불러오지 못했어요');}}}
 const wq={};function queue(key,fn){wq[key]=(wq[key]||Promise.resolve()).then(fn,fn);return wq[key];}
 async function saveStar(item,pin){try{const j=await api('/api/stars',{text:item.text,color:item.color,x:item.x,y:item.y,rot:item.rot,tx:item.tx,ty:item.ty,pin});
     MINE.add(j.id);saveMine();return j;}catch(e){toast(e.status===429?((e.data&&e.data.error)==='full'?'오늘 하늘이 가득 찼어요':'잠시 후 다시 보내주세요'):'별을 저장하지 못했어요');return null;}}
-async function deleteMine(st,pin){try{await api('/api/delete',{day:st.day,id:st.id,pin});stars.delete(st.key);MINE.delete(st.id);saveMine();updJar();return true;}
+async function deleteMine(st,pin){try{await api('/api/delete',{day:st.day,id:st.id,pin});stars.delete(st.key);gone.set(st.key,Date.now());MINE.delete(st.id);saveMine();updJar();return true;}
   catch(e){return e.status===403?'비밀번호가 맞지 않아요':e.status===429?'비밀번호를 여러 번 틀려서 1시간 동안 잠겼어요':'지우지 못했어요';}}
 async function adminCall(action,extra){return api('/api/admin',{password:adminPw,action,...(extra||{})});}
 async function saveConfig(c){try{await adminCall('config',{config:c});config=c;onConfig();return true;}catch(e){return false;}}
@@ -541,7 +542,7 @@ $('aDelSel').onclick=async()=>{const b=$('aDelSel');if(!adminSel.size)return;
   if(ok){keys.forEach(k=>adminSel.delete(k));$('aListNote').textContent=`${keys.length}개를 지웠어요`;}else $('aListNote').textContent='지우지 못했어요';
   renderAdminList();};
 async function batchDelete(keys){const items=keys.map(k=>{const i=k.indexOf(':');return{day:k.slice(0,i),id:k.slice(i+1)};});
-  try{await adminCall('delete',{items});keys.forEach(k=>stars.delete(k));updJar();await loadAdmin(adminDay);return true;}catch(e){return false;}}
+  try{await adminCall('delete',{items});keys.forEach(k=>{stars.delete(k);gone.set(k,Date.now());});updJar();await loadAdmin(adminDay);return true;}catch(e){return false;}}
 $('aArrange').onclick=()=>{show('admin',false);if(reading)finishRead();setBase('landing');mode='arrange';
   arrange={pts:landingStars.map(st=>{const[x,y]=poemPx(st);return[x/VW,y/VH];}),drag:-1};
   $('arrangeLbl').textContent=(layoutKey()==='wide'?'넓은 화면':'휴대폰 화면')+' · 별을 끌어 옮기세요';show('arrangeBar',true);$('fan').classList.add('away');};
@@ -635,7 +636,7 @@ async function land(){const s=sending;sending=null;const id=Date.now().toString(
   const key='tmp:'+id;stars.set(key,{...item,key,owner:'me',local:true});
   const pin=work.pin;work=null;mode='idle';selPaper(-1);
   const j=await saveStar(item,pin);stars.delete(key);
-  if(j){const st=normStar({...item,id:j.id,day:j.day,t:j.t});stars.set(st.key,st);}updJar();}
+  if(j){const st=normStar({...item,id:j.id,day:j.day,t:j.t});st.local=true;stars.set(st.key,st);setTimeout(()=>{const x=stars.get(st.key);if(x)delete x.local;},60000);}updJar();}
 resize();setBase('landing');requestAnimationFrame(frame);
 const refont=()=>{geomCache.clear();if(reading)drawText(reading.G=geomOfText(readText(reading.st)),readText(reading.st));
   else if(work){work.G=geomOfText(mode==='compose'?inp.value:work.text);if(mode!=='compose')drawText(work.G,work.text);}};

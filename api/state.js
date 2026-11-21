@@ -9,8 +9,9 @@ export default async function handler(req, res) {
     days.forEach((d, i) => parseHash(results[i]).forEach(s => stars.push(publicStar({ ...s, day: d }))));
     let config = {};
     try { config = JSON.parse(results[days.length] || '{}') || {}; } catch {}
-    res.setHeader('Cache-Control', 'no-store');
-    send(res, 200, { today: days[0], stars, config });
+    // 방문자가 많아도 저장소 조회는 10초에 한 번 정도로 줄이기 (Vercel CDN이 대신 응답)
+    res.setHeader('Cache-Control', 'public, s-maxage=10, stale-while-revalidate=30');
+    res.status(200).json({ today: days[0], stars, config });
   } catch (e) {
     fail(res, e);
   }
