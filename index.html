@@ -24,25 +24,25 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 #jarBtn{width:30px;height:36px;transition:transform .5s}
 #jarBtn.tilt{transform:rotate(-38deg) translate(2px,4px)}
 #jarBtn.tilt polygon{display:none}
-#sndBtn{font-size:22px;color:rgba(255,255,255,.72);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
-#backBtn{font-size:25px;text-decoration:underline;text-underline-offset:4px}
+#sndBtn{font-size:22px;color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
+#backBtn{font-size:22px;text-decoration:underline;text-underline-offset:4px}
 #delTag{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:5;font-size:19px;color:#ff9c9c;text-decoration:underline;text-underline-offset:4px}
 #theme{position:fixed;left:0;right:0;z-index:3;text-align:center;font-size:clamp(28px,5.2vw,40px);pointer-events:none;padding:0 14px}
 #stripInput{position:fixed;left:0;top:0;z-index:3;border:0;outline:none;background:transparent;padding:0;margin:0;
   font-family:"GyuRi","Nanum Pen Script",cursive;color:rgba(60,60,64,.88);caret-color:#333;transform-origin:0 50%;white-space:nowrap;line-height:1;-webkit-user-select:text;user-select:text;touch-action:manipulation}
 #stripInput::placeholder{color:rgba(60,60,64,.42)}
-.lbl{position:fixed;left:0;top:0;z-index:3;font-size:30px;white-space:nowrap;text-decoration:underline;text-underline-offset:4px;transform:translate(0,-50%)}
-.pinrow{position:fixed;left:50%;z-index:3;transform:translate(-50%,-50%);font-size:25px;color:rgba(255,255,255,.62);display:flex;align-items:center;gap:8px;white-space:nowrap}
+.lbl{position:fixed;left:0;top:0;z-index:3;font-size:22px;white-space:nowrap;text-decoration:underline;text-underline-offset:4px;transform:translate(0,-50%)}
+.pinrow{position:fixed;left:50%;z-index:3;transform:translate(-50%,-50%);font-size:22px;color:rgba(255,255,255,.62);display:flex;align-items:center;gap:8px;white-space:nowrap}
 .slots{position:relative;display:inline-flex;gap:9px;align-items:flex-end;margin-left:4px}
-.slots i{display:block;width:17px;height:24px;border-bottom:1.5px solid rgba(255,255,255,.45);text-align:center;font-style:normal;color:#fff;font-size:20px;line-height:24px;transition:border-color .2s}
+.slots i{display:block;width:16px;height:22px;border-bottom:1.5px solid rgba(255,255,255,.45);text-align:center;font-style:normal;color:#fff;font-size:18px;line-height:22px;transition:border-color .2s}
 .slots i.on{border-color:#fff}
 .slots input{position:absolute;inset:-6px;width:calc(100% + 12px)!important;opacity:0;border:0!important}
 .pinrow input{width:74px;border:0;border-bottom:1.5px solid rgba(255,255,255,.55);background:transparent;color:#fff;font-family:inherit;font-size:22px;text-align:center;letter-spacing:6px;outline:none;padding:0 0 1px;-webkit-user-select:text;user-select:text}
-.pinrow button{text-decoration:underline;text-underline-offset:4px;color:rgba(255,255,255,.85)}
+.pinrow button{font-size:22px;text-decoration:underline;text-underline-offset:4px;color:rgba(255,255,255,.85)}
 .shake{animation:shake .4s}
 @keyframes shake{25%{transform:translate(calc(-50% - 6px),-50%)}75%{transform:translate(calc(-50% + 6px),-50%)}}
 #hint{position:fixed;left:0;right:0;z-index:3;text-align:center;font-size:24px;color:rgba(255,255,255,.55);pointer-events:none}
-#madeBtns{position:fixed;left:50%;z-index:3;transform:translateX(-50%);display:flex;gap:40px;font-size:30px}
+#madeBtns{position:fixed;left:50%;z-index:3;transform:translateX(-50%);display:flex;gap:34px;font-size:22px}
 #readBtns{position:fixed;left:50%;z-index:3;transform:translate(-50%,-50%);display:flex;gap:40px;font-size:30px;white-space:nowrap}
 #readBtns button{text-decoration:underline;text-underline-offset:5px}
 #madeBtns button{text-decoration:underline;text-underline-offset:4px}
@@ -217,7 +217,7 @@ function makeGeom(NW,TF){
   const hingeU=hinges.map(h=>ARC[h.k]/LEN);
   return{NW,TF,K,NP,NV,KE,KP,hingeU,poseAt,fillMesh,uvs,idx,LEN,tailU0,RZ0,RZF,textFront,textFlip,bbKS,uToPt,stepName};}
 // 글 길이 → 띠지 길이
-const TXT={pad0:0.75,pad1:0.55,font:0.74};
+const TXT={pad0:0.75,pad1:0.55,font:0.82};
 function tailNeed(textW1){return WID*(TXT.pad0+TXT.font*textW1+TXT.pad1);} // textW1: 글자 높이 1일 때 너비
 function geomParams(textW1){const nwf=tailNeed(textW1)/mLen;let NW=Math.max(2,Math.ceil(nwf-1));let TF=nwf-NW;if(TF>1){NW++;TF=nwf-NW;}TF=Math.max(0.3,Math.min(1,TF));return[NW,+TF.toFixed(3)];}
 const geomCache=new Map();
@@ -334,6 +334,8 @@ function viewMatrix(G,Pv,vA,vB){const i=Math.min(G.KE,Math.floor(Pv)),e=ease(cla
   const v0=i<=KS?vA:vB,v1=i+1<=KS?vA:vB;const spx=Math.exp(Math.log(v0.spx)+(Math.log(v1.spx)-Math.log(v0.spx))*e);
   const cx=v0.cx+(v1.cx-v0.cx)*e,cy=v0.cy+(v1.cy-v0.cy)*e;const prog=clamp((Pv-KS)/(G.KE-KS),0,1);const rz=G.RZ0+(rzF(G)-G.RZ0)*ease(prog);
   const[wx,wy]=s2w(cx,cy);return chainM(T(wx,wy,0),Sc(spx*visH/VH),FLIP,RZ(rz));}
+function readMatrix(G,Pv,vA,vB){const t=ease(clamp((G.KE-Pv)/(G.KE-KS),0,1));const v={spx:Math.exp(Math.log(vB.spx)+(Math.log(vA.spx)-Math.log(vB.spx))*t),cx:vB.cx+(vA.cx-vB.cx)*t,cy:vB.cy+(vA.cy-vB.cy)*t};
+  const prog=clamp((Pv-KS)/(G.KE-KS),0,1);const rz=G.RZ0+(rzF(G)-G.RZ0)*ease(prog);const[wx,wy]=s2w(v.cx,v.cy);return chainM(T(wx,wy,0),Sc(v.spx*visH/VH),FLIP,RZ(rz));}
 function composeTarget(G){const spx=stripH()/WID;return{spx,cx:VW/2-G.bbKS.cx*spx,cy:VH*0.45-G.bbKS.cy*spx};}
 function foldView(){return{spx:foldSize()*0.92/3,cx:VW/2,cy:VH*0.44};}
 function starM(px,py,size,rot,tx,ty,z){const[wx,wy]=s2w(px,py);return chainM(T(wx,wy,z||0),RX(tx),RY(ty),RZ(rot),Sc(size/(2*R)*visH/VH),FLIP);}
@@ -431,7 +433,13 @@ function hasPast(){for(const st of stars.values())for(let i=1;i<4;i++)if(st.day=
 function updJar(){show('jarBtn',(base==='today'&&hasPast())||base==='jar');}
 const dayOffset=k=>{for(let i=0;i<4;i++)if(dayKey(-i)===k)return i;return 0;};
 let jarClosing=null;
-$('jarBtn').onclick=()=>{if(mode!=='idle'||jarClosing)return;
+let draft=null;
+function restoreDraft(){if(!draft||mode!=='idle'||base!=='today')return;const d=draft;draft=null;const i=COLORS.indexOf(d.color);if(i<0)return;
+  pickPaper(i);inp.value=d.text;$('pin').value=d.pin;syncSlots('pin');onType();}
+$('jarBtn').onclick=()=>{if(jarClosing)return;
+  if(mode==='read')finishRead();
+  if(mode==='compose'){draft={color:work.color,text:inp.value,pin:$('pin').value};cancelCompose();}
+  if(mode!=='idle')return;
   if(base!=='jar'){setBase('jar');return;}
   const jr=$('jarBtn').getBoundingClientRect();const jx=jr.left+jr.width*0.55,jy=jr.top+jr.height*0.35;const all=jarCols.flat();
   all.forEach((p,i)=>{p.rdelay=(all.length>1?i/(all.length-1):0)*0.55;p.cx=jx;p.cy=jy;});jarClosing=performance.now();show('jarView',false);};
@@ -441,7 +449,7 @@ $('hTitle').onclick=()=>{if(mode==='compose'&&!inp.value.trim())cancelCompose();
 /* ---- 항아리: 지난 4일 (쏟아지는 별) ---- */
 let jarCols=[],jarT0=0;
 function buildJar(animate){const jv=$('jarView');jv.innerHTML='';jarCols=[];const sp=starPx()*0.62;const port=VW/VH<0.8;
-  const present=[0,1,2,3].filter(i=>[...stars.values()].some(s=>s.day===dayKey(-i)));const n_=present.length;
+  const present=[1,2,3].filter(i=>[...stars.values()].some(s=>s.day===dayKey(-i)));const n_=present.length;
   const cols=port?(n_<=2?[[0.5,0.17],[0.5,0.55]]:[[0.27,0.17],[0.73,0.17],[0.27,0.55],[0.73,0.55]]):present.map((_,q)=>[(q+0.5)/n_*0.92+0.04,0.22]);
   const jr=$('jarBtn').getBoundingClientRect();const jx=jr.left+jr.width/2,jy=jr.top+jr.height*0.4;let order=0;
   present.forEach((i,q)=>{const k=dayKey(-i);const list=[...stars.values()].filter(s=>s.day===k).sort((a,b)=>a.t-b.t);
@@ -497,21 +505,23 @@ $('sendBtn').onclick=()=>{show('madeBtns',false);const[x,y]=emptySpot();const fv
 function readText(st){if(st.kind!=='npc')return st.text;const k=base==='day'?viewDay:dayKey();return(base==='day'?`${DAYWORD[dayOffset(k)]}의 주제: `:'오늘의 주제: ')+themeOf(k);}
 function startRead(st){const text=readText(st);const G=geomOfText(text);mode='read';reading={st,G,f:0,P:G.KE,dir:1};drawText(G,text);hideReadLbls();}
 function readViews(r){const G=r.G;const[sx,sy]=toPx(r.st);const sz=sizeOf(r.st);
-  const vB={spx:sz/(2*R),cx:sx,cy:sy};const spx=Math.min(stripH()/WID,VW*0.9/G.bbKS.w);
-  const L=(G.bbKS.cx-G.bbKS.w/2)*spx,Rr=(G.bbKS.cx+G.bbKS.w/2)*spx;let kx=sx;if(kx+Rr>VW-14)kx=VW-14-Rr;if(kx+L<14)kx=14-L;
-  const ky=clamp(sy-G.bbKS.cy*spx,70,VH-150);
+  const vB={spx:sz/(2*R),cx:sx,cy:sy};const dw=delW()+14;const spx=Math.min(stripH()/WID,VW*0.9/G.bbKS.w,(VW-28-dw)/G.bbKS.w);
+  const L=(G.bbKS.cx-G.bbKS.w/2)*spx,Rr=(G.bbKS.cx+G.bbKS.w/2)*spx;let kx=sx;if(kx+Rr>VW-14-dw)kx=VW-14-dw-Rr;if(kx+L<14)kx=14-L;
+  const ky=clamp(sy-G.bbKS.cy*spx,70,VH-150)-readLift;
   return{vA:{spx,cx:kx,cy:ky},vB};}
+let readLift=0,delWc={};
+function delW(){const t=$('rDel').textContent||'지우기';if(delWc[t])return delWc[t];tctx.font=`22px ${FONT}`;return delWc[t]=Math.ceil(tctx.measureText(t).width)+6;}
 function hideReadLbls(){['rDel','rPinRow'].forEach(id=>show(id,false));$('rDel').textContent='지우기';$('rDel').dataset.c='';}
 function closeRead(){if(!reading)return;reading.dir=-1;hideReadLbls();$('rPin').blur();}
 $('rDel').onclick=async()=>{const st=reading&&reading.st;if(!st)return;
   if(delMode){if(!$('rDel').dataset.c){$('rDel').dataset.c='1';$('rDel').textContent='정말 지우기';return;}
     const r=await adminDelete(st);if(r===true){toast('별을 지웠어요');finishRead();}else toast(r);return;}
-  show('rPinRow',true);$('rPin').value='';syncSlots('rPin');$('rPin').focus();};
+  show('rPinRow',true);$('rPin').value='';syncSlots('rPin');try{$('rPin').focus({preventScroll:true});}catch{$('rPin').focus();}};
 $('rPin').addEventListener('input',()=>{$('rPin').value=$('rPin').value.replace(/\D/g,'').slice(0,4);});
 $('rPin').addEventListener('keydown',e=>{if(e.key==='Enter')$('rPinGo').click();});
 $('rPinGo').onclick=async()=>{const st=reading&&reading.st;if(!st)return;const p=$('rPin').value;if(!/^\d{4}$/.test(p)){shake('rPinRow');return;}
   const r=await deleteMine(st,p);if(r===true){toast('별을 떼어냈어요');finishRead();}else{toast(r);shake('rPinRow');}};
-function finishRead(){hideReadLbls();reading=null;mode='idle';}
+function finishRead(){hideReadLbls();readLift=0;reading=null;mode='idle';}
 /* =================== 관리자 =================== */
 function openAdmin(){cancelCompose();const box=$('aThemes');box.innerHTML='';
   for(let o=-3;o<=7;o++){const k=dayKey(o);const row=document.createElement('div');row.className='tr';const sp=document.createElement('span');
@@ -572,7 +582,7 @@ glc.addEventListener('pointerup',e=>{if(mode==='arrange'){if(arrange)arrange.dra
   let best=null,bd=1e9;
   for(const st of visibleStars()){const[sx,sy]=toPx(st);const d=Math.hypot(x-sx,y-sy);const r=sizeOf(st)*0.62+10;if(d<r&&d<bd){bd=d;best=st;}}
   if(best)startRead(best);});
-function foldStep(){if(!work||mode!=='fold')return;if(work.P<work.target-0.35)return;work.target=Math.min(work.G.KE,work.target+1);setHint();}
+function foldStep(){if(!work||mode!=='fold')return;if(work.P<work.target-0.25)return;work.target=Math.min(work.G.KE,work.target+1);setHint();}
 addEventListener('keydown',e=>{if(e.key==='Escape'){if(mode==='read')closeRead();else if(!$('admin').classList.contains('hide'))show('admin',false);}
   if((e.key===' '||e.key==='Enter')&&mode==='fold'){e.preventDefault();foldStep();}});
 /* =================== 그리기 =================== */
@@ -580,7 +590,7 @@ let last=performance.now(),time=0;
 function place(el,x,y){const w=el.offsetWidth||44;let X=x,Y=y;if(X+w>VW-10){X=VW-10-w;Y=y+30;}el.style.left=X+'px';el.style.top=Math.max(54,Y)+'px';}
 let uiRect=null,uiRectNext=null,frameDt=0.016;
 function avoidUI(st,px,py,size){let target=0;const r=uiRect;
-  if(r&&st.kind!=='npc'){const m=size*0.6+10;
+  if(r&&!(st.kind==='npc'&&mode!=='read')){const m=size*0.6+10;
     if(px>r.L-m&&px<r.R+m&&py>r.T-m&&py<r.B+m){const up=r.T-m,down=r.B+m,minY=62,maxY=VH-175;
       const canUp=up>=minY,canDown=down<=maxY;let ny;
       if(canUp&&(!canDown||py-r.T<r.B-py))ny=up-(r.T-py>0?0:Math.min(40,(py-r.T)*0.3));else if(canDown)ny=down+Math.min(40,(r.B-py)*0.3);else ny=minY;
@@ -633,7 +643,7 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;fra
     for(const pile of jarCols)for(const p of pile){const u=clamp((tt-p.rdelay)/0.6,0,1);if(u>=1)continue;const e=u*u;
       const c1x=p.px+(p.cx-p.px)*0.6,c1y=Math.min(p.py,p.cy)-VH*0.06;const x=(1-e)*(1-e)*p.px+2*(1-e)*e*c1x+e*e*p.cx,y=(1-e)*(1-e)*p.py+2*(1-e)*e*c1y+e*e*p.cy;
       drawMesh(STD,STDM,starM(x,y,sp*(1-0.7*e),p.rot+e*4,p.tx*0.5,p.ty*0.5,p.py/VH*0.4),hex2(p.st.color),false,1);}
-    if(tt>1.3){jarClosing=null;setBase('today');}}
+    if(tt>1.3){jarClosing=null;setBase('today');restoreDraft();}}
   else if(base==='jar'){const sp=starPx()*0.62;const tt=(now-jarT0)/1000;
     for(const pile of jarCols)for(const p of pile){const t=tt-p.delay;if(t<0)continue;const u=clamp(t/0.95,0,1);const e=1-Math.pow(1-u,3);
       const c1x=p.jx+(p.px-p.jx)*0.35,c1y=Math.min(p.jy,p.py)-VH*0.05;const sz=p.ssz+(sp-p.ssz)*e;const x=(1-e)*(1-e)*p.jx+2*(1-e)*e*c1x+e*e*p.px,y=(1-e)*(1-e)*p.jy+2*(1-e)*e*c1y+e*e*p.py;
@@ -641,8 +651,8 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;fra
   gl.clear(gl.DEPTH_BUFFER_BIT);$('landing').style.opacity=(reading&&base==='landing')?0.12:1;
   // 작업 중인 색지
   if(work&&['compose','fold','made','unfold'].includes(mode)){const G=work.G;
-    if(mode==='fold'){if(work.P<work.target)work.P=Math.min(work.target,work.P+dt/0.55);if(work.P>=G.KE-1e-6){work.P=G.KE;mode='made';show('hint',false);show('madeBtns',true);}}
-    if(mode==='unfold'){work.P=Math.max(KS,work.P-dt/0.1);if(work.P<=KS){mode='compose';inp.value=work.text;$('pin').value=work.pin||'';syncSlots('pin');work.lastValid=work.text;drawText(G,'');
+    if(mode==='fold'){if(work.P<work.target)work.P=Math.min(work.target,work.P+dt/0.95);if(work.P>=G.KE-1e-6){work.P=G.KE;mode='made';show('hint',false);show('madeBtns',true);}}
+    if(mode==='unfold'){work.P=Math.max(KS,work.P-dt/0.2);if(work.P<=KS){mode='compose';inp.value=work.text;$('pin').value=work.pin||'';syncSlots('pin');work.lastValid=work.text;drawText(G,'');
       ['stripInput','pinRow','theme'].forEach(id=>show(id,true));updFoldLbl();}}
     const tgt=composeTarget(G);work.view.spx=tgt.spx;work.view.cx+=(tgt.cx-work.view.cx)*Math.min(1,dt*9);work.view.cy+=(tgt.cy-work.view.cy)*Math.min(1,dt*9);
     const Mw=viewMatrix(G,work.P,work.view,foldView());const m=poseMesh(G,work.P);
@@ -665,15 +675,30 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;fra
     drawMesh(STD,STDM,starM(px,py,size,sending.rot+e*PI*2,sending.tx*e,sending.ty*e),hex2(work.color),false,1+0.25*glow);
     if(el>T_+0.9)land();}
   if(reading){const r=reading,G=r.G,st=r.st;
-    if(r.dir>0){r.f=Math.min(1,r.f+dt/0.35);if(r.f>=1)r.P=Math.max(KS,r.P-dt/0.16);}
-    else{r.P=Math.min(G.KE,r.P+dt/0.08);if(r.P>=G.KE){r.f=Math.max(0,r.f-dt/0.3);if(r.f<=0)finishRead();}}
+    // 열기: 다가오면서(f) 동시에 오각형으로 풀림(P 퍼프 구간) → 그다음 꼬리 색지가 풀림
+    if(r.dir>0){r.f=Math.min(1,r.f+dt/0.85);const PK=G.KP+1;
+      if(r.P>PK){if(r.f>0.12)r.P=Math.max(PK,r.P-dt/0.15);}
+      else if(r.f>=1)r.P=Math.max(KS,r.P-dt/0.28);}
+    // 닫기: 꼬리를 감은 뒤, 별로 부풀면서 동시에 제자리로 돌아감
+    else{const PK=G.KP+1;if(r.P<PK)r.P=Math.min(PK,r.P+dt/0.14);
+      else{r.P=Math.min(G.KE,r.P+dt/0.12);r.f=Math.max(0,r.f-dt/0.7);if(r.f<=0&&r.P>=G.KE)finishRead();}}
     if(reading){const m=poseMesh(G,r.P);const[px,py]=toPx(st);const{vA,vB}=readViews(r);
-      const Ms=starM(px,py,sizeOf(st),st.rot,st.tx,st.ty),Mw=viewMatrix(G,r.P,vA,vB);const Mx=lerpM(Ms,Mw,ease(r.f));
+      const Ms=starM(px,py,sizeOf(st),st.rot,st.tx,st.ty),Mw=viewMatrix(G,r.P,vA,vB);const ef=r.f*r.f*r.f*(r.f*(r.f*6-15)+10);const Mx=lerpM(Ms,Mw,ef);
       drawMesh(G,m,Mx,hex2(st.color),1,1,textCut(G,r.P));
       if(r.dir>0&&r.P<=KS+0.01){const s=stripScreen(G,Mx,G.tailU0,1);const k=mProj(Mx,0,0,0);const spx=readViews(r).vA.spx;
         const left=k[0]+(G.bbKS.cx-G.bbKS.w/2)*spx,right=s.b[0];const by=Math.max(s.a[1],s.b[1],k[1])+WID*spx*0.5+26;
-        const canDel=!!st.owner;show('rDel',canDel);if(canDel)place($('rDel'),s.b[0]+14,s.b[1]);
-        $('rPinRow').style.top=(by+48)+'px';}}}
+        const canDel=!!st.owner;show('rDel',canDel);if(canDel){const e=$('rDel');e.style.left=(s.b[0]+14)+'px';e.style.top=s.b[1]+'px';}
+        const dw=$('rDel').offsetWidth||delW(),wrapped=false;const dRight=s.b[0]+14+dw;
+        const rp=$('rPinRow');const rw=rp.offsetWidth||300;rp.style.transform='translate(-100%,-50%)';
+        rp.style.top=(by+(wrapped?30:-4))+'px';rp.style.left=clamp(dRight,rw+10,VW-10)+'px';
+        // 키패드가 올라오면 쪽지와 비밀번호 줄을 화면 보이는 영역 위로 끌어올림
+        let tgt=0;if(!rp.classList.contains('hide')){const vv=window.visualViewport;const vb=vv?vv.offsetTop+vv.height:VH;
+          const need=rp.getBoundingClientRect().bottom-(vb-18);tgt=Math.max(0,readLift+need);}
+        readLift+=(tgt-readLift)*Math.min(1,dt*7);if(Math.abs(tgt-readLift)<0.5)readLift=tgt;}
+      else if(readLift){readLift+=(0-readLift)*Math.min(1,dt*7);if(readLift<0.5)readLift=0;}
+      // 펼친 쪽지 주변의 별들은 잠시 비켜나기
+      if(r.dir>0){const{vA}=readViews(r);const bb=G.bbKS,sp=vA.spx;const pinOn=!$('rPinRow').classList.contains('hide');
+        uiRectNext={L:vA.cx+(bb.cx-bb.w/2)*sp-6,R:vA.cx+(bb.cx+bb.w/2)*sp+76,T:vA.cy+(bb.cy-bb.h/2)*sp-6,B:vA.cy+(bb.cy+bb.h/2)*sp+(pinOn?92:44)};}}}
   requestAnimationFrame(frame);}
 async function land(){const s=sending;sending=null;const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);const step=2*PI/5;
   const rot=(((s.rot+PI*2)%step)+step)%step-step/2;
@@ -700,8 +725,13 @@ function startBuffer(offset){if(!abuf||!actx||actx.state!=='running'||asrc)retur
 function stopBuffer(){if(!asrc)return;const t=actx.currentTime,g=again,s=asrc;g.gain.cancelScheduledValues(t);g.gain.setValueAtTime(g.gain.value,t);g.gain.linearRampToValueAtTime(0,t+0.5);
   try{s.stop(t+0.55);}catch{}asrc=null;again=null;}
 function soundOnNow(){soundOn=true;$('sndBtn').textContent='소리 끄기';
+  try{if(navigator.audioSession)navigator.audioSession.type='playback';}catch{}
   try{if(!actx)actx=new(window.AudioContext||window.webkitAudioContext)();actx.resume().catch(()=>{});}catch{}
-  if(startBuffer(0))return;
+  if(abuf&&actx&&actx.state!=='closed'){// 버퍼가 준비돼 있으면 처음부터 끊김 없는 재생 사용
+    const go=()=>{if(soundOn&&!asrc)startBuffer(0);};if(actx.state==='running'){go();return;}
+    let n=0;const w=()=>{if(!soundOn||asrc)return;if(actx.state==='running'){go();return;}if(++n<4){setTimeout(w,120);return;}elFallback();};w();return;}
+  elFallback();}
+function elFallback(){if(!soundOn||asrc)return;
   audioEl.volume=0;const pr=audioEl.play();if(pr&&pr.catch)pr.catch(()=>{if(!asrc){soundOn=false;$('sndBtn').textContent='소리 켜기';toast('소리를 재생하지 못했어요');}});
   fadeEl(VOL,1200);
   loadBuf().then(()=>{if(!soundOn||asrc)return;const tryHand=(n)=>{if(!soundOn||asrc)return;
@@ -709,7 +739,7 @@ function soundOnNow(){soundOn=true;$('sndBtn').textContent='소리 끄기';
 function soundOffNow(){soundOn=false;$('sndBtn').textContent='소리 켜기';stopBuffer();fadeEl(0,500);}
 $('sndBtn').addEventListener('pointerdown',e=>e.stopPropagation());
 $('sndBtn').onclick=()=>{soundOn?soundOffNow():soundOnNow();};
-setTimeout(()=>loadBuf(),2500);
+setTimeout(()=>loadBuf(),1200);
 document.addEventListener('visibilitychange',()=>{if(!soundOn)return;if(document.hidden){if(actx)actx.suspend();if(!audioEl.paused)audioEl.pause();}
   else{if(actx)actx.resume().catch(()=>{});if(!asrc)audioEl.play().catch(()=>{});}});
 resize();setBase('landing');requestAnimationFrame(frame);
@@ -717,7 +747,7 @@ const refont=()=>{geomCache.clear();if(reading)drawText(reading.G=geomOfText(rea
   else if(work){work.G=geomOfText(mode==='compose'?inp.value:work.text);if(mode!=='compose')drawText(work.G,work.text);}};
 document.fonts&&document.fonts.load(`40px ${FONT}`).then(refont).catch(()=>{});
 window.__dbg={mode:()=>mode,pick:i=>pickPaper(i),type:(t,p)=>{inp.value=t;$('pin').value=p||'';syncSlots('pin');onType();},fold:()=>$('foldLbl').click(),step:()=>foldStep(),
-  send:()=>$('sendBtn').click(),fall:()=>{fxNextFall=0;},readFirst:(i)=>{const v=visibleStars();if(v.length)startRead(v[i||0]);},setBase:(b,d)=>setBase(b,d),clickDay:i=>document.querySelectorAll('.day')[i].click(),dayKey:o=>dayKey(o),P:()=>work&&work.P};
+  send:()=>$('sendBtn').click(),fall:()=>{fxNextFall=0;},readFirst:(i)=>{const v=visibleStars();if(v.length)startRead(v[i||0]);},setBase:(b,d)=>setBase(b,d),clickDay:i=>document.querySelectorAll('.day')[i].click(),dayKey:o=>dayKey(o),P:()=>work&&work.P,lift:()=>readLift,rd:()=>reading&&[reading.f,reading.P,reading.dir],readLow:()=>{let b=null;for(const st of visibleStars()){const y=toPx(st)[1];if(y<VH-60&&(!b||y>toPx(b)[1]))b=st;}if(b){b.owner='me';startRead(b);}return b&&toPx(b);}};
 })();
 </script>
 </body>
