@@ -50,6 +50,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 #fan.away{transform:translateY(220px)}
 .paper{position:absolute;left:-15px;bottom:-60px;width:30px;height:170px;border-radius:1px;transform-origin:50% 140%;background-color:var(--c);background-image:var(--noise);background-blend-mode:multiply;
   box-shadow:-2px 0 4px rgba(0,0,0,.25);transition:translate .25s}
+.paper::after{content:'';position:absolute;left:-5px;right:-5px;top:-8px;bottom:0}
 .paper:hover{translate:0 -10px}
 .paper.sel{translate:0 -18px}
 #jarView{position:fixed;inset:0;z-index:3;pointer-events:none}
@@ -362,7 +363,7 @@ const themeOf=k=>(config.themes&&config.themes[k])||'자유 주제';
 const DEFAULT_LINES=["오늘 밤 반짝이는 것들","멀리 있는 마음에게","말하지 못한 이야기","작은 종이에 담은 빛","잠들기 전의 기도","내일의 나에게","오래 기억하고 싶은 이름","창밖의 조용한 밤"];
 function layoutFan(){const f=$('fan');if(!f.children.length){COLORS.forEach((c,i)=>{const b=document.createElement('button');b.className='paper';b.style.setProperty('--c',c);b.setAttribute('aria-label','색지 '+(i+1));
     b.addEventListener('pointerdown',e=>e.stopPropagation());b.onclick=()=>pickPaper(i);f.appendChild(b);});}
-  const sc=clamp(Math.min(VW,VH)/520,0.7,1.25);[...f.children].forEach((b,i)=>{b.style.transform=`rotate(${-17+i*8.5}deg) translateX(${(i-2.5)*4}px) scale(${sc})`;});}
+  const sc=clamp(Math.min(VW,VH)/520,0.9,1.25);[...f.children].forEach((b,i)=>{b.style.transform=`rotate(${-17+i*8.5}deg) translateX(${(i-2.5)*4}px) scale(${sc})`;});}
 function selPaper(i){[...$('fan').children].forEach((b,j)=>b.classList.toggle('sel',j===i));}
 /* =================== 데이터 (서버) =================== */
 const clamp01=v=>isFinite(v)?clamp(v,0,1):0.5;
@@ -415,11 +416,37 @@ function poemPx(st){const L=layoutKey();
   const bw=Math.max(0.01,x1-x0),bh=Math.max(0.01,y1-y0);const BX=VW*0.06,BW=VW*0.88,BY=Math.max(72,VH*0.09),BH=VH*0.38-BY;
   const sc=Math.min(BW/bw,BH/bh);const ox=BX+(BW-bw*sc)/2,oy=BY+(BH-bh*sc)/2;const p=poemSrc(st);
   return[ox+(p[0]*1.62-x0)*sc,oy+(p[1]-y0)*sc];}
-const toPx=st=>st.kind==='poem'?poemPx(st):[(SKY.x0+st.x*(SKY.x1-SKY.x0))*VW,(SKY.y0+st.y*(SKY.y1-SKY.y0))*VH];
+/* 빈 하늘을 손가락으로 휘저으면 내 화면에서만 별들이 밀려나 자리가 바뀜 (저장하지 않음) */
+const stir=new Map();let stirPtr=null;
+const basePx=st=>[(SKY.x0+st.x*(SKY.x1-SKY.x0))*VW,(SKY.y0+st.y*(SKY.y1-SKY.y0))*VH];
+const toPx=st=>{if(st.kind==='poem')return poemPx(st);const b=basePx(st),o=stir.get(st.key);return o?[b[0]+o.ox*VW,b[1]+o.oy*VH]:b;};
+function stirMove(x,y){const p=stirPtr;if(!p)return;const dx=x-p.x,dy=y-p.y;const d=Math.hypot(dx,dy);if(d<1)return;p.x=x;p.y=y;p.moved+=d;
+  const R0=Math.max(90,Math.min(VW,VH)*0.22);
+  for(const st of visibleStars()){if(st.kind==='npc'||(reading&&reading.st===st))continue;const[sx,sy]=toPx(st);const rx=sx-x,ry=sy-y;const r=Math.hypot(rx,ry);if(r>R0)continue;
+    const w=Math.pow(1-r/R0,1.5);let o=stir.get(st.key);if(!o){o={ox:0,oy:0,vx:0,vy:0,spin:0};stir.set(st.key,o);}
+    // 손가락 방향으로 밀고, 살짝 소용돌이처럼 비켜나기
+    const side=(dx*ry-dy*rx)>0?1:-1;o.vx+=(dx*1.5+rx/(r+1)*d*0.5)*w/VW*0.75;o.vy+=(dy*1.5+ry/(r+1)*d*0.5)*w/VH*0.75;o.spin+=side*d*w*0.02;}}
+function stirStep(dt){if(!stir.size)return;const k=Math.exp(-dt*2.2);
+  for(const[key,o] of stir){if(Math.abs(o.vx)+Math.abs(o.vy)+Math.abs(o.spin)<1e-4)continue;o.ox+=o.vx*dt;o.oy+=o.vy*dt;o.vx*=k;o.vy*=k;o.spin*=k;
+    const st=stars.get(key);if(!st)continue;st._rot=(st._rot||0)+o.spin*dt;const b=basePx(st);
+    const x=b[0]+o.ox*VW,y=b[1]+o.oy*VH,mnY=64,mxY=VH-170;
+    if(x<12){o.ox=(12-b[0])/VW;o.vx=Math.abs(o.vx)*0.5;}if(x>VW-12){o.ox=(VW-12-b[0])/VW;o.vx=-Math.abs(o.vx)*0.5;}
+    if(y<mnY){o.oy=(mnY-b[1])/VH;o.vy=Math.abs(o.vy)*0.5;}if(y>mxY){o.oy=(mxY-b[1])/VH;o.vy=-Math.abs(o.vy)*0.5;}}}
+/* 한 하늘에는 최대 SHOW개만 보이고, 나머지는 대기열에서 별똥별 교체로 차례차례 등장 */
+const SHOW=50;const skyMem=new Map();
+function skyFor(day,pool){let m=skyMem.get(day);if(!m){m={shown:new Set(),queue:[],init:false};skyMem.set(day,m);}
+  const keys=new Set(pool.map(s=>s.key));for(const k of m.shown)if(!keys.has(k))m.shown.delete(k);
+  if(m.queue.some(k=>!keys.has(k)))m.queue=m.queue.filter(k=>keys.has(k));
+  if(pool.length>m.shown.size+m.queue.length){const known=new Set([...m.shown,...m.queue]);
+    const fresh=pool.filter(s=>!known.has(s.key)).sort((a,b)=>b.t-a.t);
+    for(const st of fresh){if(st.local||m.shown.size<SHOW)m.shown.add(st.key);else if(m.init)m.queue.unshift(st.key);else m.queue.push(st.key);}}
+  m.init=true;return m;}
+function curSkyDay(){return base==='today'?dayKey():base==='day'?viewDay:null;}
+function skyStars(day){const pool=[...stars.values()].filter(s=>s.day===day);const m=skyFor(day,pool);
+  return pool.filter(s=>m.shown.has(s.key)||(reading&&reading.st===s));}
 function visibleStars(){if(base==='landing')return landingStars;
-  if(base==='today'){const k=dayKey();const a=[...stars.values()].filter(s=>s.day===k);if(mode==='idle'||mode==='read')a.push(npc);return a;}
-  if(base==='day'){const a=[...stars.values()].filter(s=>s.day===viewDay);if(mode==='idle'||mode==='read')a.push(npc);return a;}return[];}
-function emptySpot(){const k=dayKey();const pts=[...stars.values()].filter(s=>s.day===k).map(s=>[s.x,s.y]);pts.push([0.5,0.5]);
+  if(base==='today'||base==='day'){const a=skyStars(curSkyDay());if(mode==='idle'||mode==='read')a.push(npc);return a;}return[];}
+function emptySpot(){const k=dayKey();const pts=skyStars(k).map(s=>[s.x,s.y]);pts.push([0.5,0.5]);
   let best=[Math.random(),Math.random()],bd=-1;for(let t=0;t<120;t++){const x=Math.random(),y=Math.random()*0.92;let d=9;
     for(const p of pts)d=Math.min(d,Math.hypot((p[0]-x)*VW/VH*0.9,p[1]-y));if(d>bd){bd=d;best=[x,y];}}return best;}
 const sizeOf=st=>starPx()*(st.kind==='npc'?1.25:1);
@@ -571,8 +598,10 @@ $('aSave').onclick=async()=>{const themes={...(config.themes||{})};$('aThemes').
 /* =================== 입력 =================== */
 let ptr=null;
 glc.addEventListener('pointerdown',e=>{ptr={x:e.clientX,y:e.clientY};
+  stirPtr=(mode==='idle'||mode==='read')&&(base==='today'||base==='day')?{x:e.clientX,y:e.clientY,moved:0}:null;
   if(mode==='arrange'){let bi=-1,bd=1e9;landingStars.forEach((st,i)=>{const[x,y]=poemPx(st);const d=Math.hypot(x-e.clientX,y-e.clientY);if(d<bd&&d<40){bd=d;bi=i;}});arrange.drag=bi;try{glc.setPointerCapture(e.pointerId);}catch{}}});
-glc.addEventListener('pointermove',e=>{if(mode==='arrange'&&arrange&&arrange.drag>=0)arrange.pts[arrange.drag]=[clamp(e.clientX/VW,0.02,0.98),clamp(e.clientY/VH,0.06,0.94)];});
+glc.addEventListener('pointermove',e=>{if(stirPtr&&e.buttons!==0||stirPtr&&e.pointerType==='touch')stirMove(e.clientX,e.clientY);if(mode==='arrange'&&arrange&&arrange.drag>=0)arrange.pts[arrange.drag]=[clamp(e.clientX/VW,0.02,0.98),clamp(e.clientY/VH,0.06,0.94)];});
+addEventListener('pointerup',()=>{stirPtr=null;});addEventListener('pointercancel',()=>{stirPtr=null;});
 glc.addEventListener('pointerup',e=>{if(mode==='arrange'){if(arrange)arrange.drag=-1;ptr=null;return;}const tap=ptr&&Math.hypot(e.clientX-ptr.x,e.clientY-ptr.y)<10;ptr=null;if(!tap)return;
   const x=e.clientX,y=e.clientY;
   if(mode==='fold'){foldStep();return;}
@@ -582,7 +611,7 @@ glc.addEventListener('pointerup',e=>{if(mode==='arrange'){if(arrange)arrange.dra
   let best=null,bd=1e9;
   for(const st of visibleStars()){const[sx,sy]=toPx(st);const d=Math.hypot(x-sx,y-sy);const r=sizeOf(st)*0.62+10;if(d<r&&d<bd){bd=d;best=st;}}
   if(best)startRead(best);});
-function foldStep(){if(!work||mode!=='fold')return;if(work.P<work.target-0.25)return;work.target=Math.min(work.G.KE,work.target+1);setHint();}
+function foldStep(){if(!work||mode!=='fold')return;if(work.target-work.P>3)return;work.target=Math.min(work.G.KE,work.target+1);setHint();}
 addEventListener('keydown',e=>{if(e.key==='Escape'){if(mode==='read')closeRead();else if(!$('admin').classList.contains('hide'))show('admin',false);}
   if((e.key===' '||e.key==='Enter')&&mode==='fold'){e.preventDefault();foldStep();}});
 /* =================== 그리기 =================== */
@@ -597,16 +626,30 @@ function avoidUI(st,px,py,size){let target=0;const r=uiRect;
       target=ny-py;}}
   st._dy=(st._dy||0)+(target-(st._dy||0))*Math.min(1,frameDt*5);if(Math.abs(st._dy)<0.3&&!target)st._dy=0;return py+st._dy;}
 /* ---- 별똥별 / 반짝임 효과 (잔잔하게, 첫 화면 제외) ---- */
-const FX=new Map();let fxNextFall=performance.now()+9000,fxNextGlow=performance.now()+3000;
+const FX=new Map();let fxNextFall=performance.now()+9000,fxNextSwap=performance.now()+5000,fxNextGlow=performance.now()+3000;
 function scheduleFx(now){if(base==='landing'||base==='jar'||!(mode==='idle'||mode==='read')){if(base==='landing')FX.clear();return;}
   const list=visibleStars().filter(st=>!(reading&&reading.st===st)&&!FX.has(st.key));if(!list.length)return;
-  if(now>fxNextFall){const c=list.filter(st=>st.kind!=='npc');if(c.length&&FX.size<3){const st=c[Math.floor(Math.random()*c.length)];
+  const day=curSkyDay(),m=day&&skyMem.get(day);
+  if(m&&(m.queue.length||m.shown.size>SHOW)){
+    if(now>fxNextSwap){const c=list.filter(st=>st.kind!=='npc'&&!st.local);let busy=0;for(const f of FX.values())if(f.swap)busy++;
+      if(c.length&&busy<3){const st=c[Math.floor(Math.random()*c.length)];const ang=(Math.random()<0.5?1:-1)*(0.3+Math.random()*0.3);
+        FX.set(st.key,{type:'fall',swap:m,t0:now,dx:Math.sin(ang),dy:Math.cos(ang)});}
+      fxNextSwap=now+2600+Math.random()*2600;}
+    fxNextFall=Math.max(fxNextFall,now+8000);}
+  else if(now>fxNextFall){const c=list.filter(st=>st.kind!=='npc');if(c.length&&FX.size<3){const st=c[Math.floor(Math.random()*c.length)];
       const ang=(Math.random()<0.5?1:-1)*(0.3+Math.random()*0.3);FX.set(st.key,{type:'fall',t0:now,dx:Math.sin(ang),dy:Math.cos(ang)});}
-    fxNextFall=now+14000+Math.random()*12000;}
+    fxNextFall=now+6000+Math.random()*6000;}
   if(now>fxNextGlow){const st=list[Math.floor(Math.random()*list.length)];FX.set(st.key,{type:'glow',t0:now,spin:(Math.random()<0.5?1:-1)});fxNextGlow=now+2200+Math.random()*2800;}}
 function glowAt(px,py,r,color,a){if(a<=0.01)return;const[cr,cg,cb]=hex2(color).map(v=>v*255|0);const g=bx.createRadialGradient(px,py,0,px,py,r);
   g.addColorStop(0,`rgba(255,255,248,${0.22*a})`);g.addColorStop(0.35,`rgba(${cr},${cg},${cb},${0.16*a})`);g.addColorStop(1,`rgba(${cr},${cg},${cb},0)`);bx.fillStyle=g;bx.fillRect(px-r,py-r,2*r,2*r);}
 function applyFx(st,now,px,py,size){const f=FX.get(st.key);if(!f)return{px,py,size,dim:1,rot:0};const el=(now-f.t0)/1000;
+  if(f.type==='appear'){const GROW=1.4,T_=4.2;if(el>T_){FX.delete(st.key);return{px,py,size,dim:1,rot:0};}
+    const e=1-Math.pow(1-Math.min(1,el/GROW),3);const glow=el<GROW?Math.sin(PI/2*el/GROW):Math.pow(1-(el-GROW)/(T_-GROW),1.6);
+    // 별 보내기 때처럼 별 색의 은은한 후광
+    const[cr,cg,cb]=hex2(st.color).map(v=>v*255|0);const gr=size*(1.6+1.4*glow);const g=bx.createRadialGradient(px,py,0,px,py,gr);
+    g.addColorStop(0,`rgba(${cr},${cg},${cb},${0.55*glow})`);g.addColorStop(0.35,`rgba(${cr},${cg},${cb},${0.22*glow})`);g.addColorStop(1,`rgba(${cr},${cg},${cb},0)`);
+    bx.fillStyle=g;bx.fillRect(px-gr,py-gr,gr*2,gr*2);
+    return{px,py,size:size*Math.max(0.01,e),dim:1+0.25*glow,rot:(1-e)*0.8};}
   if(f.type==='glow'){const T_=3.4;if(el>T_){FX.delete(st.key);return{px,py,size,dim:1,rot:0};}const a=Math.sin(PI*el/T_);const ea=a*a*(3-2*a);
     glowAt(px,py,size*1.5,st.color,ea);return{px,py,size:size*(1+0.04*ea),dim:1+0.16*ea,rot:f.spin*0.22*ea};}
   // fall: 3초 동안 천천히 떨어지며 사라짐 → 2.4초에 걸쳐 제자리에서 다시 생김
@@ -621,17 +664,21 @@ function applyFx(st,now,px,py,size){const f=FX.get(st.key);if(!f)return{px,py,si
       bx.fillStyle=`rgba(255,255,240,${0.75*tw})`;bx.beginPath();bx.arc(jx,jy,rr*0.55,0,6.283);bx.fill();
       bx.strokeStyle=`rgba(255,255,240,${0.45*tw})`;bx.lineWidth=0.8;bx.beginPath();bx.moveTo(jx-rr*1.6,jy);bx.lineTo(jx+rr*1.6,jy);bx.moveTo(jx,jy-rr*1.6);bx.lineTo(jx,jy+rr*1.6);bx.stroke();}
     glowAt(x,y,size*1.9,st.color,1.6*(1-u*0.8));return{px:x,py:y,size:size*Math.max(0.02,1-0.95*u*u),dim:1.4-0.2*u,rot:u*1.2};}
+  if(f.swap){const m=f.swap;FX.delete(st.key);if(reading&&reading.st===st)return{px,py,size,dim:1,rot:0};
+    m.shown.delete(st.key);m.queue.push(st.key);
+    if(m.shown.size<SHOW){const nk=m.queue.shift();if(nk){m.shown.add(nk);FX.set(nk,{type:'appear',t0:now});}}
+    return{px,py,size:0,dim:1,rot:0};}
   if(el<FALL+BACK){const u=(el-FALL)/BACK;const e=1-Math.pow(1-u,3);glowAt(px,py,size*1.4,st.color,Math.sin(PI*u)*0.6);
     return{px,py,size:size*Math.max(0.01,e),dim:1+0.12*Math.sin(PI*u),rot:(1-e)*0.8};}
   FX.delete(st.key);return{px,py,size,dim:1,rot:0};}
-function drawSkyStar(st,now){let[px,py]=toPx(st);py=avoidUI(st,px,py,sizeOf(st));const sway=Math.sin(time*0.6+(st.x*13))*0.05;let size=sizeOf(st),rot=st.rot,tx=st.tx,ty=st.ty;
+function drawSkyStar(st,now){let[px,py]=toPx(st);py=avoidUI(st,px,py,sizeOf(st));const sway=Math.sin(time*0.6+(st.x*13))*0.05;let size=sizeOf(st),rot=st.rot+(st._rot||0),tx=st.tx,ty=st.ty;
   if(spread&&base==='day'){const el=(now-spread.t0)/1000;const f=spread.from.get(st.key);
     if(f){const idx=[...spread.from.keys()].indexOf(st.key);const u=clamp((el-idx*0.02)/1.1,0,1),e=ease(u);if(u<1){const cx=(f.px+px)/2,cy=Math.min(f.py,py)-VH*0.06;
       px=(1-e)*(1-e)*f.px+2*(1-e)*e*cx+e*e*px;py=(1-e)*(1-e)*f.py+2*(1-e)*e*cy+e*e*py;size=f.size+(size-f.size)*e;rot=f.rot+(rot-f.rot)*e;tx=f.tx+(tx-f.tx)*e;ty=f.ty+(ty-f.ty)*e;}}
     else if(st.kind==='npc'){const u=clamp((el-0.5)/0.6,0,1);if(u<=0)return;size*=ease(u);}}
   const fx=applyFx(st,now,px,py,size);if(fx.size<0.5)return;
   drawMesh(STD,STDM,starM(fx.px,fx.py,fx.size,rot+fx.rot,tx,ty+sway),hex2(st.color),false,fx.dim);}
-function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;frameDt=dt;uiRect=uiRectNext;uiRectNext=null;
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;frameDt=dt;stirStep(dt);uiRect=uiRectNext;uiRectNext=null;
   bx.setTransform(DPR,0,0,DPR,0,0);bx.fillStyle='#000';bx.fillRect(0,0,VW,VH);
   gl.viewport(0,0,glc.width,glc.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);
   gl.uniformMatrix4fv(loc.uVP,false,VP);
@@ -651,7 +698,7 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;fra
   gl.clear(gl.DEPTH_BUFFER_BIT);$('landing').style.opacity=(reading&&base==='landing')?0.12:1;
   // 작업 중인 색지
   if(work&&['compose','fold','made','unfold'].includes(mode)){const G=work.G;
-    if(mode==='fold'){if(work.P<work.target)work.P=Math.min(work.target,work.P+dt/0.95);if(work.P>=G.KE-1e-6){work.P=G.KE;mode='made';show('hint',false);show('madeBtns',true);}}
+    if(mode==='fold'){if(work.P<work.target)work.P=Math.min(work.target,work.P+dt/0.95*Math.max(1,(work.target-work.P)*2.2));if(work.P>=G.KE-1e-6){work.P=G.KE;mode='made';show('hint',false);show('madeBtns',true);}}
     if(mode==='unfold'){work.P=Math.max(KS,work.P-dt/0.2);if(work.P<=KS){mode='compose';inp.value=work.text;$('pin').value=work.pin||'';syncSlots('pin');work.lastValid=work.text;drawText(G,'');
       ['stripInput','pinRow','theme'].forEach(id=>show(id,true));updFoldLbl();}}
     const tgt=composeTarget(G);work.view.spx=tgt.spx;work.view.cx+=(tgt.cx-work.view.cx)*Math.min(1,dt*9);work.view.cy+=(tgt.cy-work.view.cy)*Math.min(1,dt*9);
@@ -747,7 +794,7 @@ const refont=()=>{geomCache.clear();if(reading)drawText(reading.G=geomOfText(rea
   else if(work){work.G=geomOfText(mode==='compose'?inp.value:work.text);if(mode!=='compose')drawText(work.G,work.text);}};
 document.fonts&&document.fonts.load(`40px ${FONT}`).then(refont).catch(()=>{});
 window.__dbg={mode:()=>mode,pick:i=>pickPaper(i),type:(t,p)=>{inp.value=t;$('pin').value=p||'';syncSlots('pin');onType();},fold:()=>$('foldLbl').click(),step:()=>foldStep(),
-  send:()=>$('sendBtn').click(),fall:()=>{fxNextFall=0;},readFirst:(i)=>{const v=visibleStars();if(v.length)startRead(v[i||0]);},setBase:(b,d)=>setBase(b,d),clickDay:i=>document.querySelectorAll('.day')[i].click(),dayKey:o=>dayKey(o),P:()=>work&&work.P,lift:()=>readLift,rd:()=>reading&&[reading.f,reading.P,reading.dir],readLow:()=>{let b=null;for(const st of visibleStars()){const y=toPx(st)[1];if(y<VH-60&&(!b||y>toPx(b)[1]))b=st;}if(b){b.owner='me';startRead(b);}return b&&toPx(b);}};
+  send:()=>$('sendBtn').click(),fall:()=>{fxNextFall=0;},readFirst:(i)=>{const v=visibleStars();if(v.length)startRead(v[i||0]);},setBase:(b,d)=>setBase(b,d),clickDay:i=>document.querySelectorAll('.day')[i].click(),dayKey:o=>dayKey(o),P:()=>work&&work.P,lift:()=>readLift,vis:()=>{const d=curSkyDay(),m=d&&skyMem.get(d);return[visibleStars().length,m&&m.queue.length,[...FX.values()].filter(f=>f.swap||f.type==='appear').length];},rd:()=>reading&&[reading.f,reading.P,reading.dir],readLow:()=>{let b=null;for(const st of visibleStars()){const y=toPx(st)[1];if(y<VH-60&&(!b||y>toPx(b)[1]))b=st;}if(b){b.owner='me';startRead(b);}return b&&toPx(b);}};
 })();
 </script>
 </body>
