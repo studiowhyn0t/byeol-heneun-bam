@@ -24,10 +24,8 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 #jarBtn{width:30px;height:36px;transition:transform .5s}
 #jarBtn.tilt{transform:rotate(-38deg) translate(2px,4px)}
 #jarBtn.tilt polygon{display:none}
-#langBtn{position:fixed;left:14px;bottom:14px;z-index:5;display:flex;align-items:center;gap:6px;font-size:18px;color:rgba(255,255,255,.6);padding:6px 6px;transition:color .3s}
-#langBtn svg{width:22px;height:22px;stroke:currentColor;fill:none;stroke-width:1.4}
-#langBtn #langLbl{display:none}#langBtn.on svg{display:none}#langBtn.on #langLbl{display:inline;font-size:22px;text-decoration:underline;text-underline-offset:4px}#langBtn.on{color:rgba(255,255,255,.88)}
-#madeBy{position:fixed;left:18px;top:12px;z-index:5;font-size:22px;line-height:25px;color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
+#langBtn{position:fixed;left:14px;bottom:14px;z-index:5;display:flex;align-items:center;gap:7px;font-size:22px;color:rgba(255,255,255,.4);padding:6px}
+#langBtn i{font-style:normal;color:rgba(255,255,255,.3)}#langBtn span.on{color:rgba(255,255,255,.9);text-decoration:underline;text-underline-offset:4px}
 #sndBtn{font-size:22px;color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
 #backBtn{font-size:22px;text-decoration:underline;text-underline-offset:4px}
 #delTag{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:5;font-size:19px;color:#ff9c9c;text-decoration:underline;text-underline-offset:4px}
@@ -155,7 +153,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
   <div class="note" id="aNote"></div>
 </div></div>
 <div id="arrangeBar" class="hide"><span id="arrangeLbl"></span><button id="arSave">저장</button><button id="arReset">처음 배치로</button><button id="arCancel">취소</button></div>
-<button id="langBtn" aria-label="Translate" aria-pressed="false"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9.5"/><ellipse cx="12" cy="12" rx="4.2" ry="9.5"/><path d="M2.5 12h19M4 7h16M4 17h16"/></svg><span id="langLbl"></span></button>
+<button id="langBtn" aria-label="Language / 언어"><span id="lgA">KR</span><i>·</i><span id="lgB">EN</span></button>
 <div id="toast"></div>
 <script>
 (()=>{
@@ -356,11 +354,14 @@ const FONT='"GyuRi", "Nanum Pen Script", cursive';
 /* =================== 언어 (원어 ↔ 방문자 언어) =================== */
 const NAVL=String((window.__LANG_OVERRIDE)||(navigator.languages&&navigator.languages[0])||navigator.language||'en').toLowerCase();
 const IS_KO=NAVL.startsWith('ko');
+// 언어 모드는 두 가지: 'ko'(한국어) / 'alt'(한국 방문자는 영어, 다른 나라 방문자는 그 나라 언어)
+const ALT_NAV=IS_KO?'en-us':NAVL;
 function pickTarget(l){const b=l.split('-')[0];if(b==='zh')return/hant|tw|hk|mo/.test(l)?'ZH-HANT':'ZH-HANS';if(b==='pt')return/pt-pt/.test(l)?'PT-PT':'PT-BR';
   if(b==='en')return/gb|au|nz|ie/.test(l)?'EN-GB':'EN-US';if(b==='no'||b==='nn')return'NB';
   const ok=['ar','bg','cs','da','de','el','es','et','fi','fr','he','hu','id','it','ja','ko','lt','lv','nl','pl','ro','ru','sk','sl','sv','th','tr','uk','vi'];return ok.includes(b)?b.toUpperCase():'EN-US';}
-const TR_TARGET=pickTarget(NAVL);
-const UI_LANG=(()=>{const b=NAVL.split('-')[0];if(b==='zh')return/hant|tw|hk|mo/.test(NAVL)?'zht':'zhs';return['ko','en','ja','es','fr','de','pt','vi','th','id','ru','it'].includes(b)?b:'en';})();
+const ALT_TARGET=(t=>t==='KO'?'EN-US':t)(pickTarget(ALT_NAV));
+const ALT_UI=(()=>{const l=ALT_NAV,b=l.split('-')[0];if(b==='zh')return/hant|tw|hk|mo/.test(l)?'zht':'zhs';return['en','ja','es','fr','de','pt','vi','th','id','ru','it'].includes(b)?b:'en';})();
+const ALT_LBL=(()=>{const b=ALT_NAV.split('-')[0];return({en:'EN',ja:'JP',zh:/hant|tw|hk|mo/.test(ALT_NAV)?'TW':'CN'})[b]||b.toUpperCase();})();
 const UI_KEYS=['별 헤는 밤','색지를 골라 글을 시작하세요.','소리 켜기','소리 끄기','돌아가기','여기에 적으세요.','접기','삭제 비밀번호:','종이를 눌러 한 번씩 감아 접어요','다시 펼치기','보내기','지우기','확인','정말 지우기',
   '오늘의 주제: ','자유 주제','오늘','어제','그저께','그끄저께','의 주제: ','의 별 헤는 밤',
   '별을 떼어냈어요','별을 저장하지 못했어요','비밀번호가 맞지 않아요','비밀번호를 여러 번 틀려서 1시간 동안 잠겼어요','오늘 하늘이 가득 찼어요','잠시 후 다시 보내주세요','하늘을 불러오지 못했어요','지우지 못했어요','소리를 재생하지 못했어요',
@@ -410,8 +411,9 @@ UI_KEYS.push('원문 보기','번역 보기','만든 이');
   fr:['Voir l’original','Voir la traduction','Créé par'],de:['Original anzeigen','Übersetzung anzeigen','Gemacht von'],pt:['Ver original','Ver tradução','Feito por'],vi:['Xem bản gốc','Xem bản dịch','Người tạo'],
   th:['ดูต้นฉบับ','ดูคำแปล','ผู้สร้าง'],id:['Lihat asli','Lihat terjemahan','Dibuat oleh'],ru:['Показать оригинал','Показать перевод','Автор'],it:['Vedi originale','Vedi traduzione','Creato da']};
   for(const k in A)UI[k].push(...A[k]);}
-let TR=(()=>{try{const v=localStorage.getItem('byeol-tr');if(v!=null)return v==='1';}catch{}return false;})();
-const UIT=s=>{if(!TR||UI_LANG==='ko')return s;const a=UI[UI_LANG];const i=UI_KEYS.indexOf(s);return a&&i>=0?a[i]:s;};
+const TR=true;let LMODE=(()=>{try{const v=localStorage.getItem('byeol-lang');if(v==='ko'||v==='alt')return v;}catch{}return IS_KO?'ko':'alt';})();
+const curTarget=()=>LMODE==='ko'?'KO':ALT_TARGET;
+const UIT=s=>{if(LMODE==='ko')return s;const a=UI[ALT_UI];const i=UI_KEYS.indexOf(s);return a&&i>=0?a[i]:s;};
 // 날짜 단어 붙이기: 한국어 "어제의 주제: " / 다른 언어 "Yesterday's question: "
 const dayWord=o=>UIT(['오늘','어제','그저께','그끄저께'][o]||'');
 const dayPrefix=o=>o===0?UIT('오늘의 주제: '):dayWord(o)+UIT('의 주제: ');
@@ -419,17 +421,19 @@ const dayTitle=o=>dayWord(o)+UIT('의 별 헤는 밤');
 /* 쪽지·주제·시 문구 번역 (서버에서 한 번만 번역해 저장) */
 const trCache=new Map(),trWant=new Set();let trTimer=0;
 const LANG_RE={KO:/[가-힣]/,JA:/[぀-ヿ]/,ZH:/[一-鿿]/,TH:/[฀-๿]/,RU:/[Ѐ-ӿ]/,UK:/[Ѐ-ӿ]/};
-function sameLang(s){const b=TR_TARGET.split('-')[0];if(!/\p{L}/u.test(s))return true;
+function sameLang(s){const b=curTarget().split('-')[0];if(!/\p{L}/u.test(s))return true;
   if(b==='KO')return!/[^\s\p{P}\p{S}\p{N}가-힣ㄱ-ㅎㅏ-ㅣ]/u.test(s);
   if(LANG_RE[b])return LANG_RE[b].test(s)&&!/[가-힣]/.test(s);
   if(['EN','ES','FR','DE','IT','PT','NL','ID','VI','PL','SV','DA','NB','FI','CS','RO','TR','HU','SK','SL','ET','LV','LT'].includes(b))return b==='EN'&&/^[\x00-\x7f]*$/.test(s);
   return false;}
-function trOf(s){if(!TR||!s)return s;if(sameLang(s))return s;const t=trCache.get(s);if(t!=null)return t;wantTr([s]);return s;}
-function wantTr(list){if(!TR)return;for(const s of list)if(s&&!trCache.has(s)&&!sameLang(s))trWant.add(String(s).slice(0,200));
+const trKey=s=>curTarget()+'\u0001'+s;
+function trOf(s){if(!s)return s;if(sameLang(s))return s;const t=trCache.get(trKey(s));if(t!=null)return t;wantTr([s]);return s;}
+function wantTr(list){for(const s of list)if(s&&!trCache.has(trKey(s))&&!sameLang(s))trWant.add(String(s).slice(0,200));
   if(trWant.size&&!trTimer)trTimer=setTimeout(flushTr,250);}
 async function flushTr(){trTimer=0;const batch=[...trWant].slice(0,50);batch.forEach(s=>trWant.delete(s));if(!batch.length)return;
-  try{const j=await api('/api/translate',{texts:batch,target:TR_TARGET});const m=(j&&j.t)||{};batch.forEach(s=>trCache.set(s,typeof m[s]==='string'?m[s]:s));}
-  catch(e){batch.forEach(s=>trCache.set(s,s));}
+  const tg=curTarget(),K=s=>tg+'\u0001'+s;
+  try{const j=await api('/api/translate',{texts:batch,target:tg});const m=(j&&j.t)||{};batch.forEach(s=>trCache.set(K(s),typeof m[s]==='string'?m[s]:s));}
+  catch(e){batch.forEach(s=>trCache.set(K(s),s));}
   onTrArrive();if(trWant.size)trTimer=setTimeout(flushTr,400);}
 
 const TH=72;const tcv=document.createElement('canvas');tcv.width=64;tcv.height=TH;const tctx=tcv.getContext('2d');const textTex=mkTex(tcv,false,false);
@@ -526,12 +530,11 @@ function applyUI(){document.title=UIT('별 헤는 밤');$('madeBy').textContent=
   inp.placeholder=UIT('여기에 적으세요.');$('foldLbl').textContent=UIT('접기');$('pinRow').firstChild.textContent=UIT('삭제 비밀번호:')+' ';$('rPinRow').firstChild.textContent=UIT('삭제 비밀번호:')+' ';
   $('rPinGo').textContent=UIT('확인');$('hint').textContent=UIT('종이를 눌러 한 번씩 감아 접어요');$('reopenBtn').textContent=UIT('다시 펼치기');$('sendBtn').textContent=UIT('보내기');
   $('rDel').textContent=UIT($('rDel').dataset.c?'정말 지우기':'지우기');$('jarBtn').setAttribute('aria-label',UIT('지난 별 보기'));
-  const parts=NAVL.split(/[-_]/);const reg=parts.slice(1).find(x=>/^[a-z]{2}$/.test(x));
-  $('langLbl').textContent=(reg||parts[0]||'en').toUpperCase();$('langBtn').classList.toggle('on',TR);$('langBtn').setAttribute('aria-pressed',TR?'true':'false');
+  $('lgA').textContent='KR';$('lgB').textContent=ALT_LBL;$('lgA').classList.toggle('on',LMODE==='ko');$('lgB').classList.toggle('on',LMODE!=='ko');
   if(mode==='compose')$('theme').textContent=dayPrefix(0)+themeShow(dayKey());if(base==='jar'&&!jarClosing)buildJar(false);}
 $('langBtn').addEventListener('pointerdown',e=>e.stopPropagation());$('madeBy').addEventListener('pointerdown',e=>e.stopPropagation());$('rOrig').addEventListener('pointerdown',e=>e.stopPropagation());
 $('rOrig').onclick=()=>{if(!reading)return;reading.orig=!reading.orig;onTrArrive();};
-$('langBtn').onclick=()=>{TR=!TR;try{localStorage.setItem('byeol-tr',TR?'1':'0');}catch{}applyUI();prefetchTr();onTrArrive();};
+$('langBtn').onclick=()=>{LMODE=LMODE==='ko'?'alt':'ko';try{localStorage.setItem('byeol-lang',LMODE);}catch{}if(reading)reading.orig=false;applyUI();prefetchTr();onTrArrive();};
 addEventListener('visibilitychange',()=>{if(!document.hidden)loadState();});
 /* =================== 하늘 =================== */
 const SKY={x0:0.04,x1:0.96,y0:0.09,y1:0.74};
@@ -664,7 +667,7 @@ $('sendBtn').onclick=()=>{show('madeBtns',false);const[x,y]=emptySpot();const fv
 /* =================== 별 펼쳐 읽기 =================== */
 function origText(st){if(st.kind!=='npc')return st.text;const k=base==='day'?viewDay:dayKey();return(config.themes&&config.themes[k])||UIT('자유 주제');}
 function readText(st){if(reading&&reading.st===st&&reading.orig)return origText(st);if(st.kind!=='npc')return trOf(st.text);const k=base==='day'?viewDay:dayKey();return themeShow(k);}
-function hasTr(st){if(!TR)return false;const o=origText(st);const t=trCache.get(o);return t!=null&&t!==o;}
+function hasTr(st){const o=origText(st);const t=trCache.get(trKey(o));return t!=null&&t!==o;}
 function startRead(st){const text=readText(st);const G=geomOfText(text);mode='read';reading={st,G,f:0,P:G.KE,dir:1,text};drawText(G,text);hideReadLbls();}
 function readViews(r){const G=r.G;const[sx,sy]=toPx(r.st);const sz=sizeOf(r.st);
   const vB={spx:sz/(2*R),cx:sx,cy:sy};const dw=delW()+14;const spx=Math.min(stripH()/WID,VW*0.9/G.bbKS.w,(VW-28-dw)/G.bbKS.w);
