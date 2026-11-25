@@ -14,10 +14,9 @@ export default async function handler(req, res) {
     if (!/^\d{4}$/.test(pin)) return send(res, 400, { error: 'pin' });
     if (!/^#[0-9a-fA-F]{6}$/.test(String(b.color || ''))) return send(res, 400, { error: 'color' });
     const ip = clientIp(req);
-    // 한 접속지: 1분 6개, 하루 60개 / 사이트 전체: 하루 3000개
+    // 한 접속지: 1분 6개, 하루 60개 (사이트 전체 개수 제한은 없음)
     if (!(await allow('post:' + ip, 6, 60))) return send(res, 429, { error: 'slow_down' });
     if (!(await allow('postday:' + ip, 60, 86400))) return send(res, 429, { error: 'slow_down' });
-    if (!(await allow('postall:' + kstDay(), 3000, 90000))) return send(res, 429, { error: 'full' });
 
     const id = Date.now().toString(36) + crypto.randomBytes(3).toString('hex');
     const day = kstDay();
