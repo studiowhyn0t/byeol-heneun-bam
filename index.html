@@ -583,7 +583,7 @@ function onConfig(){const lines=POEM_KO;
       if(x>0.3&&x<0.7&&y>0.4)continue;let d=9;for(const p of pts)d=Math.min(d,Math.hypot((p.x-x)*1.6,p.y-y));if(d>bd){bd=d;best={x,y};}}pts.push(best);});
   landingStars=lines.map((text,i)=>({i,key:'poem:'+i,kind:'poem',text,color:COLORS[[2,0,1,3,0,4,5][i%7]],ix:pts[i].x,iy:pts[i].y,x:pts[i].x,y:pts[i].y,rot:rnd()*1.2,tx:(rnd()-.5)*.5,ty:(rnd()-.5)*.5}));
   if(mode==='compose')$('theme').textContent=dayPrefix(0)+themeShow(dayKey());if(base==='jar')buildJar(false);}
-loadState();setInterval(()=>{if(!document.hidden)loadState();},20000);
+loadState();setInterval(()=>{if(!document.hidden)loadState();},45000);
 (()=>{try{if(sessionStorage.getItem('byeol-hit'))return;sessionStorage.setItem('byeol-hit','1');}catch{}api('/api/hit',{lang:NAVL.split('-')[0]}).catch(()=>{});})();
 // 번역 사용량 절약: 쪽지는 펼쳐 볼 때만 번역하고, 미리 번역하는 건 짧은 주제 몇 개뿐
 function prefetchTr(){if(!TR)return;const L=[];
@@ -1120,7 +1120,7 @@ async function land(){const s=sending;sending=null;const id=Date.now().toString(
   const key='tmp:'+id;stars.set(key,{...item,key,owner:'me',local:true});
   const pin=work.pin;work=null;mode='idle';selPaper(-1);
   const j=await saveStar(item,pin);stars.delete(key);
-  if(j){const st=normStar({...item,id:j.id,day:j.day,t:j.t});st.local=true;stars.set(st.key,st);setTimeout(()=>{const x=stars.get(st.key);if(x)delete x.local;},60000);}updJar();}
+  if(j){const st=normStar({...item,id:j.id,day:j.day,t:j.t});st.local=true;stars.set(st.key,st);setTimeout(()=>{const x=stars.get(st.key);if(x)delete x.local;},150000);}updJar();}
 /* =================== 음악 =================== */
 // 1) 누르는 즉시 <audio>로 재생 → 2) 이음매 없는 반복용 버퍼가 준비되면 부드럽게 넘겨받음
 const SND_URL='sound/musicbox_loop.mp3',VOL=0.55;

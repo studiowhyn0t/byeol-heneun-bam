@@ -29,7 +29,8 @@ export default async function handler(req, res) {
     };
     const flag = moderate(text);
     if (flag) { star.hidden = true; star.flag = flag; }
-    await pipeline([['HSET', 'd:' + day, id, JSON.stringify(star)], ['SADD', 'days', day]]);
+    // r:날짜 = 최근 별 목록 (하늘에 보낼 것만 빠르게 읽기 위해, 최근 1000개만 유지)
+    await pipeline([['HSET', 'd:' + day, id, JSON.stringify(star)], ['SADD', 'days', day], ['LPUSH', 'r:' + day, id], ['LTRIM', 'r:' + day, '0', '999'], ['EXPIRE', 'r:' + day, String(40 * 86400)]]);
     send(res, 200, flag ? { id, day, t, hidden: true, care: flag === 'selfharm' } : { id, day, t });
   } catch (e) {
     fail(res, e);
