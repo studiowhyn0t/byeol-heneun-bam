@@ -7,10 +7,12 @@ import { redis, pipeline, clientIp, allow, send, fail } from './_lib.js';
 const TARGETS = new Set(['AR', 'BG', 'CS', 'DA', 'DE', 'EL', 'EN-GB', 'EN-US', 'ES', 'ET', 'FI', 'FR', 'HE', 'HU', 'ID', 'IT', 'JA', 'KO',
   'LT', 'LV', 'NB', 'NL', 'PL', 'PT-BR', 'PT-PT', 'RO', 'RU', 'SK', 'SL', 'SV', 'TH', 'TR', 'UK', 'VI', 'ZH-HANS', 'ZH-HANT']);
 const KEY = process.env.DEEPL_API_KEY || '';
-const CAP = Number(process.env.TRANSLATE_MONTHLY_CHARS) || 450000;
+// 한 달 상한: TRANSLATE_MONTHLY_CHARS 를 넣었을 때만 적용 (없으면 제한 없음, 사용량은 계속 셈)
+const CAP = Number(process.env.TRANSLATE_MONTHLY_CHARS) || Infinity;
 const TTL = 60 * 86400;
 
 const h = (t, s) => 'tr:' + t + ':' + crypto.createHash('sha1').update(s).digest('base64url');
+const hs = s => 'trsrc:' + crypto.createHash('sha1').update(s).digest('base64url');
 const month = () => new Date().toISOString().slice(0, 7);
 
 export default async function handler(req, res) {
@@ -22,10 +24,11 @@ export default async function handler(req, res) {
     if (!list.length) return send(res, 200, { t: {} });
     if (!(await allow('tr:' + clientIp(req), 40, 60))) return send(res, 429, { error: 'slow_down' });
 
-    const out = {};
-    const cached = await pipeline(list.map(s => ['GET', h(target, s)]));
+    const out = {}, src = {};
+    const cached = await pipeline([...list.map(s => ['GET', h(target, s)]), ...list.map(s => ['GET', hs(s)])]);
     const miss = [];
-    list.forEach((s, i) => { if (typeof cached[i] === 'string') out[s] = cached[i]; else miss.push(s); });
+    list.forEach((s, i) => { const sv = cached[list.length + i]; if (typeof sv === 'string') src[s] = sv;
+      if (typeof cached[i] === 'string') out[s] = cached[i]; else miss.push(s); });
 
     if (miss.length && KEY) {
       const chars = miss.reduce((a, s) => a + s.length, 0);
@@ -47,10 +50,12 @@ export default async function handler(req, res) {
           const base = target.split('-')[0];
           const save = [];
           (j.translations || []).forEach((t, i) => {
-            const src = miss[i];
-            const val = String(t.detected_source_language || '').toUpperCase() === base ? src : String(t.text || src).slice(0, 300);
-            out[src] = val;
-            save.push(['SET', h(target, src), val, 'EX', String(TTL)]);
+            const src0 = miss[i];
+            const det = String(t.detected_source_language || '').toUpperCase();
+            const val = det === base ? src0 : String(t.text || src0).slice(0, 300);
+            out[src0] = val;
+            save.push(['SET', h(target, src0), val, 'EX', String(TTL)]);
+            if (det) { src[src0] = det; save.push(['SET', hs(src0), det, 'EX', String(TTL)]); }
           });
           if (save.length) await pipeline(save);
         } else {
@@ -58,7 +63,7 @@ export default async function handler(req, res) {
         }
       }
     }
-    send(res, 200, { t: out });
+    send(res, 200, { t: out, s: src });
   } catch (e) {
     fail(res, e);
   }

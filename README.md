@@ -56,13 +56,18 @@ Vercel(무료)과 Upstash Redis(무료 저장소)를 사용해요.
 
 ## 6. 쪽지 번역 켜기 (선택)
 왼쪽 아래 지구본을 누르면 화면 문구가 방문자의 언어로 바뀌어요. 쪽지와 오늘의 주제까지 번역하려면 DeepL 키가 필요해요.
-1. https://www.deepl.com/pro-api 에서 **DeepL API Free** 계정을 만드세요. 카드 등록은 본인 확인용이에요.
+1. https://www.deepl.com/pro-api 에서 무료 **API Developer** 계정을 만드세요.
 2. 계정 화면의 **API Keys**에서 키를 복사하세요. 무료 키는 끝이 `:fx`예요.
 3. Vercel 프로젝트 → **Settings → Environment Variables**에 `DEEPL_API_KEY` 이름으로 붙여 넣고 저장하세요.
 4. **Deployments**에서 최신 배포의 **⋯ → Redeploy**를 누르세요.
 - 같은 문장은 언어별로 한 번만 번역해서 저장해요.
-- 한 달 번역 글자 수는 기본 45만 자로 막혀 있어요. DeepL 무료 한도는 50만 자예요. 바꾸려면 `TRANSLATE_MONTHLY_CHARS`를 넣으세요.
+- 번역 글자 수 제한은 기본으로 없어요. 한 달 상한을 걸고 싶으면 `TRANSLATE_MONTHLY_CHARS`에 숫자를 넣으세요. 이번 달 사용량은 관리자 통계 탭에서 볼 수 있어요.
+- 쪽지는 누군가 펼쳐 볼 때만 번역해요.
 - 키가 없거나 한도를 넘으면 쪽지는 원문 그대로 보여요.
+
+## 7. 카카오페이 후원 버튼 (선택)
+카카오페이 앱 → 송금 → **송금코드**(또는 '링크로 받기')에서 `https://qr.kakaopay.com/…` 주소를 복사하세요.
+Vercel 환경변수에 `DONATE_KAKAO_URL` 이름으로 넣고 Redeploy 하면, 한국어(KR) 화면 첫 화면 왼쪽 위 '만든 이' 옆에 작은 '후원하기'가 생겨요. 지우면 버튼도 사라져요.
 
 ## 알아두면 좋은 점
 

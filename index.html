@@ -27,6 +27,15 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 #langBtn{position:fixed;left:14px;bottom:14px;z-index:5;display:flex;align-items:center;gap:7px;font-size:22px;color:rgba(255,255,255,.4);padding:6px}
 #langBtn i{font-style:normal;color:rgba(255,255,255,.3)}#langBtn span.on{color:rgba(255,255,255,.9);text-decoration:underline;text-underline-offset:4px}
 #madeBy{position:fixed;left:18px;top:12px;z-index:5;font-size:22px;line-height:25px;color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
+#donateBtn{position:fixed;left:84px;top:15px;z-index:5;font-size:17px;line-height:20px;color:rgba(255,255,255,.5);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+#donateModal{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:24px;animation:dfade .35s ease}
+#donateModal.hide{display:none}
+@keyframes dfade{from{opacity:0}to{opacity:1}}
+#donateModal .dbox{width:min(360px,100%);background:#111;border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:26px 24px 20px;text-align:center;color:rgba(255,255,255,.88);box-shadow:0 10px 40px rgba(0,0,0,.6)}
+#donateModal p{margin:0 0 22px;font-size:21px;line-height:1.55;word-break:keep-all}
+#donateModal .dacts{display:flex;justify-content:center;gap:30px;font-size:22px}
+#donateModal .dacts a,#donateModal .dacts button{color:#fff;text-decoration:underline;text-underline-offset:4px}
+#donateModal .dacts button{color:rgba(255,255,255,.55)}
 #sndBtn{font-size:22px;color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
 #backBtn{font-size:22px;text-decoration:underline;text-underline-offset:4px}
 #delTag{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:5;font-size:19px;color:#ff9c9c;text-decoration:underline;text-underline-offset:4px}
@@ -67,7 +76,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 #admin .tr span{width:120px;flex:none;color:rgba(255,255,255,.7)}
 #admin input,#admin textarea{flex:1;background:transparent;border:0;border-bottom:1.5px solid rgba(255,255,255,.35);color:#fff;font-family:inherit;font-size:21px;outline:none;padding:2px 0;-webkit-user-select:text;user-select:text}
 #admin textarea{width:100%;height:190px;border:1.5px solid rgba(255,255,255,.3);border-radius:6px;padding:8px;resize:vertical;line-height:1.3}
-#admin .acts{display:flex;gap:26px;margin-top:20px}
+#admin .acts{display:flex;flex-wrap:wrap;gap:8px 22px;margin-top:20px}
 #admin .acts button,#admin .tog{text-decoration:underline;text-underline-offset:4px;font-size:22px}
 #admin .dtabs{display:flex;flex-wrap:wrap;gap:8px;margin:4px 0 8px}
 #admin .dtabs button{font-size:19px;padding:3px 10px;border:1px solid rgba(255,255,255,.25);border-radius:999px;color:rgba(255,255,255,.7)}
@@ -97,6 +106,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 #admin .atabs button.on{color:#fff;border-bottom-color:#fff}
 #admin .tbox{max-height:200px;overflow:auto;border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12);margin:2px 0 8px}
 #admin .tbox table{margin:0}
+#admin .mrow .tx.trd{color:#c6eea0}#admin .mrow .otag{flex:none;font-size:15px;color:rgba(255,255,255,.55);text-decoration:underline;text-underline-offset:3px;padding:0 2px}
 #admin .note{min-height:24px;color:#ffb3b3;margin-top:10px;font-size:18px}
 #arrangeBar{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:12;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 24px;align-items:center;font-size:24px;width:max-content;max-width:94vw;background:rgba(255,255,255,.08);padding:10px 20px;border-radius:18px}
 #arrangeBar button{text-decoration:underline;text-underline-offset:4px}
@@ -111,6 +121,11 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 <div id="landing" class="fade"><h1>별 헤는 밤</h1><p>색지를 골라 글을 시작하세요.</p></div>
 <button id="hTitle" class="hide">별 헤는 밤</button>
 <a id="madeBy" href="https://www.instagram.com/studio.whynot/" target="_blank" rel="noopener noreferrer">만든 이</a>
+<button id="donateBtn" class="hide">후원하기</button>
+<div id="donateModal" class="hide"><div class="dbox">
+  <p>보태주신 마음은 번역 기능 및 사이트 운영에 활용하겠습니다.<br>이 공간이 다양한 분들의 따뜻한 곳으로 남을 수 있도록요!</p>
+  <div class="dacts"><a id="donateGo" target="_blank" rel="noopener noreferrer">후원하러 가기</a><button id="donateClose">닫기</button></div>
+</div></div>
 <div id="topR">
   <button id="sndBtn">소리 켜기</button>
   <button id="jarBtn" class="hide" aria-label="지난 별 보기"><svg viewBox="0 0 30 36" width="30" height="36"><rect x="9" y="1.5" width="12" height="5" rx="1" fill="#9a9a9a"/><path d="M8 7h14v3c3 1 5 3 5 7v13c0 3-2 5-5 5H8c-3 0-5-2-5-5V17c0-4 2-6 5-7z" fill="rgba(255,255,255,.14)" stroke="rgba(255,255,255,.65)" stroke-width="1.2"/><polygon points="11.50,24.64 12.00,26.53 13.87,27.10 12.23,28.15 12.27,30.11 10.76,28.87 8.91,29.51 9.62,27.69 8.44,26.14 10.39,26.25" fill="#ffd8e0"/><polygon points="16.90,26.66 18.07,28.23 20.01,28.05 18.88,29.65 19.66,31.44 17.79,30.86 16.32,32.15 16.29,30.20 14.62,29.20 16.47,28.57" fill="#bff6f6"/><polygon points="21.46,21.37 21.61,23.25 23.30,24.10 21.56,24.83 21.27,26.69 20.04,25.26 18.18,25.57 19.16,23.95 18.29,22.28 20.13,22.71" fill="#e6d1f7"/><polygon points="12.76,19.21 13.69,20.85 15.58,20.91 14.31,22.30 14.84,24.11 13.12,23.34 11.56,24.40 11.76,22.53 10.27,21.37 12.12,20.99" fill="#ffefc4"/><polygon points="17.15,16.09 17.43,17.74 19.00,18.37 17.51,19.15 17.40,20.83 16.19,19.66 14.56,20.07 15.30,18.56 14.40,17.14 16.07,17.38" fill="#d9f6bd"/></svg></button>
@@ -124,16 +139,17 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 <div id="madeBtns" class="hide"><button id="reopenBtn">다시 펼치기</button><button id="sendBtn">보내기</button></div>
 <button id="rDel" class="lbl hide">지우기</button>
 <button id="rOrig" class="lbl hide">원문 보기</button>
+<a id="rFull" class="lbl hide" target="_blank" rel="noopener noreferrer" style="color:inherit">전문 보기</a>
 <div id="rPinRow" class="pinrow hide">삭제 비밀번호: <span class="slots"><i></i><i></i><i></i><i></i><input id="rPin" type="tel" inputmode="numeric" maxlength="4" autocomplete="off"></span><button id="rPinGo">확인</button></div>
 <div id="fan"></div>
 <div id="jarView" class="hide"></div>
 <div id="admin" class="hide"><div class="box">
   <div class="ahead"><h2>관리자 모드</h2><button id="aClose">닫기</button></div>
-  <div class="atabs" role="tablist"><button data-t="notes" class="on">쪽지</button><button data-t="themes">주제</button><button data-t="home">첫 화면</button><button data-t="stats">통계</button></div>
+  <div class="atabs" role="tablist"><button data-t="notes" class="on">쪽지</button><button data-t="themes">주제</button><button data-t="stats">통계</button></div>
   <section class="apane" data-p="notes">
     <div id="aDays" class="dtabs"></div>
     <div id="aList" class="mlist"></div>
-    <div class="acts" style="margin-top:10px"><button id="aSelAll">전체 선택</button><button id="aDelSel">선택한 쪽지 지우기</button></div>
+    <div class="acts" style="margin-top:10px"><button id="aSelAll">전체 선택</button><button id="aSaveSel">선택한 쪽지 저장</button><button id="aDelSel">선택한 쪽지 지우기</button></div>
     <div class="note" id="aListNote"></div>
     <div class="sec">많이 나온 답변 <span id="aTopDay"></span></div>
     <div id="aTop" class="stats"></div>
@@ -143,7 +159,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
     <div id="aThemes" class="tscroll"></div>
     <div class="acts"><button class="aSaveBtn">저장</button></div>
   </section>
-  <section class="apane hide" data-p="home">
+  <section class="apane hide" data-p="home" style="display:none">
     <div class="sec">첫 화면 별에 넣을 문구 (한 줄에 하나)</div>
     <textarea id="aLines" spellcheck="false"></textarea>
     <div class="acts"><button class="aSaveBtn">저장</button><button class="tog" id="aArrange">첫 화면 별 위치 정하기</button></div>
@@ -154,7 +170,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
   <div class="note" id="aNote"></div>
 </div></div>
 <div id="arrangeBar" class="hide"><span id="arrangeLbl"></span><button id="arSave">저장</button><button id="arReset">처음 배치로</button><button id="arCancel">취소</button></div>
-<button id="langBtn" aria-label="Language / 언어"><span id="lgA">KR</span><i>·</i><span id="lgB">EN</span></button>
+<button id="langBtn" aria-label="Language / 언어"><span id="lgA">ALL</span><i>·</i><span id="lgB">KR</span></button>
 <div id="toast"></div>
 <script>
 (()=>{
@@ -356,13 +372,13 @@ const FONT='"GyuRi", "Nanum Pen Script", cursive';
 const NAVL=String((window.__LANG_OVERRIDE)||(navigator.languages&&navigator.languages[0])||navigator.language||'en').toLowerCase();
 const IS_KO=NAVL.startsWith('ko');
 // 언어 모드는 두 가지: 'ko'(한국어) / 'alt'(한국 방문자는 영어, 다른 나라 방문자는 그 나라 언어)
-const ALT_NAV=IS_KO?'en-us':NAVL;
+const ALT_NAV=NAVL;
 function pickTarget(l){const b=l.split('-')[0];if(b==='zh')return/hant|tw|hk|mo/.test(l)?'ZH-HANT':'ZH-HANS';if(b==='pt')return/pt-pt/.test(l)?'PT-PT':'PT-BR';
   if(b==='en')return/gb|au|nz|ie/.test(l)?'EN-GB':'EN-US';if(b==='no'||b==='nn')return'NB';
   const ok=['ar','bg','cs','da','de','el','es','et','fi','fr','he','hu','id','it','ja','ko','lt','lv','nl','pl','ro','ru','sk','sl','sv','th','tr','uk','vi'];return ok.includes(b)?b.toUpperCase():'EN-US';}
-const ALT_TARGET=(t=>t==='KO'?'EN-US':t)(pickTarget(ALT_NAV));
-const ALT_UI=(()=>{const l=ALT_NAV,b=l.split('-')[0];if(b==='zh')return/hant|tw|hk|mo/.test(l)?'zht':'zhs';return['en','ja','es','fr','de','pt','vi','th','id','ru','it'].includes(b)?b:'en';})();
-const ALT_LBL=(()=>{const b=ALT_NAV.split('-')[0];return({en:'EN',ja:'JP',zh:/hant|tw|hk|mo/.test(ALT_NAV)?'TW':'CN'})[b]||b.toUpperCase();})();
+const ALT_TARGET=pickTarget(ALT_NAV);
+const ALT_UI=(()=>{const l=ALT_NAV,b=l.split('-')[0];if(b==='zh')return/hant|tw|hk|mo/.test(l)?'zht':'zhs';return['ko','en','ja','es','fr','de','pt','vi','th','id','ru','it'].includes(b)?b:'en';})();
+const ALT_LBL=(()=>{const b=ALT_NAV.split('-')[0];return({ko:'KR',en:'EN',ja:'JP',zh:/hant|tw|hk|mo/.test(ALT_NAV)?'TW':'CN'})[b]||b.toUpperCase();})();
 const UI_KEYS=['별 헤는 밤','색지를 골라 글을 시작하세요.','소리 켜기','소리 끄기','돌아가기','여기에 적으세요.','접기','삭제 비밀번호:','종이를 눌러 한 번씩 감아 접어요','다시 펼치기','보내기','지우기','확인','정말 지우기',
   '오늘의 주제: ','자유 주제','오늘','어제','그저께','그끄저께','의 주제: ','의 별 헤는 밤',
   '별을 떼어냈어요','별을 저장하지 못했어요','비밀번호가 맞지 않아요','비밀번호를 여러 번 틀려서 1시간 동안 잠겼어요','오늘 하늘이 가득 찼어요','잠시 후 다시 보내주세요','하늘을 불러오지 못했어요','지우지 못했어요','소리를 재생하지 못했어요',
@@ -407,14 +423,15 @@ const UI={
  it:['Notte a contare le stelle','Scegli un foglio per iniziare a scrivere.','Attiva audio','Disattiva audio','Indietro','Scrivi qui.','Piega','PIN per cancellare:','Tocca il foglio per piegarlo, un giro alla volta','Riapri','Invia','Cancella','OK','Cancella davvero',
   'Domanda di oggi: ','Tema libero','Oggi','Ieri','Altroieri','3 giorni fa',' · domanda: ',' · notte stellata',
   'La tua stella è stata tolta','Impossibile salvare la stella','PIN errato','Troppi tentativi. Bloccato per 1 ora.','Il cielo di oggi è pieno','Riprova tra un momento','Impossibile caricare il cielo','Impossibile cancellare','Impossibile riprodurre il suono','Originale','Stelle passate']};
-UI_KEYS.push('원문 보기','번역 보기','만든 이');
-{const A={en:['See original','See translation','Made by'],ja:['原文を見る','翻訳を見る','つくった人'],zhs:['查看原文','查看译文','制作者'],zht:['查看原文','查看譯文','製作者'],es:['Ver original','Ver traducción','Creado por'],
-  fr:['Voir l’original','Voir la traduction','Créé par'],de:['Original anzeigen','Übersetzung anzeigen','Gemacht von'],pt:['Ver original','Ver tradução','Feito por'],vi:['Xem bản gốc','Xem bản dịch','Người tạo'],
-  th:['ดูต้นฉบับ','ดูคำแปล','ผู้สร้าง'],id:['Lihat asli','Lihat terjemahan','Dibuat oleh'],ru:['Показать оригинал','Показать перевод','Автор'],it:['Vedi originale','Vedi traduzione','Creato da']};
+UI_KEYS.push('원문 보기','번역 보기','만든 이','전문 보기');
+{const A={en:['See original','See translation','Made by','Read the full poem'],ja:['原文を見る','翻訳を見る','つくった人','全文を読む'],zhs:['查看原文','查看译文','制作者','阅读全文'],zht:['查看原文','查看譯文','製作者','閱讀全文'],es:['Ver original','Ver traducción','Creado por','Leer el poema completo'],
+  fr:['Voir l’original','Voir la traduction','Créé par','Lire le poème entier'],de:['Original anzeigen','Übersetzung anzeigen','Gemacht von','Ganzes Gedicht lesen'],pt:['Ver original','Ver tradução','Feito por','Ler o poema completo'],vi:['Xem bản gốc','Xem bản dịch','Người tạo','Đọc toàn bài thơ'],
+  th:['ดูต้นฉบับ','ดูคำแปล','ผู้สร้าง','อ่านบทกวีทั้งหมด'],id:['Lihat asli','Lihat terjemahan','Dibuat oleh','Baca puisi lengkap'],ru:['Показать оригинал','Показать перевод','Автор','Читать полностью'],it:['Vedi originale','Vedi traduzione','Creato da','Leggi la poesia intera']};
   for(const k in A)UI[k].push(...A[k]);}
-const TR=true;let LMODE=(()=>{try{const v=localStorage.getItem('byeol-lang');if(v==='ko'||v==='alt')return v;}catch{}return IS_KO?'ko':'alt';})();
-const curTarget=()=>LMODE==='ko'?'KO':ALT_TARGET;
-const UIT=s=>{if(LMODE==='ko')return s;const a=UI[ALT_UI];const i=UI_KEYS.indexOf(s);return a&&i>=0?a[i]:s;};
+// 언어 모드 두 가지: 'all' = 번역 없이 원문 그대로(화면 문구는 영어) / 'loc' = 접속자 언어로 번역
+const TR=true;let LMODE=(()=>{try{const v=localStorage.getItem('byeol-lang2');if(v==='all'||v==='loc')return v;}catch{}return'loc';})();
+const curTarget=()=>ALT_TARGET;const KO_VIEW=()=>LMODE==='loc'&&IS_KO;
+const UIT=s=>{const L=LMODE==='all'?'en':ALT_UI;if(L==='ko')return s;const a=UI[L];const i=UI_KEYS.indexOf(s);return a&&i>=0?a[i]:s;};
 // 날짜 단어 붙이기: 한국어 "어제의 주제: " / 다른 언어 "Yesterday's question: "
 const dayWord=o=>UIT(['오늘','어제','그저께','그끄저께'][o]||'');
 const dayPrefix=o=>o===0?UIT('오늘의 주제: '):dayWord(o)+UIT('의 주제: ');
@@ -428,9 +445,9 @@ function sameLang(s){const b=curTarget().split('-')[0];if(!/\p{L}/u.test(s))retu
   if(['EN','ES','FR','DE','IT','PT','NL','ID','VI','PL','SV','DA','NB','FI','CS','RO','TR','HU','SK','SL','ET','LV','LT'].includes(b))return b==='EN'&&/^[\x00-\x7f]*$/.test(s);
   return false;}
 const trKey=s=>curTarget()+'\u0001'+s;
-function trOf(s){if(!s)return s;if(sameLang(s))return s;const t=trCache.get(trKey(s));if(t!=null)return t;wantTr([s]);return s;}
-function wantTr(list){for(const s of list)if(s&&!trCache.has(trKey(s))&&!sameLang(s))trWant.add(String(s).slice(0,200));
-  if(trWant.size&&!trTimer)trTimer=setTimeout(flushTr,250);}
+function trOf(s){if(!s||LMODE==='all')return s;if(sameLang(s))return s;const t=trCache.get(trKey(s));if(t!=null)return t;wantTr([s]);return s;}
+function wantTr(list){if(LMODE==='all')return;for(const s of list)if(s&&!trCache.has(trKey(s))&&!sameLang(s))trWant.add(String(s).slice(0,200));
+  if(trWant.size&&!trTimer)trTimer=setTimeout(flushTr,40);}
 async function flushTr(){trTimer=0;const batch=[...trWant].slice(0,50);batch.forEach(s=>trWant.delete(s));if(!batch.length)return;
   const tg=curTarget(),K=s=>tg+'\u0001'+s;
   try{const j=await api('/api/translate',{texts:batch,target:tg});const m=(j&&j.t)||{};batch.forEach(s=>trCache.set(K(s),typeof m[s]==='string'?m[s]:s));}
@@ -501,7 +518,7 @@ async function loadState(){try{const j=await api('/api/state');const seen=new Se
     for(const it of j.stars||[]){const st=normStar(it);if(gone.has(st.key))continue;seen.add(st.key);stars.set(st.key,st);}
     for(const k of[...stars.keys()])if(!seen.has(k)&&!stars.get(k).local)stars.delete(k);
     config={lines:Array.isArray(j.config&&j.config.lines)?j.config.lines:[],themes:(j.config&&j.config.themes)||{},pos:(j.config&&j.config.pos)||{}};
-    onConfig();updJar();if(base==='jar'&&!jarClosing)buildJar(false);prefetchTr();}catch(e){if(!loadState.warned){loadState.warned=1;toast('하늘을 불러오지 못했어요');}}}
+    DONATE=(j.donate&&typeof j.donate.kakao==='string')?j.donate.kakao:'';updDonate();onConfig();updJar();if(base==='jar'&&!jarClosing)buildJar(false);prefetchTr();}catch(e){if(!loadState.warned){loadState.warned=1;toast('하늘을 불러오지 못했어요');}}}
 const wq={};function queue(key,fn){wq[key]=(wq[key]||Promise.resolve()).then(fn,fn);return wq[key];}
 async function saveStar(item,pin){try{const j=await api('/api/stars',{text:item.text,color:item.color,x:item.x,y:item.y,rot:item.rot,tx:item.tx,ty:item.ty,pin});
     MINE.add(j.id);saveMine();return j;}catch(e){toast(e.status===429?((e.data&&e.data.error)==='full'?'오늘 하늘이 가득 찼어요':'잠시 후 다시 보내주세요'):'별을 저장하지 못했어요');return null;}}
@@ -511,39 +528,56 @@ async function adminCall(action,extra){return api('/api/admin',{password:adminPw
 async function saveConfig(c){try{await adminCall('config',{config:c});config=c;onConfig();return true;}catch(e){return false;}}
 async function adminDelete(st){try{await adminCall('delete',{items:[{day:st.day,id:st.id}]});stars.delete(st.key);return true;}catch(e){return'지우지 못했어요';}}
 let landingStars=[];
-function onConfig(){const lines=(config.lines&&config.lines.length?config.lines:DEFAULT_LINES).map(s=>String(s).slice(0,40)).filter(Boolean).slice(0,24);
+// 첫 화면 문구는 고정: 북두칠성 왼쪽부터 오른쪽 순서. 한국어 모드는 국문, 그 밖의 모드는 영문
+const POEM_KO=['별 하나에 추억과','별 하나에 사랑과','별 하나에 쓸쓸함과','별 하나에 동경과','별 하나에 시와','별 하나에 어머니,','어머니'];
+const POEM_EN=['For one star, a memory,','for one star, love,','for one star, loneliness,','for one star, longing,','for one star, a poem,','for one star, Mother,','Mother'];
+const POEM_URL={ko:'https://ko.wikisource.org/wiki/%ED%95%98%EB%8A%98%EA%B3%BC_%EB%B0%94%EB%9E%8C%EA%B3%BC_%EB%B3%84%EA%B3%BC_%EC%8B%9C_(1948%EB%85%84)/%EB%B3%84_%ED%97%A4%EB%8A%94_%EB%B0%A4',
+  en:'https://hanabira.org/korean/poetry/byeol-heneun-bam'};
+function poemRank(st){const x=poemPx(st)[0];let r=0;for(const o of landingStars)if(o!==st){const ox=poemPx(o)[0];if(ox<x||(ox===x&&o.i<st.i))r++;}return r;}
+const poemText=st=>(KO_VIEW()?POEM_KO:POEM_EN)[poemRank(st)]||'';
+function onConfig(){const lines=POEM_KO;
   let seed=97;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;const pts=[];
   const DIPPER=[[0.134,0.151],[0.356,0.119],[0.124,0.523],[0.400,0.364],[0.584,0.376],[0.735,0.567],[0.895,0.465]];
   lines.forEach((text,i)=>{if(i<7&&lines.length<=7){const k=lines.length===7?i:Math.round(i*6/Math.max(1,lines.length-1));pts.push({x:DIPPER[k][0],y:DIPPER[k][1]});return;}
     let best=null,bd=-1;for(let t=0;t<60;t++){const x=0.05+rnd()*0.9,y=0.1+rnd()*0.5;
       if(x>0.3&&x<0.7&&y>0.4)continue;let d=9;for(const p of pts)d=Math.min(d,Math.hypot((p.x-x)*1.6,p.y-y));if(d>bd){bd=d;best={x,y};}}pts.push(best);});
-  landingStars=lines.map((text,i)=>({i,key:'poem:'+i,kind:'poem',text,color:COLORS[i%COLORS.length],ix:pts[i].x,iy:pts[i].y,x:pts[i].x,y:pts[i].y,rot:rnd()*1.2,tx:(rnd()-.5)*.5,ty:(rnd()-.5)*.5}));
+  landingStars=lines.map((text,i)=>({i,key:'poem:'+i,kind:'poem',text,color:COLORS[[2,0,1,3,0,4,5][i%7]],ix:pts[i].x,iy:pts[i].y,x:pts[i].x,y:pts[i].y,rot:rnd()*1.2,tx:(rnd()-.5)*.5,ty:(rnd()-.5)*.5}));
   if(mode==='compose')$('theme').textContent=dayPrefix(0)+themeShow(dayKey());if(base==='jar')buildJar(false);}
 loadState();setInterval(()=>{if(!document.hidden)loadState();},20000);
 (()=>{try{if(sessionStorage.getItem('byeol-hit'))return;sessionStorage.setItem('byeol-hit','1');}catch{}api('/api/hit',{lang:NAVL.split('-')[0]}).catch(()=>{});})();
-function prefetchTr(){if(!TR)return;const L=[];for(const st of visibleStars())if(st.kind!=='npc'&&st.text)L.push(st.text);
+// 번역 사용량 절약: 쪽지는 펼쳐 볼 때만 번역하고, 미리 번역하는 건 짧은 주제 몇 개뿐
+function prefetchTr(){if(!TR)return;const L=[];
   for(let o=0;o<4;o++){const t=config.themes&&config.themes[dayKey(-o)];if(t)L.push(t);}wantTr(L);}
 function onTrArrive(){if(reading){const t=readText(reading.st);if(t!==reading.text){const G=geomOfText(t);const r=reading;
     const fr=(r.G.KE-r.P)/Math.max(1,r.G.KE-KS);r.G=G;r.P=Math.max(KS,G.KE-fr*(G.KE-KS));r.text=t;drawText(G,t);}}
   if(mode==='compose')$('theme').textContent=dayPrefix(0)+themeShow(dayKey());if(base==='jar'&&!jarClosing)buildJar(false);}
-function applyUI(){document.title=UIT('별 헤는 밤');$('madeBy').textContent=UIT('만든 이');const L=$('landing');L.querySelector('h1').textContent=UIT('별 헤는 밤');L.querySelector('p').textContent=UIT('색지를 골라 글을 시작하세요.');
+let DONATE='';
+function updDonate(){const on=!!DONATE&&base==='landing'&&KO_VIEW();const d=$('donateBtn');if(on){$('donateGo').href=DONATE;const r=$('madeBy').getBoundingClientRect();d.style.left=Math.round((r.right||62)+14)+'px';}show('donateBtn',on);}
+function applyUI(){updDonate();document.title=UIT('별 헤는 밤');$('madeBy').textContent=UIT('만든 이');const L=$('landing');L.querySelector('h1').textContent=UIT('별 헤는 밤');L.querySelector('p').textContent=UIT('색지를 골라 글을 시작하세요.');
   $('hTitle').textContent=base==='day'?dayTitle(dayOffset(viewDay)):UIT('별 헤는 밤');$('sndBtn').textContent=UIT(soundOn?'소리 끄기':'소리 켜기');$('backBtn').textContent=UIT('돌아가기');
   inp.placeholder=UIT('여기에 적으세요.');$('foldLbl').textContent=UIT('접기');$('pinRow').firstChild.textContent=UIT('삭제 비밀번호:')+' ';$('rPinRow').firstChild.textContent=UIT('삭제 비밀번호:')+' ';
   $('rPinGo').textContent=UIT('확인');$('hint').textContent=UIT('종이를 눌러 한 번씩 감아 접어요');$('reopenBtn').textContent=UIT('다시 펼치기');$('sendBtn').textContent=UIT('보내기');
   $('rDel').textContent=UIT($('rDel').dataset.c?'정말 지우기':'지우기');$('jarBtn').setAttribute('aria-label',UIT('지난 별 보기'));
-  $('lgA').textContent='KR';$('lgB').textContent=ALT_LBL;$('lgA').classList.toggle('on',LMODE==='ko');$('lgB').classList.toggle('on',LMODE!=='ko');
+  $('lgA').textContent='ALL';$('lgB').textContent=ALT_LBL;$('lgA').classList.toggle('on',LMODE==='all');$('lgB').classList.toggle('on',LMODE==='loc');
   if(mode==='compose')$('theme').textContent=dayPrefix(0)+themeShow(dayKey());if(base==='jar'&&!jarClosing)buildJar(false);}
-$('langBtn').addEventListener('pointerdown',e=>e.stopPropagation());$('madeBy').addEventListener('pointerdown',e=>e.stopPropagation());$('rOrig').addEventListener('pointerdown',e=>e.stopPropagation());
+$('langBtn').addEventListener('pointerdown',e=>e.stopPropagation());$('madeBy').addEventListener('pointerdown',e=>e.stopPropagation());$('donateBtn').addEventListener('pointerdown',e=>e.stopPropagation());$('donateModal').addEventListener('pointerdown',e=>e.stopPropagation());
+$('donateBtn').onclick=()=>show('donateModal',true);$('donateClose').onclick=()=>show('donateModal',false);
+$('donateModal').onclick=e=>{if(e.target===$('donateModal'))show('donateModal',false);};$('donateGo').addEventListener('click',()=>setTimeout(()=>show('donateModal',false),300));$('rOrig').addEventListener('pointerdown',e=>e.stopPropagation());$('rFull').addEventListener('pointerdown',e=>e.stopPropagation());
 $('rOrig').onclick=()=>{if(!reading)return;reading.orig=!reading.orig;onTrArrive();};
-$('langBtn').onclick=()=>{LMODE=LMODE==='ko'?'alt':'ko';try{localStorage.setItem('byeol-lang',LMODE);}catch{}if(reading)reading.orig=false;applyUI();prefetchTr();onTrArrive();};
+$('langBtn').onclick=()=>{LMODE=LMODE==='all'?'loc':'all';try{localStorage.setItem('byeol-lang2',LMODE);}catch{}if(reading)reading.orig=false;applyUI();prefetchTr();onTrArrive();};
 addEventListener('visibilitychange',()=>{if(!document.hidden)loadState();});
 /* =================== 하늘 =================== */
 const SKY={x0:0.04,x1:0.96,y0:0.09,y1:0.74};
 const npc={key:'npc',kind:'npc',color:NPC_COLOR,x:0.5,y:0.5,rot:0.1,tx:0,ty:0};
 const layoutKey=()=>VW/VH>=1?'wide':'narrow';let arrange=null;
 function poemSrc(st){const w=config.pos&&Array.isArray(config.pos.wide)&&config.pos.wide[st.i];return(w&&isFinite(w[0])&&isFinite(w[1]))?w:[st.ix,st.iy];}
+// 북두칠성 고정 배치 (휴대폰 화면 캡처 기준 1179×1971 픽셀 위치). 휴대폰은 그대로, 넓은 화면은 모양을 유지해 위쪽 가운데에 맞춤
+const DIPPER_PX=[[70,378],[295,323],[474,433],[763,472],[1110,514],[848,640],[1031,650]];
 function poemPx(st){const L=layoutKey();
   if(arrange){const q=arrange.pts[st.i];return[q[0]*VW,q[1]*VH];}
+  {const P=DIPPER_PX[st.i%7];if(L!=='wide')return[P[0]/1179*VW,P[1]/1971*VH];
+    const x0=70,x1=1110,y0=323,y1=650,sc=Math.min(VW*0.62/(x1-x0),VH*0.27/(y1-y0));const ox=VW/2-(x0+x1)/2*sc,oy=VH*0.13-y0*sc;
+    return[ox+P[0]*sc,oy+P[1]*sc];}
   const q=config.pos&&Array.isArray(config.pos[L])&&config.pos[L][st.i];
   if(q&&isFinite(q[0])&&isFinite(q[1]))return[q[0]*VW,q[1]*VH];
   if(L==='wide'){const w=poemSrc(st);return[w[0]*VW,w[1]*VH];}
@@ -590,7 +624,7 @@ const sizeOf=st=>starPx()*(st.kind==='npc'?1.25:1);
 /* =================== 화면 전환 =================== */
 let spread=null;
 function setBase(b,day,opt){if(reading)finishRead();const prev=base,prevDay=viewDay;base=b;spread=opt&&opt.spread||null;viewDay=day||null;
-  show('landing',b==='landing');show('hTitle',b!=='landing');show('madeBy',b==='landing');updJar();$('jarBtn').classList.toggle('tilt',b==='jar');
+  show('landing',b==='landing');show('hTitle',b!=='landing');show('madeBy',b==='landing');updDonate();updJar();$('jarBtn').classList.toggle('tilt',b==='jar');
   show('backBtn',b==='day');$('fan').classList.toggle('away',b==='jar'||b==='day');show('jarView',b==='jar');
   $('hTitle').textContent=b==='day'?dayTitle(dayOffset(day)):UIT('별 헤는 밤');prefetchTr();if(b==='jar')buildJar(prev==='day'?{gather:prevDay}:true);}
 function hasPast(){for(const st of stars.values())for(let i=1;i<4;i++)if(st.day===dayKey(-i))return true;return false;}
@@ -622,14 +656,14 @@ function buildJar(animate){const jv=$('jarView');jv.innerHTML='';jarCols=[];cons
     const l1=document.createElement('span');l1.textContent=dayWord(i);const l2=document.createElement('small');l2.textContent=themeShow(k);b.append(l1,l2);
     b.onclick=()=>{const from=new Map();const tt=(performance.now()-jarT0)/1000;for(const p of jarCols[q])from.set(p.st.key,{px:p.px,py:p.py,size:sp,rot:p.rot,tx:p.tx,ty:p.ty});
       setBase('day',k,{spread:{from,t0:performance.now(),n:from.size}});};jv.appendChild(b);
-    const n=Math.min(list.length,400);let seed=i*131+7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
+    const n=Math.min(list.length,400);const stp=0.028*Math.min(1,60/Math.max(1,n));let seed=i*131+7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
     const pile=[];const MW=Math.min(150,(port?VW*0.5:VW*0.23)*0.8),MH=MW*0.55,top=y+62,bottom=top+MH;
     const hal=(k,b)=>{let f=1,r=0;while(k>0){f/=b;r+=f*(k%b);k=Math.floor(k/b);}return r;};
     const pts=[];let hk=1+i*7;while(pts.length<n){const ux=hal(hk,2)*2-1,uy=hal(hk,3);hk++;if(uy<=Math.pow(Math.max(0,1-ux*ux),0.65))pts.push([ux,uy]);}
     pts.sort((a,b)=>b[1]-a[1]);
     for(let j=0;j<n;j++){const[ux,uy]=pts[j];
       const px=x+ux*MW/2+(rnd()-.5)*sp*0.25,py=bottom-uy*MH+(rnd()-.5)*sp*0.2;
-      const it={st:list[j],px,py,rot:rnd()*1.3,tx:(rnd()-.5)*.5,ty:(rnd()-.5)*.5,delay:order++*0.028+rnd()*0.05,spin:(rnd()-.5)*8,jx,jy,ssz:sp*0.45};
+      const it={st:list[j],px,py,rot:rnd()*1.3,tx:(rnd()-.5)*.5,ty:(rnd()-.5)*.5,delay:(order+=stp)-stp+rnd()*0.05*Math.min(1,60/Math.max(1,n)),spin:(rnd()-.5)*8,jx,jy,ssz:sp*0.45};
       if(animate&&animate.gather){if(k===animate.gather){const[sx2,sy2]=toPx(list[j]);it.jx=sx2;it.jy=sy2;it.ssz=starPx();it.spin=0;it.delay=j*0.015;}else it.delay=-10;}
       pile.push(it);}
     jarCols.push(pile);});
@@ -666,9 +700,9 @@ $('reopenBtn').onclick=()=>{show('madeBtns',false);mode='unfold';};
 $('sendBtn').onclick=()=>{show('madeBtns',false);const[x,y]=emptySpot();const fv=foldView();
   sending={from:[fv.cx,fv.cy],fromSize:2*R*fv.spx,x,y,t0:performance.now(),rot:-rzF(work.G),tx:(Math.random()-.5)*.5,ty:(Math.random()-.5)*.5};mode='send';};
 /* =================== 별 펼쳐 읽기 =================== */
-function origText(st){if(st.kind!=='npc')return st.text;const k=base==='day'?viewDay:dayKey();return(config.themes&&config.themes[k])||UIT('자유 주제');}
-function readText(st){if(reading&&reading.st===st&&reading.orig)return origText(st);if(st.kind!=='npc')return trOf(st.text);const k=base==='day'?viewDay:dayKey();return themeShow(k);}
-function hasTr(st){const o=origText(st);const t=trCache.get(trKey(o));return t!=null&&t!==o;}
+function origText(st){if(st.kind==='poem')return poemText(st);if(st.kind!=='npc')return st.text;const k=base==='day'?viewDay:dayKey();return(config.themes&&config.themes[k])||UIT('자유 주제');}
+function readText(st){if(st.kind==='poem')return poemText(st);if(reading&&reading.st===st&&reading.orig)return origText(st);if(st.kind!=='npc')return trOf(st.text);const k=base==='day'?viewDay:dayKey();return themeShow(k);}
+function hasTr(st){if(LMODE==='all')return false;const o=origText(st);const t=trCache.get(trKey(o));return t!=null&&t!==o;}
 function startRead(st){const text=readText(st);const G=geomOfText(text);mode='read';reading={st,G,f:0,P:G.KE,dir:1,text};drawText(G,text);hideReadLbls();}
 function readViews(r){const G=r.G;const[sx,sy]=toPx(r.st);const sz=sizeOf(r.st);
   const vB={spx:sz/(2*R),cx:sx,cy:sy};const dw=delW()+14;const spx=Math.min(stripH()/WID,VW*0.9/G.bbKS.w,(VW-28-dw)/G.bbKS.w);
@@ -677,7 +711,7 @@ function readViews(r){const G=r.G;const[sx,sy]=toPx(r.st);const sz=sizeOf(r.st);
   return{vA:{spx,cx:kx,cy:ky},vB};}
 let readLift=0,delWc={};
 function delW(){const t=$('rDel').textContent||'지우기';if(delWc[t])return delWc[t];tctx.font=`22px ${FONT}`;return delWc[t]=Math.ceil(tctx.measureText(t).width)+6;}
-function hideReadLbls(){['rDel','rPinRow','rOrig'].forEach(id=>show(id,false));$('rDel').textContent=UIT('지우기');$('rDel').dataset.c='';}
+function hideReadLbls(){['rDel','rPinRow','rOrig','rFull'].forEach(id=>show(id,false));$('rDel').textContent=UIT('지우기');$('rDel').dataset.c='';}
 function closeRead(){if(!reading)return;reading.dir=-1;hideReadLbls();$('rPin').blur();}
 $('rDel').onclick=async()=>{const st=reading&&reading.st;if(!st)return;
   if(delMode){if(!$('rDel').dataset.c){$('rDel').dataset.c='1';$('rDel').textContent=UIT('정말 지우기');return;}
@@ -722,9 +756,45 @@ function renderAdminList(){if(!adminData)return;const days=[...new Set([...(admi
   list.forEach(st=>{const row=document.createElement('label');row.className='mrow';const cb=document.createElement('input');cb.type='checkbox';cb.checked=adminSel.has(st.key);
     cb.onchange=()=>{cb.checked?adminSel.add(st.key):adminSel.delete(st.key);updDelBtn();};
     const dot=document.createElement('i');dot.style.background=st.color;const tx=document.createElement('span');tx.className='tx';tx.textContent=st.text;
+    let otag=null;if(isForeign(st.text)){const tr_=admTr.get(st.text);if(tr_==null)admWant(st.text);else if(tr_!==st.text){const showO=admOrig.has(st.key);tx.textContent=showO?st.text:tr_;tx.classList.toggle('trd',!showO);
+      otag=document.createElement('button');otag.className='otag';otag.textContent=showO?'번역 보기':'원문 보기';otag.onclick=e=>{e.preventDefault();e.stopPropagation();showO?admOrig.delete(st.key):admOrig.add(st.key);renderAdminList();};}}
     const tm=document.createElement('span');tm.className='tm';tm.textContent=st.t?new Date(st.t).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Seoul'}):'';
-    row.append(cb,dot,tx,tm);box.appendChild(row);});
+    const sv=document.createElement('button');sv.className='otag';sv.textContent='저장';sv.onclick=e=>{e.preventDefault();e.stopPropagation();savePaper(st);};
+    row.append(cb,dot,tx);if(otag)row.append(otag);row.append(sv,tm);box.appendChild(row);});
   $('aSelAll').textContent=list.length&&list.every(st=>adminSel.has(st.key))?'선택 해제':'전체 선택';updDelBtn();renderTop(list);}
+// 펼친 쪽지 모양 그대로: 화면과 같은 3D 쪽지를 큰 해상도로 한 번 그려서 PNG로 저장
+const exportJobs=[];let exportGap=0;
+function savePaper(st){exportJobs.push(st);}
+function doExport(st){const text=st.text||'';const G=geomOfText(text);drawText(G,text);
+  const bb=G.bbKS,spx=Math.min(stripH()/WID,VW*0.86/bb.w),v={spx,cx:VW/2-bb.cx*spx,cy:VH/2-bb.cy*spx};
+  const nw=bb.w*spx,nh=bb.h*spx;let maxR=4096;try{maxR=Math.min(gl.getParameter(gl.MAX_RENDERBUFFER_SIZE),gl.getParameter(gl.MAX_VIEWPORT_DIMS)[0],8192);}catch{}
+  const Sx=Math.max(DPR,Math.min(1080/nw,maxR/Math.max(VW,VH)));
+  glc.width=Math.round(VW*Sx);glc.height=Math.round(VH*Sx);
+  gl.viewport(0,0,glc.width,glc.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);
+  gl.uniformMatrix4fv(loc.uVP,false,VP);gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,paperTex);gl.uniform1i(loc.uPaper,0);
+  gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,textTex);gl.uniform1i(loc.uText,1);
+  drawMesh(G,poseMesh(G,KS),viewMatrix(G,KS,v,v),hex2(st.color||'#f9c9cc'),1,1,-1);
+  const bx0=Math.max(0,Math.floor((VW/2-nw/2-30)*Sx)),bw=Math.min(glc.width-bx0,Math.ceil((nw+60)*Sx));
+  const by0=Math.max(0,Math.floor((VH/2-nh/2-30)*Sx)),bh=Math.min(glc.height-by0,Math.ceil((nh+60)*Sx));
+  const px=new Uint8Array(bw*bh*4);gl.readPixels(bx0,glc.height-by0-bh,bw,bh,gl.RGBA,gl.UNSIGNED_BYTE,px);
+  glc.width=VW*DPR;glc.height=VH*DPR;
+  let X0=bw,X1=-1,Y0=bh,Y1=-1;for(let y=0;y<bh;y++)for(let x=0;x<bw;x++){if(px[(y*bw+x)*4+3]>8){if(x<X0)X0=x;if(x>X1)X1=x;if(y<Y0)Y0=y;if(y>Y1)Y1=y;}}
+  if(X1<0)return;const M=Math.round(Math.max(X1-X0,Y1-Y0)*0.04),cw=X1-X0+1+M*2,ch=Y1-Y0+1+M*2;
+  const c=document.createElement('canvas');c.width=cw;c.height=ch;const x=c.getContext('2d');const im=x.createImageData(cw,ch);
+  for(let y=Y0;y<=Y1;y++){const ty=ch-1-(y-Y0+M);for(let xx=X0;xx<=X1;xx++){const si=(y*bw+xx)*4,di=(ty*cw+(xx-X0+M))*4,a=px[si+3];if(!a)continue;
+    const k=255/a;im.data[di]=Math.min(255,px[si]*k);im.data[di+1]=Math.min(255,px[si+1]*k);im.data[di+2]=Math.min(255,px[si+2]*k);im.data[di+3]=a;}}
+  x.putImageData(im,0,0);
+  const name=('별헤는밤_'+(st.day||'')+'_'+String(st.text||'').slice(0,14)).replace(/[\\/:*?"<>|\s]+/g,'_')+'.png';
+  c.toBlob(b=>{if(!b)return;const u=URL.createObjectURL(b);const a=document.createElement('a');a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),4000);},'image/png');
+  if(reading)drawText(reading.G,reading.text||readText(reading.st));
+  window.__lastExport=c;}
+/* ---- 관리자 목록: 한국어·영어가 아닌 쪽지는 한국어로 번역해 연두색으로 ---- */
+const admTr=new Map(),admOrig=new Set();let admQ=new Set(),admT=0;
+const admSrc=new Map();
+const isForeign=t=>{t=String(t||'');if(!/\p{L}/u.test(t))return false;if(/[가-힣]/.test(t))return false;if(/^[\x00-\x7f\u2018\u2019\u201c\u201d\u2026]*$/.test(t))return false;return admSrc.get(t)!=='EN';};
+function admWant(t){admQ.add(t);if(!admT)admT=setTimeout(async()=>{admT=0;const b=[...admQ].slice(0,50);b.forEach(x=>admQ.delete(x));
+  try{const j=await api('/api/translate',{texts:b,target:'KO'});const m=(j&&j.t)||{},sr=(j&&j.s)||{};b.forEach(x=>{admTr.set(x,typeof m[x]==='string'?m[x]:x);if(sr[x])admSrc.set(x,sr[x]);});}catch{b.forEach(x=>admTr.set(x,x));}
+  renderAdminList();if(admQ.size)admWant([...admQ][0]);},200);}
 /* ---- 많이 나온 답변: 같은 답변 / 자주 나온 낱말 ---- */
 const STOP=new Set(['나','너','내','네','우리','저','제','그','이','것','거','수','더','좀','잘','꼭','정말','진짜','너무','그냥','매우','아주','항상','모든','같은','같이','있는','없는','하는','했던','하고','있다','없다','하기','하다','했다','해서','되는','된','할','한','해','게','때','중','등',
   'the','a','an','to','and','of','is','are','was','i','my','me','you','your','in','on','it','for','with','that','this','be','so']);
@@ -756,9 +826,12 @@ async function loadStats(){const box=$('aStats');box.innerHTML='<div class="sub"
     const L=agg('lang'),Sx=agg('src'),lt=L.reduce((a,x)=>a+x[1],0)||1,st=Sx.reduce((a,x)=>a+x[1],0)||1;
     if(L.length)html+='<div class="sub">언어 (30일)</div><div class="kv">'+L.slice(0,8).map(([k,v])=>`<span>${LANG_NAME[k]||k} <b>${Math.round(100*v/lt)}%</b></span>`).join('')+'</div>';
     if(Sx.length)html+='<div class="sub">들어온 곳 (30일)</div><div class="kv">'+Sx.map(([k,v])=>`<span>${SRC_NAME[k]||k} <b>${Math.round(100*v/st)}%</b></span>`).join('')+'</div>';
+    if(j.tr){const u=j.tr.used||0,c=j.tr.cap||0;html+='<div class="sub">번역 사용량 (이번 달, 매달 1일 초기화)</div>'+(j.tr.on?(j.tr.cap?`<div class="kv"><span><b>${u.toLocaleString()}</b> / ${c.toLocaleString()}자 (${Math.round(100*u/c)}%)</span></div><div style="height:6px;background:rgba(255,255,255,.12);border-radius:3px;margin:2px 0 10px"><div style="height:6px;width:${Math.min(100,100*u/c)}%;background:rgba(255,255,255,.7);border-radius:3px"></div></div>`:`<div class="kv"><span><b>${u.toLocaleString()}</b>자 (상한 없음)</span></div>`):'<div class="kv"><span>DeepL 키가 아직 연결되지 않았어요</span></div>');}
     html+='<div class="sub">방문자는 하루 기준 기기 수예요(같은 사람이 다른 날 오면 따로 셉니다). 통계는 이 기능을 올린 날부터 쌓여요.</div>';
     box.innerHTML=html;}catch(e){box.innerHTML='<div class="sub">통계를 불러오지 못했어요</div>';}}
 function updDelBtn(){const b=$('aDelSel');b.dataset.c='';b.textContent=adminSel.size?`선택한 쪽지 ${adminSel.size}개 지우기`:'선택한 쪽지 지우기';}
+$('aSaveSel').onclick=()=>{const list=((adminData&&adminData.items)||[]).map(normStar).filter(st=>adminSel.has(st.key));if(!list.length){$('aListNote').textContent='저장할 쪽지를 먼저 선택하세요';return;}
+  list.forEach((st,i)=>setTimeout(()=>savePaper(st),i*450));$('aListNote').textContent=`${list.length}개를 저장해요`;};
 $('aSelAll').onclick=()=>{const list=((adminData&&adminData.items)||[]).map(normStar);const all=list.length&&list.every(st=>adminSel.has(st.key));
   list.forEach(st=>all?adminSel.delete(st.key):adminSel.add(st.key));renderAdminList();};
 $('aDelSel').onclick=async()=>{const b=$('aDelSel');if(!adminSel.size)return;
@@ -852,7 +925,7 @@ function applyFx(st,now,px,py,size){const f=FX.get(st.key);if(!f)return{px,py,si
     glowAt(x,y,size*1.9,st.color,1.6*(1-u*0.8));return{px:x,py:y,size:size*Math.max(0.02,1-0.95*u*u),dim:1.4-0.2*u,rot:u*1.2};}
   if(f.swap){const m=f.swap;FX.delete(st.key);if(reading&&reading.st===st)return{px,py,size,dim:1,rot:0};
     m.shown.delete(st.key);m.queue.push(st.key);
-    if(m.shown.size<SHOW){const nk=m.queue.shift();if(nk){m.shown.add(nk);FX.set(nk,{type:'appear',t0:now});const ns=stars.get(nk);if(ns)wantTr([ns.text]);}}
+    if(m.shown.size<SHOW){const nk=m.queue.shift();if(nk){m.shown.add(nk);FX.set(nk,{type:'appear',t0:now});}}
     return{px,py,size:0,dim:1,rot:0};}
   if(el<FALL+BACK){const u=(el-FALL)/BACK;const e=1-Math.pow(1-u,3);glowAt(px,py,size*1.4,st.color,Math.sin(PI*u)*0.6);
     return{px,py,size:size*Math.max(0.01,e),dim:1+0.12*Math.sin(PI*u),rot:(1-e)*0.8};}
@@ -927,6 +1000,9 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;fra
         // 키패드가 올라오면 쪽지와 비밀번호 줄을 화면 보이는 영역 위로 끌어올림
         const ro=$('rOrig'),pinOn_=!rp.classList.contains('hide'),roOn=hasTr(st)&&!pinOn_;show('rOrig',roOn);
         if(roOn){ro.textContent=UIT(r.orig?'번역 보기':'원문 보기');const rw_=ro.offsetWidth||90;ro.style.transform='translate(-50%,-50%)';ro.style.left=clamp((s.a[0]+s.b[0])/2,rw_/2+10,VW-rw_/2-10)+'px';ro.style.top=(by-4)+'px';}
+        const rf=$('rFull'),rfOn=st.kind==='poem'&&poemRank(st)===landingStars.length-1;show('rFull',rfOn);
+        if(rfOn){rf.textContent=UIT('전문 보기');rf.href=KO_VIEW()?POEM_URL.ko:POEM_URL.en;const w_=rf.offsetWidth||90;rf.style.transform='translate(-50%,-50%)';
+          rf.style.left=clamp((s.a[0]+s.b[0])/2,w_/2+10,VW-w_/2-10)+'px';rf.style.top=(by-4)+'px';}
         let tgt=0;if(!rp.classList.contains('hide')){const vv=window.visualViewport;const vb=vv?vv.offsetTop+vv.height:VH;
           const need=rp.getBoundingClientRect().bottom-(vb-18);tgt=Math.max(0,readLift+need);}
         readLift+=(tgt-readLift)*Math.min(1,dt*7);if(Math.abs(tgt-readLift)<0.5)readLift=tgt;}
@@ -934,6 +1010,7 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;fra
       // 펼친 쪽지 주변의 별들은 잠시 비켜나기
       if(r.dir>0){const{vA}=readViews(r);const bb=G.bbKS,sp=vA.spx;const pinOn=!$('rPinRow').classList.contains('hide');
         uiRectNext={L:vA.cx+(bb.cx-bb.w/2)*sp-6,R:vA.cx+(bb.cx+bb.w/2)*sp+76,T:vA.cy+(bb.cy-bb.h/2)*sp-6,B:vA.cy+(bb.cy+bb.h/2)*sp+(pinOn?92:44)};}}}
+  if(exportJobs.length&&now>exportGap){exportGap=now+450;doExport(exportJobs.shift());}
   requestAnimationFrame(frame);}
 async function land(){const s=sending;sending=null;const id=Date.now().toString(36)+Math.random().toString(36).slice(2,6);const step=2*PI/5;
   const rot=(((s.rot+PI*2)%step)+step)%step-step/2;
@@ -982,7 +1059,7 @@ const refont=()=>{geomCache.clear();if(reading)drawText(reading.G=geomOfText(rea
   else if(work){work.G=geomOfText(mode==='compose'?inp.value:work.text);if(mode!=='compose')drawText(work.G,work.text);}};
 document.fonts&&document.fonts.load(`40px ${FONT}`).then(refont).catch(()=>{});
 window.__dbg={mode:()=>mode,pick:i=>pickPaper(i),type:(t,p)=>{inp.value=t;$('pin').value=p||'';syncSlots('pin');onType();},fold:()=>$('foldLbl').click(),step:()=>foldStep(),
-  send:()=>$('sendBtn').click(),fall:()=>{fxNextFall=0;},readFirst:(i)=>{const v=visibleStars();if(v.length)startRead(v[i||0]);},setBase:(b,d)=>setBase(b,d),clickDay:i=>document.querySelectorAll('.day')[i].click(),dayKey:o=>dayKey(o),P:()=>work&&work.P,lift:()=>readLift,vis:()=>{const d=curSkyDay(),m=d&&skyMem.get(d);return[visibleStars().length,m&&m.queue.length,[...FX.values()].filter(f=>f.swap||f.type==='appear').length];},rd:()=>reading&&[reading.f,reading.P,reading.dir],readLow:()=>{let b=null;for(const st of visibleStars()){const y=toPx(st)[1];if(y<VH-60&&(!b||y>toPx(b)[1]))b=st;}if(b){b.owner='me';startRead(b);}return b&&toPx(b);}};
+  send:()=>$('sendBtn').click(),fall:()=>{fxNextFall=0;},readFirst:(i)=>{const v=visibleStars();if(v.length)startRead(v[i||0]);},setBase:(b,d)=>setBase(b,d),clickDay:i=>document.querySelectorAll('.day')[i].click(),dayKey:o=>dayKey(o),P:()=>work&&work.P,lift:()=>readLift,exp:(t,c)=>savePaper({text:t,color:c,day:'x'}),vis:()=>{const d=curSkyDay(),m=d&&skyMem.get(d);return[visibleStars().length,m&&m.queue.length,[...FX.values()].filter(f=>f.swap||f.type==='appear').length];},rd:()=>reading&&[reading.f,reading.P,reading.dir],readLow:()=>{let b=null;for(const st of visibleStars()){const y=toPx(st)[1];if(y<VH-60&&(!b||y>toPx(b)[1]))b=st;}if(b){b.owner='me';startRead(b);}return b&&toPx(b);}};
 applyUI();
 })();
 </script>

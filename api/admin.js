@@ -46,15 +46,18 @@ export default async function handler(req, res) {
       const days = Array.from({ length: 30 }, (_, i) => kstDay(-i));
       const cmds = [];
       days.forEach(d => cmds.push(['PFCOUNT', 'uv:' + d], ['GET', 'pv:' + d], ['HLEN', 'd:' + d], ['HGETALL', 'lang:' + d], ['HGETALL', 'src:' + d]));
+      cmds.push(['GET', 'trm:' + new Date().toISOString().slice(0, 7)]);
       cmds.push(['SMEMBERS', 'days']);
       const r = await pipeline(cmds);
       const toObj = a => { const o = {}; if (Array.isArray(a)) for (let i = 0; i < a.length; i += 2) o[a[i]] = Number(a[i + 1]) || 0; return o; };
       const rows = days.map((d, i) => ({ day: d, uv: Number(r[i * 5]) || 0, pv: Number(r[i * 5 + 1]) || 0, stars: Number(r[i * 5 + 2]) || 0,
         lang: toObj(r[i * 5 + 3]), src: toObj(r[i * 5 + 4]) }));
       const allDays = (r[r.length - 1] || []).sort();
+      const trUsed = Number(r[r.length - 2]) || 0;
       let total = 0;
       if (allDays.length) { const n = await pipeline(allDays.map(d => ['HLEN', 'd:' + d])); total = n.reduce((a, x) => a + (Number(x) || 0), 0); }
-      return send(res, 200, { rows, totalStars: total, firstDay: allDays[0] || null });
+      return send(res, 200, { rows, totalStars: total, firstDay: allDays[0] || null,
+        tr: { used: trUsed, cap: Number(process.env.TRANSLATE_MONTHLY_CHARS) || 0, on: !!process.env.DEEPL_API_KEY } });
     }
 
     if (b.action === 'delete') {
