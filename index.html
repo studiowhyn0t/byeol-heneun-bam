@@ -690,7 +690,9 @@ function skyFor(day,pool){let m=skyMem.get(day);if(!m){m={shown:new Set(),queue:
   const keys=new Set(pool.map(s=>s.key));for(const k of m.shown)if(!keys.has(k))m.shown.delete(k);
   if(m.queue.some(k=>!keys.has(k)))m.queue=m.queue.filter(k=>keys.has(k));
   if(pool.length>m.shown.size+m.queue.length){const known=new Set([...m.shown,...m.queue]);
-    const fresh=pool.filter(s=>!known.has(s.key)).sort((a,b)=>b.t-a.t);
+    let fresh=pool.filter(s=>!known.has(s.key)).sort((a,b)=>b.t-a.t);
+    // 지난 날은 처음 열 때 무작위로 골라 보여주기 (서버는 이미 받은 목록만 사용, 추가 요청 없음)
+    if(!m.init&&day!==dayKey()){for(let i=fresh.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fresh[i],fresh[j]]=[fresh[j],fresh[i]];}}
     for(const st of fresh){if(st.local||m.shown.size<SHOW)m.shown.add(st.key);else if(m.init)m.queue.unshift(st.key);else m.queue.push(st.key);}}
   m.init=true;return m;}
 function curSkyDay(){return base==='today'?dayKey():base==='day'?viewDay:null;}
@@ -731,12 +733,12 @@ function buildJar(animate){const jv=$('jarView');jv.innerHTML='';jarCols=[];cons
   const present=[1,2,3].filter(i=>[...stars.values()].some(s=>s.day===dayKey(-i)));const n_=present.length;
   const cols=port?(n_<=2?[[0.5,0.17],[0.5,0.55]]:[[0.27,0.17],[0.73,0.17],[0.27,0.55],[0.73,0.55]]):present.map((_,q)=>[(q+0.5)/n_*0.92+0.04,0.22]);
   const jr=$('jarBtn').getBoundingClientRect();const jx=jr.left+jr.width/2,jy=jr.top+jr.height*0.4;let order=0;
-  present.forEach((i,q)=>{const k=dayKey(-i);const list=[...stars.values()].filter(s=>s.day===k).sort((a,b)=>a.t-b.t);
+  present.forEach((i,q)=>{const k=dayKey(-i);const list=skyStars(k).sort((a,b)=>a.t-b.t);
     const[cx,cy]=cols[q];const x=cx*VW,y=cy*VH;const b=document.createElement('button');b.className='day';
     const h=port?VH*0.32:VH*0.5;b.style.left=(x-85)+'px';b.style.top=(y-10)+'px';b.style.width='170px';b.style.height=h+'px';
     const l1=document.createElement('span');l1.textContent=dayWord(i);const l2=document.createElement('small');l2.textContent=themeShow(k);b.append(l1,l2);
     b.onclick=()=>{const from=new Map();const tt=(performance.now()-jarT0)/1000;for(const p of jarCols[q])from.set(p.st.key,{px:p.px,py:p.py,size:sp,rot:p.rot,tx:p.tx,ty:p.ty});
-      setBase('day',k,{spread:{from,t0:performance.now(),n:from.size}});};jv.appendChild(b);
+      const order=new Map([...from.keys()].map((kk,ii)=>[kk,ii]));setBase('day',k,{spread:{from,order,t0:performance.now(),n:from.size}});};jv.appendChild(b);
     const n=Math.min(list.length,400);const stp=0.028*Math.min(1,60/Math.max(1,n));let seed=i*131+7;const rnd=()=>(seed=(seed*16807)%2147483647)/2147483647;
     const pile=[];const MW=Math.min(150,(port?VW*0.5:VW*0.23)*0.8),MH=MW*0.55,top=y+62,bottom=top+MH;
     const hal=(k,b)=>{let f=1,r=0;while(k>0){f/=b;r+=f*(k%b);k=Math.floor(k/b);}return r;};
@@ -1031,7 +1033,7 @@ function applyFx(st,now,px,py,size){const f=FX.get(st.key);if(!f)return{px,py,si
   FX.delete(st.key);return{px,py,size,dim:1,rot:0};}
 function drawSkyStar(st,now){let[px,py]=toPx(st);py=avoidUI(st,px,py,sizeOf(st));const sway=Math.sin(time*0.6+(st.x*13))*0.05;let size=sizeOf(st),rot=st.rot+(st._rot||0),tx=st.tx,ty=st.ty;
   if(spread&&base==='day'){const el=(now-spread.t0)/1000;const f=spread.from.get(st.key);
-    if(f){const idx=[...spread.from.keys()].indexOf(st.key);const u=clamp((el-idx*0.02)/1.1,0,1),e=ease(u);if(u<1){const cx=(f.px+px)/2,cy=Math.min(f.py,py)-VH*0.06;
+    if(f){const idx=spread.order?spread.order.get(st.key)||0:0;const u=clamp((el-idx*0.02)/1.1,0,1),e=ease(u);if(u<1){const cx=(f.px+px)/2,cy=Math.min(f.py,py)-VH*0.06;
       px=(1-e)*(1-e)*f.px+2*(1-e)*e*cx+e*e*px;py=(1-e)*(1-e)*f.py+2*(1-e)*e*cy+e*e*py;size=f.size+(size-f.size)*e;rot=f.rot+(rot-f.rot)*e;tx=f.tx+(tx-f.tx)*e;ty=f.ty+(ty-f.ty)*e;}}
     else if(st.kind==='npc'){const u=clamp((el-0.5)/0.6,0,1);if(u<=0)return;size*=ease(u);}}
   const fx=applyFx(st,now,px,py,size);if(fx.size<0.5)return;
