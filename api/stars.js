@@ -1,5 +1,5 @@
 import crypto from 'node:crypto';
-import { redis, pipeline, kstDay, pinHash, clientIp, allow, send, fail } from './_lib.js';
+import { redis, pipeline, kstDay, pinHash, clientIp, allow, send, fail, moderate } from './_lib.js';
 
 const num = (v, a, b, d = 0) => { v = Number(v); return Number.isFinite(v) ? Math.min(b, Math.max(a, v)) : d; };
 
@@ -28,8 +28,10 @@ export default async function handler(req, res) {
       rot: num(b.rot, -7, 7), tx: num(b.tx, -1, 1), ty: num(b.ty, -1, 1),
       pin: pinHash(id, pin),
     };
+    const flag = moderate(text);
+    if (flag) { star.hidden = true; star.flag = flag; }
     await pipeline([['HSET', 'd:' + day, id, JSON.stringify(star)], ['SADD', 'days', day]]);
-    send(res, 200, { id, day, t });
+    send(res, 200, flag ? { id, day, t, hidden: true, care: flag === 'selfharm' } : { id, day, t });
   } catch (e) {
     fail(res, e);
   }

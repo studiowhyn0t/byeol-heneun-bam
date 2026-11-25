@@ -28,14 +28,22 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 #langBtn i{font-style:normal;color:rgba(255,255,255,.3)}#langBtn span.on{color:rgba(255,255,255,.9);text-decoration:underline;text-underline-offset:4px}
 #madeBy{position:fixed;left:18px;top:12px;z-index:5;font-size:22px;line-height:25px;color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
 #donateBtn{position:fixed;left:84px;top:15px;z-index:5;font-size:17px;line-height:20px;color:rgba(255,255,255,.5);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+#careModal{position:fixed;inset:0;z-index:12;display:flex;align-items:center;justify-content:center;padding:24px;background:transparent}
+#careModal.hide{display:none}
+#careModal p{margin:0;max-width:min(520px,88vw);text-align:center;font-size:23px;line-height:1.7;color:rgba(255,255,255,.88);word-break:keep-all;overflow-wrap:anywhere;
+  text-shadow:0 0 12px rgba(255,248,225,.22);animation:careIn 2.4s ease both}
+#careModal.out p{animation:careOut .9s ease both}
+@keyframes careIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+@keyframes careOut{to{opacity:0}}
 #donateModal{position:fixed;inset:0;z-index:30;background:rgba(0,0,0,.72);display:flex;align-items:center;justify-content:center;padding:24px;animation:dfade .35s ease}
 #donateModal.hide{display:none}
 @keyframes dfade{from{opacity:0}to{opacity:1}}
 #donateModal .dbox{width:min(360px,100%);background:#111;border:1px solid rgba(255,255,255,.16);border-radius:14px;padding:26px 24px 20px;text-align:center;color:rgba(255,255,255,.88);box-shadow:0 10px 40px rgba(0,0,0,.6)}
-#donateModal p{margin:0 0 22px;font-size:21px;line-height:1.55;word-break:keep-all}
+#donateModal p{margin:0 0 22px;font-size:21px;line-height:1.55;word-break:keep-all;overflow-wrap:anywhere}
 #donateModal .dacts{display:flex;justify-content:center;gap:30px;font-size:22px}
 #donateModal .dacts a,#donateModal .dacts button{color:#fff;text-decoration:underline;text-underline-offset:4px}
 #donateModal .dacts button{color:rgba(255,255,255,.55)}
+#rOrig,#rFull{padding:12px 16px;margin:0}
 #sndBtn{font-size:22px;color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
 #backBtn{font-size:22px;text-decoration:underline;text-underline-offset:4px}
 #delTag{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:5;font-size:19px;color:#ff9c9c;text-decoration:underline;text-underline-offset:4px}
@@ -107,6 +115,13 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 #admin .tbox{max-height:200px;overflow:auto;border-top:1px solid rgba(255,255,255,.12);border-bottom:1px solid rgba(255,255,255,.12);margin:2px 0 8px}
 #admin .tbox table{margin:0}
 #admin .mrow .tx.trd{color:#c6eea0}#admin .mrow .otag{flex:none;font-size:15px;color:rgba(255,255,255,.55);text-decoration:underline;text-underline-offset:3px;padding:0 2px}
+#admin .asearch{display:flex;gap:12px;align-items:center;margin:0 0 8px}
+#admin .asearch input[type=search]{flex:1;font-size:20px;border:1px solid rgba(255,255,255,.3);border-radius:999px;padding:6px 14px;-webkit-appearance:none;appearance:none}
+#admin .asearch label{flex:none;font-size:18px;color:rgba(255,255,255,.7);display:flex;gap:6px;align-items:center}
+#admin .asearch label input{width:18px;height:18px;accent-color:#fff;flex:none}
+#admin .sinfo{font-size:16px;color:rgba(255,255,255,.5);min-height:4px;margin:-2px 0 6px}
+#admin .dtabs.dim{opacity:.35;pointer-events:none}
+#admin .mrow.flag .tx{color:#ff9a9a}#admin .mrow.flag{background:rgba(255,80,80,.07)}#admin .ftag{display:inline-block;font-size:14px;color:#ff8080;border:1px solid rgba(255,128,128,.6);border-radius:999px;padding:0 7px;margin-right:6px;vertical-align:2px}
 #admin .note{min-height:24px;color:#ffb3b3;margin-top:10px;font-size:18px}
 #arrangeBar{position:fixed;left:50%;bottom:24px;transform:translateX(-50%);z-index:12;display:flex;flex-wrap:wrap;justify-content:center;gap:6px 24px;align-items:center;font-size:24px;width:max-content;max-width:94vw;background:rgba(255,255,255,.08);padding:10px 20px;border-radius:18px}
 #arrangeBar button{text-decoration:underline;text-underline-offset:4px}
@@ -122,8 +137,9 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 <button id="hTitle" class="hide">별 헤는 밤</button>
 <a id="madeBy" href="https://www.instagram.com/studio.whynot/" target="_blank" rel="noopener noreferrer">만든 이</a>
 <button id="donateBtn" class="hide">후원하기</button>
+<div id="careModal" class="hide"><p id="careMsg"></p></div>
 <div id="donateModal" class="hide"><div class="dbox">
-  <p>보태주신 마음은 번역 기능 및 사이트 운영에 활용하겠습니다.<br>이 공간이 다양한 분들의 따뜻한 곳으로 남을 수 있도록요!</p>
+  <p id="donateMsg">보태주신 마음은 번역 기능 및 사이트 운영에 활용하겠습니다.<br>이 공간이 다양한 분들의 따뜻한 곳으로 남을 수 있도록요!</p>
   <div class="dacts"><a id="donateGo" target="_blank" rel="noopener noreferrer">후원하러 가기</a><button id="donateClose">닫기</button></div>
 </div></div>
 <div id="topR">
@@ -147,6 +163,8 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
   <div class="ahead"><h2>관리자 모드</h2><button id="aClose">닫기</button></div>
   <div class="atabs" role="tablist"><button data-t="notes" class="on">쪽지</button><button data-t="themes">주제</button><button data-t="stats">통계</button></div>
   <section class="apane" data-p="notes">
+    <div class="asearch"><input id="aSearch" type="search" placeholder="쪽지 검색" autocomplete="off" spellcheck="false"><label><input id="aSearchAll" type="checkbox"> 전체 날짜</label></div>
+    <div id="aSearchInfo" class="sinfo"></div>
     <div id="aDays" class="dtabs"></div>
     <div id="aList" class="mlist"></div>
     <div class="acts" style="margin-top:10px"><button id="aSelAll">전체 선택</button><button id="aSaveSel">선택한 쪽지 저장</button><button id="aDelSel">선택한 쪽지 지우기</button></div>
@@ -170,7 +188,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
   <div class="note" id="aNote"></div>
 </div></div>
 <div id="arrangeBar" class="hide"><span id="arrangeLbl"></span><button id="arSave">저장</button><button id="arReset">처음 배치로</button><button id="arCancel">취소</button></div>
-<button id="langBtn" aria-label="Language / 언어"><span id="lgA">ALL</span><i>·</i><span id="lgB">KR</span></button>
+<button id="langBtn" aria-label="Language / 언어"><span id="lgA">All</span><i>·</i><span id="lgB">KR</span></button>
 <div id="toast"></div>
 <script>
 (()=>{
@@ -429,8 +447,23 @@ UI_KEYS.push('원문 보기','번역 보기','만든 이','전문 보기');
   th:['ดูต้นฉบับ','ดูคำแปล','ผู้สร้าง','อ่านบทกวีทั้งหมด'],id:['Lihat asli','Lihat terjemahan','Dibuat oleh','Baca puisi lengkap'],ru:['Показать оригинал','Показать перевод','Автор','Читать полностью'],it:['Vedi originale','Vedi traduzione','Creato da','Leggi la poesia intera']};
   for(const k in A)UI[k].push(...A[k]);}
 // 언어 모드 두 가지: 'all' = 번역 없이 원문 그대로(화면 문구는 영어) / 'loc' = 접속자 언어로 번역
+UI_KEYS.push('후원하기','보태주신 마음은 번역 기능 및 사이트 운영에 활용하겠습니다.','이 공간이 다양한 분들의 따뜻한 곳으로 남을 수 있도록요!','후원하러 가기','닫기');
+{const D={en:['Support','Your kind support will go toward translation and keeping this site running.','So this place can stay warm for all!','Go to support','Close'],
+  ja:['応援する','いただいたお気持ちは、翻訳機能とサイトの運営に使わせていただきます。','この場所が、みんなのあたたかい場所であり続けられるように!','応援しに行く','閉じる'],
+  zhs:['支持我们','您的心意将用于翻译功能和网站运营。','让这里继续成为大家温暖的角落!','去支持','关闭'],
+  zht:['支持我們','您的心意將用於翻譯功能和網站營運。','讓這裡繼續成為大家溫暖的角落!','去支持','關閉'],
+  es:['Apoyar','Tu apoyo se destinará a la traducción y al mantenimiento del sitio.','¡Para que este lugar siga siendo cálido para todos!','Ir a apoyar','Cerrar'],
+  fr:['Soutenir','Votre soutien servira à la traduction et au fonctionnement du site.','Pour que cet endroit reste chaleureux pour tous !','Soutenir','Fermer'],
+  de:['Unterstützen','Deine Unterstützung fließt in die Übersetzung und den Betrieb der Seite.','Damit dieser Ort für alle ein warmer Platz bleibt!','Zur Unterstützung','Schließen'],
+  pt:['Apoiar','Seu apoio será usado na tradução e na manutenção do site.','Para que este lugar continue acolhedor para todos!','Ir apoiar','Fechar'],
+  vi:['Ủng hộ','Tấm lòng của bạn sẽ được dùng cho tính năng dịch và duy trì trang web.','Để nơi này mãi là góc ấm áp cho mọi người!','Đi ủng hộ','Đóng'],
+  th:['สนับสนุน','น้ำใจของคุณจะนำไปใช้กับระบบแปลภาษาและการดูแลเว็บไซต์','เพื่อให้ที่นี่ยังคงเป็นที่อบอุ่นสำหรับทุกคน!','ไปสนับสนุน','ปิด'],
+  id:['Dukung','Dukunganmu akan dipakai untuk fitur terjemahan dan operasional situs.','Agar tempat ini tetap hangat untuk semua!','Dukung sekarang','Tutup'],
+  ru:['Поддержать','Ваша поддержка пойдёт на перевод и работу сайта.','Чтобы это место оставалось тёплым для всех!','Поддержать','Закрыть'],
+  it:['Sostieni','Il tuo sostegno servirà per la traduzione e per mantenere il sito.','Perché questo posto resti accogliente per tutti!','Vai a sostenere','Chiudi']};
+  for(const k in D)UI[k].push(...D[k]);}
 const TR=true;let LMODE=(()=>{try{const v=localStorage.getItem('byeol-lang2');if(v==='all'||v==='loc')return v;}catch{}return'loc';})();
-const curTarget=()=>ALT_TARGET;const KO_VIEW=()=>LMODE==='loc'&&IS_KO;
+const curTarget=()=>LMODE==='all'?'EN-US':ALT_TARGET;const KO_VIEW=()=>LMODE==='loc'&&IS_KO;
 const UIT=s=>{const L=LMODE==='all'?'en':ALT_UI;if(L==='ko')return s;const a=UI[L];const i=UI_KEYS.indexOf(s);return a&&i>=0?a[i]:s;};
 // 날짜 단어 붙이기: 한국어 "어제의 주제: " / 다른 언어 "Yesterday's question: "
 const dayWord=o=>UIT(['오늘','어제','그저께','그끄저께'][o]||'');
@@ -445,8 +478,9 @@ function sameLang(s){const b=curTarget().split('-')[0];if(!/\p{L}/u.test(s))retu
   if(['EN','ES','FR','DE','IT','PT','NL','ID','VI','PL','SV','DA','NB','FI','CS','RO','TR','HU','SK','SL','ET','LV','LT'].includes(b))return b==='EN'&&/^[\x00-\x7f]*$/.test(s);
   return false;}
 const trKey=s=>curTarget()+'\u0001'+s;
-function trOf(s){if(!s||LMODE==='all')return s;if(sameLang(s))return s;const t=trCache.get(trKey(s));if(t!=null)return t;wantTr([s]);return s;}
-function wantTr(list){if(LMODE==='all')return;for(const s of list)if(s&&!trCache.has(trKey(s))&&!sameLang(s))trWant.add(String(s).slice(0,200));
+// force: ALL 모드에서도 번역 (오늘의 주제는 ALL에서 영어로)
+function trOf(s,force){if(!s||(LMODE==='all'&&!force))return s;if(sameLang(s))return s;const t=trCache.get(trKey(s));if(t!=null)return t;wantTr([s]);return s;}
+function wantTr(list){for(const s of list)if(s&&!trCache.has(trKey(s))&&!sameLang(s))trWant.add(String(s).slice(0,200));
   if(trWant.size&&!trTimer)trTimer=setTimeout(flushTr,40);}
 async function flushTr(){trTimer=0;const batch=[...trWant].slice(0,50);batch.forEach(s=>trWant.delete(s));if(!batch.length)return;
   const tg=curTarget(),K=s=>tg+'\u0001'+s;
@@ -497,7 +531,7 @@ const stars=new Map();let config={lines:[],themes:{}};
 let online=true,delMode=false;
 const toast=(s,ms=2200)=>{const t=$('toast');t.textContent=UIT(s);t.classList.add('show');clearTimeout(toast._t);toast._t=setTimeout(()=>t.classList.remove('show'),ms);};
 const themeOf=k=>(config.themes&&config.themes[k])||'자유 주제';
-const themeShow=k=>(config.themes&&config.themes[k])?trOf(config.themes[k]):UIT('자유 주제');
+const themeShow=k=>(config.themes&&config.themes[k])?trOf(config.themes[k],true):UIT('자유 주제');
 const DEFAULT_LINES=["오늘 밤 반짝이는 것들","멀리 있는 마음에게","말하지 못한 이야기","작은 종이에 담은 빛","잠들기 전의 기도","내일의 나에게","오래 기억하고 싶은 이름","창밖의 조용한 밤"];
 function layoutFan(){const f=$('fan');if(!f.children.length){COLORS.forEach((c,i)=>{const b=document.createElement('button');b.className='paper';b.style.setProperty('--c',c);b.setAttribute('aria-label','색지 '+(i+1));
     b.addEventListener('pointerdown',e=>e.stopPropagation());b.onclick=()=>pickPaper(i);f.appendChild(b);});}
@@ -506,23 +540,29 @@ function selPaper(i){[...$('fan').children].forEach((b,j)=>b.classList.toggle('s
 /* =================== 데이터 (서버) =================== */
 const clamp01=v=>isFinite(v)?clamp(v,0,1):0.5;
 const gone=new Map();let MINE=new Set();try{MINE=new Set(JSON.parse(localStorage.getItem('byeol-mine')||'[]'));}catch{}
+// 자동 숨김된 내 쪽지: 서버는 남들에게 보여주지 않으므로, 내 기기에만 보관해서 내 하늘에선 보이게
+let MYH=[];try{MYH=JSON.parse(localStorage.getItem('byeol-myhidden')||'[]')||[];}catch{}
+const saveMYH=()=>{try{const lim=dayKey(-4);MYH=MYH.filter(it=>it.day>=lim).slice(-60);localStorage.setItem('byeol-myhidden',JSON.stringify(MYH));}catch{}};
 const saveMine=()=>{try{localStorage.setItem('byeol-mine',JSON.stringify([...MINE]));}catch{}};
 const me=()=>'me';online=true;
 let adminPw=null;
 async function api(path,body){const r=await fetch(path,body?{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)}:{});
   let j=null;try{j=await r.json();}catch{}if(!r.ok)throw Object.assign(new Error((j&&j.error)||'error'),{status:r.status,data:j});return j;}
 function normStar(it){const t=+it.t||0;return{key:it.day+':'+it.id,owner:MINE.has(it.id)?'me':'x',id:String(it.id),text:String(it.text||'').slice(0,60),
-  color:/^#[0-9a-f]{6}$/i.test(it.color)?it.color:COLORS[0],x:clamp01(+it.x),y:clamp01(+it.y),rot:+it.rot||0,tx:+it.tx||0,ty:+it.ty||0,t,day:String(it.day)};}
+  color:/^#[0-9a-f]{6}$/i.test(it.color)?it.color:COLORS[0],x:clamp01(+it.x),y:clamp01(+it.y),rot:+it.rot||0,tx:+it.tx||0,ty:+it.ty||0,t,day:String(it.day),...(it.hidden?{hidden:true,flag:String(it.flag||'')}:{})};}
 async function loadState(){try{const j=await api('/api/state');const seen=new Set();
     const now_=Date.now();for(const[k,t]of[...gone])if(now_-t>90000)gone.delete(k);
-    for(const it of j.stars||[]){const st=normStar(it);if(gone.has(st.key))continue;seen.add(st.key);stars.set(st.key,st);}
+    for(const it of j.stars||[]){const st=normStar(it);if(gone.has(st.key))continue;seen.add(st.key);const old=stars.get(st.key);
+      if(old){const keep={_dy:old._dy,_rot:old._rot,local:old.local};Object.assign(old,st,keep);}else stars.set(st.key,st);}
+    for(const it of MYH){const k=it.day+':'+it.id;if(gone.has(k))continue;seen.add(k);if(!stars.has(k)){const st=normStar(it);st.owner='me';stars.set(k,st);}}
     for(const k of[...stars.keys()])if(!seen.has(k)&&!stars.get(k).local)stars.delete(k);
     config={lines:Array.isArray(j.config&&j.config.lines)?j.config.lines:[],themes:(j.config&&j.config.themes)||{},pos:(j.config&&j.config.pos)||{}};
-    DONATE=(j.donate&&typeof j.donate.kakao==='string')?j.donate.kakao:'';updDonate();onConfig();updJar();if(base==='jar'&&!jarClosing)buildJar(false);prefetchTr();}catch(e){if(!loadState.warned){loadState.warned=1;toast('하늘을 불러오지 못했어요');}}}
+    DONATE=(j.donate&&typeof j.donate.kakao==='string')?j.donate.kakao:'';DONATE_INT=(j.donate&&typeof j.donate.kofi==='string')?j.donate.kofi:'';updDonate();onConfig();updJar();if(base==='jar'&&!jarClosing)buildJar(false);prefetchTr();}catch(e){if(!loadState.warned){loadState.warned=1;toast('하늘을 불러오지 못했어요');}}}
 const wq={};function queue(key,fn){wq[key]=(wq[key]||Promise.resolve()).then(fn,fn);return wq[key];}
 async function saveStar(item,pin){try{const j=await api('/api/stars',{text:item.text,color:item.color,x:item.x,y:item.y,rot:item.rot,tx:item.tx,ty:item.ty,pin});
-    MINE.add(j.id);saveMine();return j;}catch(e){toast(e.status===429?((e.data&&e.data.error)==='full'?'오늘 하늘이 가득 찼어요':'잠시 후 다시 보내주세요'):'별을 저장하지 못했어요');return null;}}
-async function deleteMine(st,pin){try{await api('/api/delete',{day:st.day,id:st.id,pin});stars.delete(st.key);gone.set(st.key,Date.now());MINE.delete(st.id);saveMine();updJar();return true;}
+    MINE.add(j.id);saveMine();if(j.hidden){MYH.push({...item,id:j.id,day:j.day,t:j.t});saveMYH();}
+    if(j.care)setTimeout(()=>showCare(),2600);return j;}catch(e){toast(e.status===429?((e.data&&e.data.error)==='full'?'오늘 하늘이 가득 찼어요':'잠시 후 다시 보내주세요'):'별을 저장하지 못했어요');return null;}}
+async function deleteMine(st,pin){try{await api('/api/delete',{day:st.day,id:st.id,pin});MYH=MYH.filter(it=>!(it.id===st.id&&it.day===st.day));saveMYH();stars.delete(st.key);gone.set(st.key,Date.now());MINE.delete(st.id);saveMine();updJar();return true;}
   catch(e){return e.status===403?'비밀번호가 맞지 않아요':e.status===429?'비밀번호를 여러 번 틀려서 1시간 동안 잠겼어요':'지우지 못했어요';}}
 async function adminCall(action,extra){return api('/api/admin',{password:adminPw,action,...(extra||{})});}
 async function saveConfig(c){try{await adminCall('config',{config:c});config=c;onConfig();return true;}catch(e){return false;}}
@@ -551,23 +591,47 @@ function prefetchTr(){if(!TR)return;const L=[];
 function onTrArrive(){if(reading){const t=readText(reading.st);if(t!==reading.text){const G=geomOfText(t);const r=reading;
     const fr=(r.G.KE-r.P)/Math.max(1,r.G.KE-KS);r.G=G;r.P=Math.max(KS,G.KE-fr*(G.KE-KS));r.text=t;drawText(G,t);}}
   if(mode==='compose')$('theme').textContent=dayPrefix(0)+themeShow(dayKey());if(base==='jar'&&!jarClosing)buildJar(false);}
-let DONATE='';
-function updDonate(){const on=!!DONATE&&base==='landing'&&KO_VIEW();const d=$('donateBtn');if(on){$('donateGo').href=DONATE;const r=$('madeBy').getBoundingClientRect();d.style.left=Math.round((r.right||62)+14)+'px';}show('donateBtn',on);}
-function applyUI(){updDonate();document.title=UIT('별 헤는 밤');$('madeBy').textContent=UIT('만든 이');const L=$('landing');L.querySelector('h1').textContent=UIT('별 헤는 밤');L.querySelector('p').textContent=UIT('색지를 골라 글을 시작하세요.');
+// 자살·자해를 암시하는 쪽지를 보낸 사람에게 조용히 건네는 안내 (숨김 처리는 알리지 않음)
+const CARE={ko:['오늘을 지나온 당신을 응원해요.','내일의 밤하늘에도 함께해 주세요.'],
+  en:['You made it through today, and we\'re cheering for you.','We hope to see you under tomorrow\'s night sky too.'],
+  ja:['今日を乗り越えてきたあなたを応援しています。','明日の夜空でも、また会えますように。'],
+  zhs:['为熬过今天的你加油。','明晚的星空，也期待与你相见。'],
+  zht:['為熬過今天的你加油。','明晚的星空，也期待與你相見。'],
+  es:['Te mandamos ánimo por haber superado este día.','Te esperamos también bajo el cielo de mañana.'],
+  fr:['On est de tout cœur avec toi, qui as traversé cette journée.','On t’attend aussi sous le ciel étoilé de demain.'],
+  de:['Du hast den heutigen Tag geschafft – wir sind bei dir.','Wir freuen uns, dich auch morgen unter dem Nachthimmel wiederzusehen.'],
+  pt:['Estamos torcendo por você, que chegou ao fim deste dia.','Esperamos você também sob o céu de amanhã.'],
+  vi:['Chúng mình luôn cổ vũ bạn – người đã vượt qua ngày hôm nay.','Hãy cùng ngắm bầu trời đêm mai nữa nhé.'],
+  th:['เราเป็นกำลังใจให้คุณที่ผ่านวันนี้มาได้','คืนพรุ่งนี้ มาดูดาวด้วยกันอีกนะ'],
+  id:['Semangat untukmu yang sudah berhasil melewati hari ini.','Sampai jumpa lagi di langit malam besok, ya.'],
+  ru:['Мы рядом с вами — вы справились с этим днём.','Ждём вас и под завтрашним ночным небом.'],
+  it:['Facciamo il tifo per te, che hai superato anche questa giornata.','Ti aspettiamo anche sotto il cielo di domani.']};
+// 쪽지를 쓴 사람 언어로, 하늘 가운데에 잠깐 빛나며 나타나고 터치하면 사라짐 (All 모드면 영어)
+function showCare(){const L=CARE[LMODE==='all'?'en':ALT_UI]||CARE.en;const m=$('careMsg');m.innerHTML='';
+  L.forEach((t,i)=>{if(i)m.append(document.createElement('br'));m.append(t);});const c=$('careModal');c.classList.remove('out');show('careModal',true);}
+function hideCare(){const c=$('careModal');if(c.classList.contains('hide'))return;c.classList.add('out');setTimeout(()=>{show('careModal',false);c.classList.remove('out');},900);}
+let DONATE='',DONATE_INT='';
+// 한국어 화면은 카카오페이, 그 밖의 화면(All·해외)은 Ko-fi. 링크가 없으면 버튼을 숨김
+function updDonate(){const url=KO_VIEW()?DONATE:DONATE_INT;const on=!!url&&base==='landing';const d=$('donateBtn');
+  d.textContent=UIT('후원하기');$('donateMsg').innerHTML='';$('donateMsg').append(UIT('보태주신 마음은 번역 기능 및 사이트 운영에 활용하겠습니다.'),document.createElement('br'),UIT('이 공간이 다양한 분들의 따뜻한 곳으로 남을 수 있도록요!'));
+  $('donateGo').textContent=UIT('후원하러 가기');$('donateClose').textContent=UIT('닫기');
+  if(on){$('donateGo').href=url;const r=$('madeBy').getBoundingClientRect();d.style.left=Math.round((r.right||62)+14)+'px';}show('donateBtn',on);}
+function applyUI(){document.title=UIT('별 헤는 밤');$('madeBy').textContent=UIT('만든 이');setTimeout(updDonate,0);const L=$('landing');L.querySelector('h1').textContent=UIT('별 헤는 밤');L.querySelector('p').textContent=UIT('색지를 골라 글을 시작하세요.');
   $('hTitle').textContent=base==='day'?dayTitle(dayOffset(viewDay)):UIT('별 헤는 밤');$('sndBtn').textContent=UIT(soundOn?'소리 끄기':'소리 켜기');$('backBtn').textContent=UIT('돌아가기');
   inp.placeholder=UIT('여기에 적으세요.');$('foldLbl').textContent=UIT('접기');$('pinRow').firstChild.textContent=UIT('삭제 비밀번호:')+' ';$('rPinRow').firstChild.textContent=UIT('삭제 비밀번호:')+' ';
   $('rPinGo').textContent=UIT('확인');$('hint').textContent=UIT('종이를 눌러 한 번씩 감아 접어요');$('reopenBtn').textContent=UIT('다시 펼치기');$('sendBtn').textContent=UIT('보내기');
   $('rDel').textContent=UIT($('rDel').dataset.c?'정말 지우기':'지우기');$('jarBtn').setAttribute('aria-label',UIT('지난 별 보기'));
-  $('lgA').textContent='ALL';$('lgB').textContent=ALT_LBL;$('lgA').classList.toggle('on',LMODE==='all');$('lgB').classList.toggle('on',LMODE==='loc');
+  $('lgA').textContent='All';$('lgB').textContent=ALT_LBL;$('lgA').classList.toggle('on',LMODE==='all');$('lgB').classList.toggle('on',LMODE==='loc');
   if(mode==='compose')$('theme').textContent=dayPrefix(0)+themeShow(dayKey());if(base==='jar'&&!jarClosing)buildJar(false);}
 $('langBtn').addEventListener('pointerdown',e=>e.stopPropagation());$('madeBy').addEventListener('pointerdown',e=>e.stopPropagation());$('donateBtn').addEventListener('pointerdown',e=>e.stopPropagation());$('donateModal').addEventListener('pointerdown',e=>e.stopPropagation());
-$('donateBtn').onclick=()=>show('donateModal',true);$('donateClose').onclick=()=>show('donateModal',false);
+$('donateBtn').onclick=()=>show('donateModal',true);$('careModal').addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();hideCare();});$('donateClose').onclick=()=>show('donateModal',false);
 $('donateModal').onclick=e=>{if(e.target===$('donateModal'))show('donateModal',false);};$('donateGo').addEventListener('click',()=>setTimeout(()=>show('donateModal',false),300));$('rOrig').addEventListener('pointerdown',e=>e.stopPropagation());$('rFull').addEventListener('pointerdown',e=>e.stopPropagation());
 $('rOrig').onclick=()=>{if(!reading)return;reading.orig=!reading.orig;onTrArrive();};
 $('langBtn').onclick=()=>{LMODE=LMODE==='all'?'loc':'all';try{localStorage.setItem('byeol-lang2',LMODE);}catch{}if(reading)reading.orig=false;applyUI();prefetchTr();onTrArrive();};
 addEventListener('visibilitychange',()=>{if(!document.hidden)loadState();});
 /* =================== 하늘 =================== */
 const SKY={x0:0.04,x1:0.96,y0:0.09,y1:0.74};
+let npcWas=false;
 const npc={key:'npc',kind:'npc',color:NPC_COLOR,x:0.5,y:0.5,rot:0.1,tx:0,ty:0};
 const layoutKey=()=>VW/VH>=1?'wide':'narrow';let arrange=null;
 function poemSrc(st){const w=config.pos&&Array.isArray(config.pos.wide)&&config.pos.wide[st.i];return(w&&isFinite(w[0])&&isFinite(w[1]))?w:[st.ix,st.iy];}
@@ -590,10 +654,27 @@ function poemPx(st){const L=layoutKey();
 /* 빈 하늘을 손가락으로 휘저으면 내 화면에서만 별들이 밀려나 자리가 바뀜 (저장하지 않음) */
 const stir=new Map();let stirPtr=null;
 const basePx=st=>[(SKY.x0+st.x*(SKY.x1-SKY.x0))*VW,(SKY.y0+st.y*(SKY.y1-SKY.y0))*VH];
-const toPx=st=>{if(st.kind==='poem')return poemPx(st);const b=basePx(st),o=stir.get(st.key);return o?[b[0]+o.ox*VW,b[1]+o.oy*VH]:b;};
+const sep=new Map();
+const toPx=st=>{if(st.kind==='poem')return poemPx(st);const b=basePx(st),o=stir.get(st.key),q=sep.get(st.key);let x=b[0],y=b[1];if(o){x+=o.ox*VW;y+=o.oy*VH;}if(q){x+=q.x;y+=q.y;}return[x,y];};
+// 겹친 별은 누르기 쉽게 살짝 서로 밀어내기 (내 화면에서만)
+function sepStep(dt){if(base!=='today'&&base!=='day'){if(sep.size)sep.clear();return;}const L=visibleStars();const minD=Math.max(starPx()*1.8,46);const P=L.map(st=>toPx(st));
+  const k=Math.min(1,dt*6);
+  for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++){const dx=P[j][0]-P[i][0],dy=P[j][1]-P[i][1];const d=Math.hypot(dx,dy);if(d>=minD)continue;
+    const ux=d>0.01?dx/d:Math.cos(i*2.4),uy=d>0.01?dy/d:Math.sin(i*2.4);const push=(minD-d)*0.5*k;
+    const A=L[i],B=L[j],fa=A.kind==='npc'||(reading&&reading.st.key===A.key),fb=B.kind==='npc'||(reading&&reading.st.key===B.key);
+    const ma=fa?0:fb?2:1,mb=fb?0:fa?2:1;
+    if(ma){const q=sep.get(A.key)||{x:0,y:0};q.x-=ux*push*ma;q.y-=uy*push*ma;sep.set(A.key,q);}
+    if(mb){const q=sep.get(B.key)||{x:0,y:0};q.x+=ux*push*mb;q.y+=uy*push*mb;sep.set(B.key,q);}}
+  // 가장자리·위쪽 UI(제목, 소리, 유리병)와 아래 색지 근처는 피해서 누르기 쉽게
+  const lim=minD*1.6,EX=Math.max(34,starPx()*1.3),TOP=92,BOT=VH-175;
+  for(const st of L){if(st.kind==='npc'||(reading&&reading.st.key===st.key))continue;let q=sep.get(st.key);
+    const b=basePx(st);const o=stir.get(st.key);const bx=b[0]+(o?o.ox*VW:0),by=b[1]+(o?o.oy*VH:0);
+    if(!q){if(bx>=EX&&bx<=VW-EX&&by>=TOP&&by<=BOT)continue;q={x:0,y:0};sep.set(st.key,q);}
+    const m=Math.hypot(q.x,q.y);if(m>lim){q.x*=lim/m;q.y*=lim/m;}
+    q.x=clamp(bx+q.x,EX,VW-EX)-bx;q.y=clamp(by+q.y,TOP,Math.max(TOP,BOT))-by;}}
 function stirMove(x,y){const p=stirPtr;if(!p)return;const dx=x-p.x,dy=y-p.y;const d=Math.hypot(dx,dy);if(d<1)return;p.x=x;p.y=y;p.moved+=d;
   const R0=Math.max(90,Math.min(VW,VH)*0.22);
-  for(const st of visibleStars()){if(st.kind==='npc'||(reading&&reading.st===st))continue;const[sx,sy]=toPx(st);const rx=sx-x,ry=sy-y;const r=Math.hypot(rx,ry);if(r>R0)continue;
+  for(const st of visibleStars()){if(st.kind==='npc'||(reading&&reading.st.key===st.key))continue;const[sx,sy]=toPx(st);const rx=sx-x,ry=sy-y;const r=Math.hypot(rx,ry);if(r>R0)continue;
     const w=Math.pow(1-r/R0,1.5);let o=stir.get(st.key);if(!o){o={ox:0,oy:0,vx:0,vy:0,spin:0};stir.set(st.key,o);}
     // 손가락 방향으로 밀고, 살짝 소용돌이처럼 비켜나기
     const side=(dx*ry-dy*rx)>0?1:-1;o.vx+=(dx*1.5+rx/(r+1)*d*0.5)*w/VW*0.75;o.vy+=(dy*1.5+ry/(r+1)*d*0.5)*w/VH*0.75;o.spin+=side*d*w*0.02;}}
@@ -614,7 +695,7 @@ function skyFor(day,pool){let m=skyMem.get(day);if(!m){m={shown:new Set(),queue:
   m.init=true;return m;}
 function curSkyDay(){return base==='today'?dayKey():base==='day'?viewDay:null;}
 function skyStars(day){const pool=[...stars.values()].filter(s=>s.day===day);const m=skyFor(day,pool);
-  return pool.filter(s=>m.shown.has(s.key)||(reading&&reading.st===s));}
+  return pool.filter(s=>m.shown.has(s.key)||(reading&&reading.st.key===s.key));}
 function visibleStars(){if(base==='landing')return landingStars;
   if(base==='today'||base==='day'){const a=skyStars(curSkyDay());if(mode==='idle'||mode==='read')a.push(npc);return a;}return[];}
 function emptySpot(){const k=dayKey();const pts=skyStars(k).map(s=>[s.x,s.y]);pts.push([0.5,0.5]);
@@ -701,8 +782,8 @@ $('sendBtn').onclick=()=>{show('madeBtns',false);const[x,y]=emptySpot();const fv
   sending={from:[fv.cx,fv.cy],fromSize:2*R*fv.spx,x,y,t0:performance.now(),rot:-rzF(work.G),tx:(Math.random()-.5)*.5,ty:(Math.random()-.5)*.5};mode='send';};
 /* =================== 별 펼쳐 읽기 =================== */
 function origText(st){if(st.kind==='poem')return poemText(st);if(st.kind!=='npc')return st.text;const k=base==='day'?viewDay:dayKey();return(config.themes&&config.themes[k])||UIT('자유 주제');}
-function readText(st){if(st.kind==='poem')return poemText(st);if(reading&&reading.st===st&&reading.orig)return origText(st);if(st.kind!=='npc')return trOf(st.text);const k=base==='day'?viewDay:dayKey();return themeShow(k);}
-function hasTr(st){if(LMODE==='all')return false;const o=origText(st);const t=trCache.get(trKey(o));return t!=null&&t!==o;}
+function readText(st){if(st.kind==='poem')return poemText(st);if(reading&&reading.st.key===st.key&&reading.orig)return origText(st);if(st.kind!=='npc')return trOf(st.text);const k=base==='day'?viewDay:dayKey();return themeShow(k);}
+function hasTr(st){if(LMODE==='all'&&st.kind!=='npc')return false;const o=origText(st);const t=trCache.get(trKey(o));return t!=null&&t!==o;}
 function startRead(st){const text=readText(st);const G=geomOfText(text);mode='read';reading={st,G,f:0,P:G.KE,dir:1,text};drawText(G,text);hideReadLbls();}
 function readViews(r){const G=r.G;const[sx,sy]=toPx(r.st);const sz=sizeOf(r.st);
   const vB={spx:sz/(2*R),cx:sx,cy:sy};const dw=delW()+14;const spx=Math.min(stripH()/WID,VW*0.9/G.bbKS.w,(VW-28-dw)/G.bbKS.w);
@@ -750,17 +831,25 @@ async function loadAdmin(day){try{const j=await adminCall('list',{day:day||admin
 function renderAdminList(){if(!adminData)return;const days=[...new Set([...(adminData.days||[]),dayKey()])].sort().reverse();
   const tabs=$('aDays');tabs.innerHTML='';days.forEach(k=>{const b=document.createElement('button');b.textContent=fmtDate(k)+(k===adminDay?` · ${adminData.items.length}`:'');b.classList.toggle('on',k===adminDay);
     b.onclick=()=>{adminSel.clear();loadAdmin(k);};tabs.appendChild(b);});
-  const list=(adminData.items||[]).map(normStar).sort((a,b)=>a.t-b.t);const box=$('aList');box.innerHTML='';
-  for(const k of[...adminSel])if(!list.some(st=>st.key===k))adminSel.delete(k);
-  if(!list.length){const e=document.createElement('div');e.className='empty';e.textContent='이 날은 쪽지가 없어요';box.appendChild(e);}
+  const q=($('aSearch').value||'').trim().toLowerCase();const allMode=$('aSearchAll').checked&&q;
+  let list=allMode?(admSearch.q===q?admSearch.items:[]):(adminData.items||[]);list=list.map(normStar);
+  if(q&&!allMode)list=list.filter(st=>st.text.toLowerCase().includes(q)||String(admTr.get(st.text)||'').toLowerCase().includes(q));
+  list.sort((a,b)=>allMode?b.t-a.t:a.t-b.t);adminShown=list;const box=$('aList');box.innerHTML='';
+  $('aDays').classList.toggle('dim',!!allMode);
+  $('aSearchInfo').textContent=q?(allMode?(admSearch.loading?'전체 날짜에서 찾는 중…':`전체 날짜에서 ${list.length}개 찾았어요`+(admSearch.more?' (최근 300개까지)':'')):`이 날짜에서 ${list.length}개 찾았어요`):'';
+  if(!list.length){const e=document.createElement('div');e.className='empty';e.textContent=q?'찾는 쪽지가 없어요':'이 날은 쪽지가 없어요';box.appendChild(e);}
   list.forEach(st=>{const row=document.createElement('label');row.className='mrow';const cb=document.createElement('input');cb.type='checkbox';cb.checked=adminSel.has(st.key);
     cb.onchange=()=>{cb.checked?adminSel.add(st.key):adminSel.delete(st.key);updDelBtn();};
     const dot=document.createElement('i');dot.style.background=st.color;const tx=document.createElement('span');tx.className='tx';tx.textContent=st.text;
     let otag=null;if(isForeign(st.text)){const tr_=admTr.get(st.text);if(tr_==null)admWant(st.text);else if(tr_!==st.text){const showO=admOrig.has(st.key);tx.textContent=showO?st.text:tr_;tx.classList.toggle('trd',!showO);
       otag=document.createElement('button');otag.className='otag';otag.textContent=showO?'번역 보기':'원문 보기';otag.onclick=e=>{e.preventDefault();e.stopPropagation();showO?admOrig.delete(st.key):admOrig.add(st.key);renderAdminList();};}}
-    const tm=document.createElement('span');tm.className='tm';tm.textContent=st.t?new Date(st.t).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Seoul'}):'';
+    const tm=document.createElement('span');tm.className='tm';tm.textContent=(allMode?fmtDate(st.day).replace(/ (오늘|어제|그저께|그끄저께)$/,'')+' ':'')+(st.t?new Date(st.t).toLocaleTimeString('ko-KR',{hour:'2-digit',minute:'2-digit',timeZone:'Asia/Seoul'}):'');
+    let vt=null;if(st.hidden){row.classList.add('flag');const fl=document.createElement('span');fl.className='ftag';fl.textContent=st.flag==='selfharm'?'자살 암시':st.flag==='hate'?'혐오 표현':'숨김';tx.prepend(fl);}
+    vt=document.createElement('button');vt.className='otag';vt.textContent=st.hidden?'공개로 돌리기':'숨기기';vt.onclick=async e=>{e.preventDefault();e.stopPropagation();vt.textContent='…';
+      try{await adminCall('visibility',{items:[{day:st.day,id:st.id}],hidden:!st.hidden});const flip=it=>{if(it.id===st.id&&it.day===st.day){if(st.hidden){delete it.hidden;}else{it.hidden=true;it.flag=it.flag||'admin';}}};
+        (adminData.items||[]).forEach(flip);admSearch.items.forEach(flip);if(!st.hidden){stars.delete(st.key);}loadState();renderAdminList();}catch(err){vt.textContent='실패';}};
     const sv=document.createElement('button');sv.className='otag';sv.textContent='저장';sv.onclick=e=>{e.preventDefault();e.stopPropagation();savePaper(st);};
-    row.append(cb,dot,tx);if(otag)row.append(otag);row.append(sv,tm);box.appendChild(row);});
+    row.append(cb,dot,tx);if(otag)row.append(otag);row.append(vt,sv,tm);box.appendChild(row);});
   $('aSelAll').textContent=list.length&&list.every(st=>adminSel.has(st.key))?'선택 해제':'전체 선택';updDelBtn();renderTop(list);}
 // 펼친 쪽지 모양 그대로: 화면과 같은 3D 쪽지를 큰 해상도로 한 번 그려서 PNG로 저장
 const exportJobs=[];let exportGap=0;
@@ -830,9 +919,16 @@ async function loadStats(){const box=$('aStats');box.innerHTML='<div class="sub"
     html+='<div class="sub">방문자는 하루 기준 기기 수예요(같은 사람이 다른 날 오면 따로 셉니다). 통계는 이 기능을 올린 날부터 쌓여요.</div>';
     box.innerHTML=html;}catch(e){box.innerHTML='<div class="sub">통계를 불러오지 못했어요</div>';}}
 function updDelBtn(){const b=$('aDelSel');b.dataset.c='';b.textContent=adminSel.size?`선택한 쪽지 ${adminSel.size}개 지우기`:'선택한 쪽지 지우기';}
-$('aSaveSel').onclick=()=>{const list=((adminData&&adminData.items)||[]).map(normStar).filter(st=>adminSel.has(st.key));if(!list.length){$('aListNote').textContent='저장할 쪽지를 먼저 선택하세요';return;}
+let adminShown=[];const admSearch={q:'',items:[],loading:false,more:false};let admSearchT=0;
+function admSearchGo(){clearTimeout(admSearchT);admSearchT=setTimeout(async()=>{const q=($('aSearch').value||'').trim().toLowerCase();
+  if($('aSearchAll').checked&&q&&admSearch.q!==q){admSearch.q=q;admSearch.items=[];admSearch.loading=true;renderAdminList();
+    try{const j=await adminCall('search',{q});if(admSearch.q===q){admSearch.items=j.items||[];admSearch.more=!!j.more;}}catch(e){admSearch.items=[];}
+    admSearch.loading=false;}
+  renderAdminList();},250);}
+$('aSearch').addEventListener('input',admSearchGo);$('aSearchAll').addEventListener('change',()=>{admSearch.q='';admSearchGo();});
+$('aSaveSel').onclick=()=>{const list=adminShown.filter(st=>adminSel.has(st.key));if(!list.length){$('aListNote').textContent='저장할 쪽지를 먼저 선택하세요';return;}
   list.forEach((st,i)=>setTimeout(()=>savePaper(st),i*450));$('aListNote').textContent=`${list.length}개를 저장해요`;};
-$('aSelAll').onclick=()=>{const list=((adminData&&adminData.items)||[]).map(normStar);const all=list.length&&list.every(st=>adminSel.has(st.key));
+$('aSelAll').onclick=()=>{const list=adminShown;const all=list.length&&list.every(st=>adminSel.has(st.key));
   list.forEach(st=>all?adminSel.delete(st.key):adminSel.add(st.key));renderAdminList();};
 $('aDelSel').onclick=async()=>{const b=$('aDelSel');if(!adminSel.size)return;
   if(!b.dataset.c){b.dataset.c='1';b.textContent=`정말 ${adminSel.size}개를 지울까요?`;return;}
@@ -840,7 +936,7 @@ $('aDelSel').onclick=async()=>{const b=$('aDelSel');if(!adminSel.size)return;
   if(ok){keys.forEach(k=>adminSel.delete(k));$('aListNote').textContent=`${keys.length}개를 지웠어요`;}else $('aListNote').textContent='지우지 못했어요';
   renderAdminList();};
 async function batchDelete(keys){const items=keys.map(k=>{const i=k.indexOf(':');return{day:k.slice(0,i),id:k.slice(i+1)};});
-  try{await adminCall('delete',{items});keys.forEach(k=>{stars.delete(k);gone.set(k,Date.now());});updJar();await loadAdmin(adminDay);return true;}catch(e){return false;}}
+  try{await adminCall('delete',{items});keys.forEach(k=>{stars.delete(k);gone.set(k,Date.now());});admSearch.items=admSearch.items.filter(it=>!keys.includes(it.day+':'+it.id));updJar();await loadAdmin(adminDay);return true;}catch(e){return false;}}
 $('aArrange').onclick=()=>{show('admin',false);if(reading)finishRead();setBase('landing');mode='arrange';
   arrange={pts:landingStars.map(st=>{const[x,y]=poemPx(st);return[x/VW,y/VH];}),drag:-1};
   $('arrangeLbl').textContent=(layoutKey()==='wide'?'넓은 화면':'휴대폰 화면')+' · 별을 끌어 옮기세요';show('arrangeBar',true);$('fan').classList.add('away');};
@@ -865,7 +961,10 @@ glc.addEventListener('pointerup',e=>{if(mode==='arrange'){if(arrange)arrange.dra
   const x=e.clientX,y=e.clientY;
   if(mode==='fold'){foldStep();return;}
   if(mode==='made'||mode==='unfold'||mode==='send')return;
-  if(mode==='read'){if(reading&&reading.dir>0&&reading.P<=KS+0.01)closeRead();return;}
+  if(mode==='read'){if(reading&&reading.dir>0&&reading.P<=KS+0.01){
+      // 쪽지 아래 버튼(원문 보기, 전문 보기, 지우기) 근처를 살짝 빗나간 터치는 닫지 않음
+      for(const id of['rOrig','rFull','rDel']){const e=$(id);if(e.classList.contains('hide'))continue;const r=e.getBoundingClientRect();if(x>r.left-22&&x<r.right+22&&y>r.top-22&&y<r.bottom+22)return;}
+      closeRead();}return;}
   if(mode==='compose'){if(!inp.value.trim())cancelCompose();else inp.focus({preventScroll:true});return;}
   let best=null,bd=1e9;
   for(const st of visibleStars()){const[sx,sy]=toPx(st);const d=Math.hypot(x-sx,y-sy);const r=sizeOf(st)*0.62+10;if(d<r&&d<bd){bd=d;best=st;}}
@@ -887,7 +986,7 @@ function avoidUI(st,px,py,size){let target=0;const r=uiRect;
 /* ---- 별똥별 / 반짝임 효과 (잔잔하게, 첫 화면 제외) ---- */
 const FX=new Map();let fxNextFall=performance.now()+9000,fxNextSwap=performance.now()+5000,fxNextGlow=performance.now()+3000;
 function scheduleFx(now){if(base==='landing'||base==='jar'||!(mode==='idle'||mode==='read')){if(base==='landing')FX.clear();return;}
-  const list=visibleStars().filter(st=>!(reading&&reading.st===st)&&!FX.has(st.key));if(!list.length)return;
+  const list=visibleStars().filter(st=>!(reading&&reading.st.key===st.key)&&!FX.has(st.key));if(!list.length)return;
   const day=curSkyDay(),m=day&&skyMem.get(day);
   if(m&&(m.queue.length||m.shown.size>SHOW)){
     if(now>fxNextSwap){const c=list.filter(st=>st.kind!=='npc'&&!st.local);let busy=0;for(const f of FX.values())if(f.swap)busy++;
@@ -923,7 +1022,7 @@ function applyFx(st,now,px,py,size){const f=FX.get(st.key);if(!f)return{px,py,si
       bx.fillStyle=`rgba(255,255,240,${0.75*tw})`;bx.beginPath();bx.arc(jx,jy,rr*0.55,0,6.283);bx.fill();
       bx.strokeStyle=`rgba(255,255,240,${0.45*tw})`;bx.lineWidth=0.8;bx.beginPath();bx.moveTo(jx-rr*1.6,jy);bx.lineTo(jx+rr*1.6,jy);bx.moveTo(jx,jy-rr*1.6);bx.lineTo(jx,jy+rr*1.6);bx.stroke();}
     glowAt(x,y,size*1.9,st.color,1.6*(1-u*0.8));return{px:x,py:y,size:size*Math.max(0.02,1-0.95*u*u),dim:1.4-0.2*u,rot:u*1.2};}
-  if(f.swap){const m=f.swap;FX.delete(st.key);if(reading&&reading.st===st)return{px,py,size,dim:1,rot:0};
+  if(f.swap){const m=f.swap;FX.delete(st.key);if(reading&&reading.st.key===st.key)return{px,py,size,dim:1,rot:0};
     m.shown.delete(st.key);m.queue.push(st.key);
     if(m.shown.size<SHOW){const nk=m.queue.shift();if(nk){m.shown.add(nk);FX.set(nk,{type:'appear',t0:now});}}
     return{px,py,size:0,dim:1,rot:0};}
@@ -937,14 +1036,17 @@ function drawSkyStar(st,now){let[px,py]=toPx(st);py=avoidUI(st,px,py,sizeOf(st))
     else if(st.kind==='npc'){const u=clamp((el-0.5)/0.6,0,1);if(u<=0)return;size*=ease(u);}}
   const fx=applyFx(st,now,px,py,size);if(fx.size<0.5)return;
   drawMesh(STD,STDM,starM(fx.px,fx.py,fx.size,rot+fx.rot,tx,ty+sway),hex2(st.color),false,fx.dim);}
-function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;frameDt=dt;stirStep(dt);uiRect=uiRectNext;uiRectNext=null;
+function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;frameDt=dt;stirStep(dt);sepStep(dt);if(!$('careModal').classList.contains('hide')){const r=$('careMsg').getBoundingClientRect();if(r.width)uiRectNext={L:r.left-24,R:r.right+24,T:r.top-30,B:r.bottom+30};}uiRect=uiRectNext;uiRectNext=null;
   bx.setTransform(DPR,0,0,DPR,0,0);bx.fillStyle='#000';bx.fillRect(0,0,VW,VH);
   gl.viewport(0,0,glc.width,glc.height);gl.clearColor(0,0,0,0);gl.clear(gl.COLOR_BUFFER_BIT|gl.DEPTH_BUFFER_BIT);gl.enable(gl.DEPTH_TEST);
   gl.uniformMatrix4fv(loc.uVP,false,VP);
   gl.activeTexture(gl.TEXTURE0);gl.bindTexture(gl.TEXTURE_2D,paperTex);gl.uniform1i(loc.uPaper,0);
   gl.activeTexture(gl.TEXTURE1);gl.bindTexture(gl.TEXTURE_2D,textTex);gl.uniform1i(loc.uText,1);
   scheduleFx(now);
-  for(const st of visibleStars()){if(reading&&reading.st===st)continue;drawSkyStar(st,now);}
+  {const vs=visibleStars();const npcOn=vs.includes(npc);
+    // 주제별이 (별 보내기 등으로) 잠시 사라졌다 다시 나타날 때는 은은한 빛과 함께 천천히 떠오르게
+    if(npcOn&&!npcWas&&!(spread&&base==='day'))FX.set(npc.key,{type:'appear',t0:now});npcWas=npcOn;
+    for(const st of vs){if(reading&&reading.st.key===st.key)continue;drawSkyStar(st,now);}}
   if(base==='jar'&&jarClosing){const sp=starPx()*0.62;const tt=(now-jarClosing)/1000;
     for(const pile of jarCols)for(const p of pile){const u=clamp((tt-p.rdelay)/0.6,0,1);if(u>=1)continue;const e=u*u;
       const c1x=p.px+(p.cx-p.px)*0.6,c1y=Math.min(p.py,p.cy)-VH*0.06;const x=(1-e)*(1-e)*p.px+2*(1-e)*e*c1x+e*e*p.cx,y=(1-e)*(1-e)*p.py+2*(1-e)*e*c1y+e*e*p.cy;
@@ -1059,7 +1161,7 @@ const refont=()=>{geomCache.clear();if(reading)drawText(reading.G=geomOfText(rea
   else if(work){work.G=geomOfText(mode==='compose'?inp.value:work.text);if(mode!=='compose')drawText(work.G,work.text);}};
 document.fonts&&document.fonts.load(`40px ${FONT}`).then(refont).catch(()=>{});
 window.__dbg={mode:()=>mode,pick:i=>pickPaper(i),type:(t,p)=>{inp.value=t;$('pin').value=p||'';syncSlots('pin');onType();},fold:()=>$('foldLbl').click(),step:()=>foldStep(),
-  send:()=>$('sendBtn').click(),fall:()=>{fxNextFall=0;},readFirst:(i)=>{const v=visibleStars();if(v.length)startRead(v[i||0]);},setBase:(b,d)=>setBase(b,d),clickDay:i=>document.querySelectorAll('.day')[i].click(),dayKey:o=>dayKey(o),P:()=>work&&work.P,lift:()=>readLift,exp:(t,c)=>savePaper({text:t,color:c,day:'x'}),vis:()=>{const d=curSkyDay(),m=d&&skyMem.get(d);return[visibleStars().length,m&&m.queue.length,[...FX.values()].filter(f=>f.swap||f.type==='appear').length];},rd:()=>reading&&[reading.f,reading.P,reading.dir],readLow:()=>{let b=null;for(const st of visibleStars()){const y=toPx(st)[1];if(y<VH-60&&(!b||y>toPx(b)[1]))b=st;}if(b){b.owner='me';startRead(b);}return b&&toPx(b);}};
+  send:()=>$('sendBtn').click(),fall:()=>{fxNextFall=0;},readFirst:(i)=>{const v=visibleStars();if(v.length)startRead(v[i||0]);},setBase:(b,d)=>setBase(b,d),clickDay:i=>document.querySelectorAll('.day')[i].click(),dayKey:o=>dayKey(o),P:()=>work&&work.P,lift:()=>readLift,edges:()=>{const P=visibleStars().map(toPx);return[Math.round(Math.min(...P.map(p=>p[0]))),Math.round(Math.max(...P.map(p=>p[0]))),Math.round(Math.min(...P.map(p=>p[1])))];},minD:()=>{const L=visibleStars(),P=L.map(toPx);let m=1e9;for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++)m=Math.min(m,Math.hypot(P[i][0]-P[j][0],P[i][1]-P[j][1]));return Math.round(m);},exp:(t,c)=>savePaper({text:t,color:c,day:'x'}),vis:()=>{const d=curSkyDay(),m=d&&skyMem.get(d);return[visibleStars().length,m&&m.queue.length,[...FX.values()].filter(f=>f.swap||f.type==='appear').length];},rd:()=>reading&&[reading.f,reading.P,reading.dir],readLow:()=>{let b=null;for(const st of visibleStars()){const y=toPx(st)[1];if(y<VH-60&&(!b||y>toPx(b)[1]))b=st;}if(b){b.owner='me';startRead(b);}return b&&toPx(b);}};
 applyUI();
 })();
 </script>

@@ -60,6 +60,34 @@ export default async function handler(req, res) {
         tr: { used: trUsed, cap: Number(process.env.TRANSLATE_MONTHLY_CHARS) || 0, on: !!process.env.DEEPL_API_KEY } });
     }
 
+    if (b.action === 'search') {
+      // 모든 날짜의 쪽지에서 글자 찾기 (최근 날짜부터, 최대 300개)
+      const q = String(b.q || '').trim().toLowerCase().slice(0, 40);
+      if (!q) return send(res, 200, { items: [] });
+      const days = ((await redis('SMEMBERS', 'days')) || []).filter(isDay).sort().reverse();
+      const items = []; let more = false;
+      for (let i = 0; i < days.length && !more; i += 20) {
+        const chunk = days.slice(i, i + 20);
+        const r = await pipeline(chunk.map(d => ['HGETALL', 'd:' + d]));
+        chunk.forEach((d, k) => { for (const st of parseHash(r[k])) if (String(st.text || '').toLowerCase().includes(q)) {
+          if (items.length >= 300) { more = true; break; } items.push(publicStar({ ...st, day: d })); } });
+      }
+      return send(res, 200, { items, more });
+    }
+
+    if (b.action === 'visibility') {
+      // 숨김/공개 바꾸기: hidden=false 면 다시 공개
+      const hide = !!b.hidden;
+      const items = (Array.isArray(b.items) ? b.items.slice(0, 300) : []).filter(it => isDay(it.day) && it.id);
+      const raws = await pipeline(items.map(it => ['HGET', 'd:' + it.day, String(it.id)]));
+      const sets = [];
+      items.forEach((it, i) => { if (!raws[i]) return; let st; try { st = JSON.parse(raws[i]); } catch { return; }
+        if (hide) { st.hidden = true; st.flag = st.flag || 'admin'; } else { delete st.hidden; st.reviewed = true; }
+        sets.push(['HSET', 'd:' + it.day, String(it.id), JSON.stringify(st)]); });
+      await pipeline(sets);
+      return send(res, 200, { ok: true, changed: sets.length });
+    }
+
     if (b.action === 'delete') {
       const items = Array.isArray(b.items) ? b.items.slice(0, 500) : [];
       const cmds = items.filter(it => isDay(it.day) && it.id).map(it => ['HDEL', 'd:' + it.day, String(it.id)]);

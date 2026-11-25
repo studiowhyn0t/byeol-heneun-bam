@@ -84,3 +84,59 @@ export function parseHash(arr) {
   }
   return out;
 }
+
+// ---- 쪽지 자동 숨김: 자살·자해 암시, 소수자 혐오 표현 ----
+// 걸린 쪽지는 쓴 사람 화면에서만 보이고 다른 사람에겐 보이지 않습니다. 관리자 화면에서 붉게 표시되고 다시 공개할 수 있어요.
+// 단어를 더하거나 빼려면 아래 목록만 고치면 됩니다. (띄어쓰기·기호를 지운 뒤 비교)
+const SELF_HARM = [
+  '자살', '자해', '죽고싶', '죽고십', '주고싶', '죽여줘', '죽여주세요', '죽어버리', '죽어야겠', '죽을래', '죽으려', '죽을거야', '살기싫', '살고싶지않', '그만살', '사라지고싶',
+  '뛰어내리', '목매', '목을매', '손목긋', '손목을긋', '극단적선택', '유서를쓰', '유서써', '수면제모아', '번개탄',
+  'suicide', 'suicidal', 'killmyself', 'killme', 'wanttodie', 'wannadie', 'wanttodie', 'gonnadie', 'endmylife', 'endit all'.replace(' ', ''), 'endingmylife',
+  'selfharm', 'cutmyself', 'dontwanttolive', 'donotwanttolive', 'dontwannalive', 'wishiwasdead', 'wishiweredead', 'betteroffdead',
+  '죽을래', '죽고파', '죽고시퍼', '죽어버릴', '죽어야지', '살기싫어', '살고싶지않아', '자살하', '목숨끊',
+];
+const HATE = [
+  '똥꼬충', '게이새끼', '호모새끼', '레즈충', '트젠충', '트랜스충', '변태성욕자', '한남충', '김치녀', '된장녀', '맘충', '틀딱', '급식충', '장애충', '병신',
+  '짱깨', '쪽바리', '깜둥이', '흑형', '똥남아', '조선족새끼', '홍어새끼', '홍어족', '개독', '난민새끼',
+  'nigger', 'nigga', 'faggot', 'fag', 'tranny', 'retard', 'chink', 'kike',
+];
+// 다른 언어 (띄어쓰기 없이 적기). 일상어와 겹쳐 오판이 잦은 말은 일부러 넣지 않았어요.
+const SELF_HARM_INTL = [
+  // 일본어
+  '死にたい', '死にたく', '自殺', '自傷', '消えたい', '殺して', '生きたくない', '飛び降り', 'リスカ', '首吊り',
+  // 중국어
+  '想死', '自杀', '自残', '自殘', '不想活', '活不下去', '杀了我', '殺了我', '跳楼', '跳樓', '割腕',
+  // 스페인어·포르투갈어·프랑스어·이탈리아어 (suicid- 는 공통)
+  'suicid', 'quieromorir', 'mequieromorir', 'matarme', 'noquierovivir', 'acabarconmivida', 'autolesi',
+  'queromorrer', 'mematar', 'naoqueroviver', 'nãoqueroviver', 'automutil',
+  'jeveuxmourir', 'enviedemourir', 'metuer', 'plusenviedevivre',
+  'vogliomorire', 'uccidermi', 'nonvogliopiuvivere', 'nonvogliopiùvivere',
+  // 독일어
+  'ichwillsterben', 'selbstmord', 'suizid', 'michumbringen', 'nichtmehrleben', 'selbstverletz',
+  // 베트남어·태국어·인도네시아어
+  'muốnchết', 'tựtử', 'tựsát', 'tựhại', 'khôngmuốnsống',
+  'อยากตาย', 'ฆ่าตัวตาย', 'ไม่อยากมีชีวิต', 'ทำร้ายตัวเอง',
+  'inginmati', 'pengenmati', 'maumati', 'bunuhdiri', 'tidakinginhidup', 'gamauhidup',
+  // 러시아어
+  'хочуумереть', 'суицид', 'самоубий', 'убейменя', 'нехочужить', 'покончитьссобой',
+];
+const HATE_INTL = [
+  'バカチョン', 'チョン公', '支那人', 'ガイジ', 'キチガイ', 'ホモ野郎', 'オカマ野郎',
+  '黑鬼', '死基佬', '人妖', '高丽棒子', '高麗棒子', '小日本', '支那', '残废', '殘廢', '弱智', '阿三',
+  'maricón', 'maricon', 'sudaca', 'negrata', 'bollera',
+  'pédé', 'tarlouze', 'bougnoule', 'youpin', 'bamboula',
+  'schwuchtel', 'kanake', 'neger', 'spast', 'zigeuner',
+  'sapatão', 'traveco', 'retardado',
+  'bêđê', 'pêđê', 'ไอ้ตุ๊ด', 'ปัญญาอ่อน', 'banci', 'bencong',
+  'пидор', 'пидорас', 'хохлы', 'чурка', 'жиды', 'жидов',
+  'frocio', 'ricchione', 'terrone', 'mongoloide', 'ritardato',
+];
+SELF_HARM.push(...SELF_HARM_INTL.map(w => w.normalize('NFC').toLowerCase()));
+HATE.push(...HATE_INTL.map(w => w.normalize('NFC').toLowerCase()));
+const norm = s => String(s || '').toLowerCase().normalize('NFC').replace(/[\s\p{P}\p{S}_]+/gu, '');
+export function moderate(text) {
+  const t = norm(text);
+  if (SELF_HARM.some(w => t.includes(w))) return 'selfharm';
+  if (HATE.some(w => t.includes(w))) return 'hate';
+  return null;
+}
