@@ -44,6 +44,11 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 #donateModal .dacts a,#donateModal .dacts button{color:#fff;text-decoration:underline;text-underline-offset:4px}
 #donateModal .dacts button{color:rgba(255,255,255,.55)}
 #rOrig,#rFull{padding:12px 16px;margin:0}
+#rShare{position:fixed;left:0;top:0;z-index:4;transform:translate(-50%,-50%);width:44px;height:44px;display:flex;align-items:center;justify-content:center;padding:0;background:transparent}
+#rShare svg{width:19px;height:19px;fill:none;stroke:rgba(50,50,56,.62);stroke-width:1.7;stroke-linecap:round;stroke-linejoin:round}
+#giftHint{position:fixed;left:50%;transform:translateX(-50%);z-index:3;font-size:20px;color:rgba(255,255,255,.6);white-space:nowrap;animation:dfade 1.2s ease both}
+#giftTheme{position:fixed;left:0;right:0;z-index:3;text-align:center;font-size:clamp(28px,5.2vw,40px);pointer-events:none;padding:0 14px;animation:dfade 1.2s ease both}
+#giftCta{position:fixed;left:50%;transform:translate(-50%,-50%);z-index:5;font-size:22px;color:#fff;text-decoration:underline;text-underline-offset:4px;padding:10px 16px;animation:dfade 1.2s ease both}
 #sndBtn{font-size:22px;color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
 #backBtn{font-size:22px;text-decoration:underline;text-underline-offset:4px}
 #delTag{position:fixed;left:50%;top:14px;transform:translateX(-50%);z-index:5;font-size:19px;color:#ff9c9c;text-decoration:underline;text-underline-offset:4px}
@@ -155,6 +160,10 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 <div id="madeBtns" class="hide"><button id="reopenBtn">다시 펼치기</button><button id="sendBtn">보내기</button></div>
 <button id="rDel" class="lbl hide">지우기</button>
 <button id="rOrig" class="lbl hide">원문 보기</button>
+<button id="rShare" class="hide" aria-label="공유하기"><svg viewBox="0 0 24 24"><path d="M12 14V3.5M8 7l4-4 4 4"/><path d="M6.5 10.5H5v9.5h14v-9.5h-1.5"/></svg></button>
+<div id="giftHint" class="hide"></div>
+<div id="giftTheme" class="hide"></div>
+<button id="giftCta" class="hide">나도 답하기</button>
 <a id="rFull" class="lbl hide" target="_blank" rel="noopener noreferrer" style="color:inherit">전문 보기</a>
 <div id="rPinRow" class="pinrow hide">삭제 비밀번호: <span class="slots"><i></i><i></i><i></i><i></i><input id="rPin" type="tel" inputmode="numeric" maxlength="4" autocomplete="off"></span><button id="rPinGo">확인</button></div>
 <div id="fan"></div>
@@ -462,6 +471,21 @@ UI_KEYS.push('후원하기','보태주신 마음은 번역 기능 및 사이트 
   ru:['Поддержать','Ваша поддержка пойдёт на перевод и работу сайта.','Чтобы это место оставалось тёплым для всех!','Поддержать','Закрыть'],
   it:['Sostieni','Il tuo sostegno servirà per la traduzione e per mantenere il sito.','Perché questo posto resti accogliente per tutti!','Vai a sostenere','Chiudi']};
   for(const k in D)UI[k].push(...D[k]);}
+UI_KEYS.push('공유하기','누군가 당신에게 종이별을 보냈어요','링크를 복사했어요','별을 눌러 펼쳐 보세요','나도 답하기','이 별은 하늘을 떠났어요','오늘의 별을 모두 헤아렸어요','이 밤의 별을 모두 헤아렸어요');
+{const D={en:['Share','Someone sent you a paper star','Link copied','Tap the star to unfold it','Answer it too','This star has left the sky','You\'ve counted all of today\'s stars','You\'ve counted all the stars of this night'],
+  ja:['共有','誰かがあなたに折り紙の星を送りました','リンクをコピーしました','星をタップして広げてみてください','わたしも答える','この星は空を去りました','今日の星をすべて数えました','この夜の星をすべて数えました'],
+  zhs:['分享','有人送给你一颗纸星星','已复制链接','点一下星星，把它展开','我也来回答','这颗星星已经离开了夜空','你已数完今天所有的星星','你已数完这一夜所有的星星'],
+  zht:['分享','有人送給你一顆紙星星','已複製連結','點一下星星，把它展開','我也來回答','這顆星星已經離開了夜空','你已數完今天所有的星星','你已數完這一夜所有的星星'],
+  es:['Compartir','Alguien te envió una estrella de papel','Enlace copiado','Toca la estrella para desplegarla','Responder yo también','Esta estrella ya dejó el cielo','Has contado todas las estrellas de hoy','Has contado todas las estrellas de esta noche'],
+  fr:['Partager','Quelqu’un t’a envoyé une étoile en papier','Lien copié','Touche l’étoile pour la déplier','Répondre moi aussi','Cette étoile a quitté le ciel','Tu as compté toutes les étoiles d’aujourd’hui','Tu as compté toutes les étoiles de cette nuit'],
+  de:['Teilen','Jemand hat dir einen Papierstern geschickt','Link kopiert','Tippe auf den Stern, um ihn aufzufalten','Ich antworte auch','Dieser Stern hat den Himmel verlassen','Du hast alle Sterne von heute gezählt','Du hast alle Sterne dieser Nacht gezählt'],
+  pt:['Compartilhar','Alguém te enviou uma estrela de papel','Link copiado','Toque na estrela para desdobrá-la','Responder também','Esta estrela já deixou o céu','Você contou todas as estrelas de hoje','Você contou todas as estrelas desta noite'],
+  vi:['Chia sẻ','Ai đó đã gửi cho bạn một ngôi sao giấy','Đã sao chép liên kết','Chạm vào ngôi sao để mở ra','Mình cũng trả lời','Ngôi sao này đã rời bầu trời','Bạn đã đếm hết sao của hôm nay','Bạn đã đếm hết sao của đêm này'],
+  th:['แชร์','มีคนส่งดาวกระดาษมาให้คุณ','คัดลอกลิงก์แล้ว','แตะที่ดาวเพื่อคลี่ออก','ฉันก็จะตอบด้วย','ดาวดวงนี้ได้จากท้องฟ้าไปแล้ว','คุณนับดาวของวันนี้ครบแล้ว','คุณนับดาวของคืนนี้ครบแล้ว'],
+  id:['Bagikan','Seseorang mengirimimu bintang kertas','Tautan disalin','Ketuk bintang untuk membukanya','Aku juga mau menjawab','Bintang ini sudah meninggalkan langit','Kamu sudah menghitung semua bintang hari ini','Kamu sudah menghitung semua bintang malam ini'],
+  ru:['Поделиться','Кто-то прислал вам бумажную звезду','Ссылка скопирована','Нажмите на звезду, чтобы развернуть её','Ответить тоже','Эта звезда покинула небо','Вы сосчитали все сегодняшние звёзды','Вы сосчитали все звёзды этой ночи'],
+  it:['Condividi','Qualcuno ti ha inviato una stella di carta','Link copiato','Tocca la stella per aprirla','Rispondo anch’io','Questa stella ha lasciato il cielo','Hai contato tutte le stelle di oggi','Hai contato tutte le stelle di questa notte']};
+  for(const k in D)UI[k].push(...D[k]);}
 const TR=true;let LMODE=(()=>{try{const v=localStorage.getItem('byeol-lang2');if(v==='all'||v==='loc')return v;}catch{}return'loc';})();
 const curTarget=()=>LMODE==='all'?'EN-US':ALT_TARGET;const KO_VIEW=()=>LMODE==='loc'&&IS_KO;
 const UIT=s=>{const L=LMODE==='all'?'en':ALT_UI;if(L==='ko')return s;const a=UI[L];const i=UI_KEYS.indexOf(s);return a&&i>=0?a[i]:s;};
@@ -543,6 +567,10 @@ const gone=new Map();let MINE=new Set();try{MINE=new Set(JSON.parse(localStorage
 // 자동 숨김된 내 쪽지: 서버는 남들에게 보여주지 않으므로, 내 기기에만 보관해서 내 하늘에선 보이게
 let MYH=[];try{MYH=JSON.parse(localStorage.getItem('byeol-myhidden')||'[]')||[];}catch{}
 const saveMYH=()=>{try{const lim=dayKey(-4);MYH=MYH.filter(it=>it.day>=lim).slice(-60);localStorage.setItem('byeol-myhidden',JSON.stringify(MYH));}catch{}};
+// 한 번 펼쳐 본 별: 내 기기에만 기록 (서버 요청 없음). 내 별·주제별·첫 화면 별은 제외
+let SEEN=new Map();try{SEEN=new Map(JSON.parse(localStorage.getItem('byeol-seen')||'[]'));}catch{}
+const saveSeen=()=>{try{const lim=dayKey(-5);for(const[k,d]of SEEN)if(d<lim)SEEN.delete(k);localStorage.setItem('byeol-seen',JSON.stringify([...SEEN]));}catch{}};
+const canVanish=st=>!!st&&st.kind!=='npc'&&st.kind!=='poem'&&st.owner!=='me'&&!st.local&&!st.myHidden;
 const saveMine=()=>{try{localStorage.setItem('byeol-mine',JSON.stringify([...MINE]));}catch{}};
 const me=()=>'me';online=true;
 let adminPw=null;
@@ -554,7 +582,7 @@ async function loadState(){try{const j=await api('/api/state');const seen=new Se
     const now_=Date.now();for(const[k,t]of[...gone])if(now_-t>90000)gone.delete(k);
     for(const it of j.stars||[]){const st=normStar(it);if(gone.has(st.key))continue;seen.add(st.key);const old=stars.get(st.key);
       if(old){const keep={_dy:old._dy,_rot:old._rot,local:old.local};Object.assign(old,st,keep);}else stars.set(st.key,st);}
-    for(const it of MYH){const k=it.day+':'+it.id;if(gone.has(k))continue;seen.add(k);if(!stars.has(k)){const st=normStar(it);st.owner='me';stars.set(k,st);}}
+    for(const it of MYH){const k=it.day+':'+it.id;if(gone.has(k))continue;seen.add(k);if(!stars.has(k)){const st=normStar(it);st.owner='me';st.myHidden=true;stars.set(k,st);}}
     for(const k of[...stars.keys()])if(!seen.has(k)&&!stars.get(k).local)stars.delete(k);
     config={lines:Array.isArray(j.config&&j.config.lines)?j.config.lines:[],themes:(j.config&&j.config.themes)||{},pos:(j.config&&j.config.pos)||{}};
     DONATE=(j.donate&&typeof j.donate.kakao==='string')?j.donate.kakao:'';DONATE_INT=(j.donate&&typeof j.donate.kofi==='string')?j.donate.kofi:'';updDonate();onConfig();updJar();if(base==='jar'&&!jarClosing)buildJar(false);prefetchTr();}catch(e){if(!loadState.warned){loadState.warned=1;toast('하늘을 불러오지 못했어요');}}}
@@ -584,7 +612,7 @@ function onConfig(){const lines=POEM_KO;
   landingStars=lines.map((text,i)=>({i,key:'poem:'+i,kind:'poem',text,color:COLORS[[2,0,1,3,0,4,5][i%7]],ix:pts[i].x,iy:pts[i].y,x:pts[i].x,y:pts[i].y,rot:rnd()*1.2,tx:(rnd()-.5)*.5,ty:(rnd()-.5)*.5}));
   if(mode==='compose')$('theme').textContent=dayPrefix(0)+themeShow(dayKey());if(base==='jar')buildJar(false);}
 loadState();setInterval(()=>{if(!document.hidden)loadState();},45000);
-(()=>{try{if(sessionStorage.getItem('byeol-hit'))return;sessionStorage.setItem('byeol-hit','1');}catch{}api('/api/hit',{lang:NAVL.split('-')[0]}).catch(()=>{});})();
+(()=>{try{if(sessionStorage.getItem('byeol-hit'))return;sessionStorage.setItem('byeol-hit','1');}catch{}api('/api/hit',{lang:NAVL.split('-')[0],ref:/[?&]s=/.test(location.search)?'share':''}).catch(()=>{});})();
 // 번역 사용량 절약: 쪽지는 펼쳐 볼 때만 번역하고, 미리 번역하는 건 짧은 주제 몇 개뿐
 function prefetchTr(){if(!TR)return;const L=[];
   for(let o=0;o<4;o++){const t=config.themes&&config.themes[dayKey(-o)];if(t)L.push(t);}wantTr(L);}
@@ -607,7 +635,8 @@ const CARE={ko:['오늘을 지나온 당신을 응원해요.','내일의 밤하�
   ru:['Мы рядом с вами — вы справились с этим днём.','Ждём вас и под завтрашним ночным небом.'],
   it:['Facciamo il tifo per te, che hai superato anche questa giornata.','Ti aspettiamo anche sotto il cielo di domani.']};
 // 쪽지를 쓴 사람 언어로, 하늘 가운데에 잠깐 빛나며 나타나고 터치하면 사라짐 (All 모드면 영어)
-function showCare(){const L=CARE[LMODE==='all'?'en':ALT_UI]||CARE.en;const m=$('careMsg');m.innerHTML='';
+function showCare(){showSkyMsg(CARE[LMODE==='all'?'en':ALT_UI]||CARE.en);}
+function showSkyMsg(L){const m=$('careMsg');m.innerHTML='';
   L.forEach((t,i)=>{if(i)m.append(document.createElement('br'));m.append(t);});const c=$('careModal');c.classList.remove('out');show('careModal',true);}
 function hideCare(){const c=$('careModal');if(c.classList.contains('hide'))return;c.classList.add('out');setTimeout(()=>{show('careModal',false);c.classList.remove('out');},900);}
 let DONATE='',DONATE_INT='';
@@ -625,13 +654,50 @@ function applyUI(){document.title=UIT('별 헤는 밤');$('madeBy').textContent=
   if(mode==='compose')$('theme').textContent=dayPrefix(0)+themeShow(dayKey());if(base==='jar'&&!jarClosing)buildJar(false);}
 $('langBtn').addEventListener('pointerdown',e=>e.stopPropagation());$('madeBy').addEventListener('pointerdown',e=>e.stopPropagation());$('donateBtn').addEventListener('pointerdown',e=>e.stopPropagation());$('donateModal').addEventListener('pointerdown',e=>e.stopPropagation());
 $('donateBtn').onclick=()=>show('donateModal',true);$('careModal').addEventListener('pointerdown',e=>{e.stopPropagation();e.preventDefault();hideCare();});$('donateClose').onclick=()=>show('donateModal',false);
-$('donateModal').onclick=e=>{if(e.target===$('donateModal'))show('donateModal',false);};$('donateGo').addEventListener('click',()=>setTimeout(()=>show('donateModal',false),300));$('rOrig').addEventListener('pointerdown',e=>e.stopPropagation());$('rFull').addEventListener('pointerdown',e=>e.stopPropagation());
+$('donateModal').onclick=e=>{if(e.target===$('donateModal'))show('donateModal',false);};$('donateGo').addEventListener('click',()=>setTimeout(()=>show('donateModal',false),300));$('rOrig').addEventListener('pointerdown',e=>e.stopPropagation());$('rShare').addEventListener('pointerdown',e=>e.stopPropagation());
+const canShare=st=>!!st&&st.kind!=='npc'&&st.kind!=='poem'&&!st.hidden&&!st.myHidden&&!String(st.key).startsWith('tmp:')&&/^[A-Za-z0-9]+$/.test(String(st.id||''));
+async function shareStar(st){if(!canShare(st))return;const url=location.origin+location.pathname+'?s='+st.day+'.'+st.id;const text=UIT('누군가 당신에게 종이별을 보냈어요');
+  if(navigator.share){try{await navigator.share({title:UIT('별 헤는 밤'),text,url});return;}catch(e){if(e&&e.name==='AbortError')return;}}
+  try{await navigator.clipboard.writeText(url);toast('링크를 복사했어요');return;}catch{}
+  try{const t=document.createElement('textarea');t.value=url;t.style.position='fixed';t.style.opacity='0';document.body.appendChild(t);t.select();document.execCommand('copy');t.remove();toast('링크를 복사했어요');}catch{toast(url,5000);}}
+$('rShare').onclick=()=>{if(reading)shareStar(reading.st);};$('rFull').addEventListener('pointerdown',e=>e.stopPropagation());
 $('rOrig').onclick=()=>{if(!reading)return;reading.orig=!reading.orig;onTrArrive();};
 $('langBtn').onclick=()=>{LMODE=LMODE==='all'?'loc':'all';try{localStorage.setItem('byeol-lang2',LMODE);}catch{}if(reading)reading.orig=false;applyUI();prefetchTr();onTrArrive();};
 addEventListener('visibilitychange',()=>{if(!document.hidden)loadState();});
 /* =================== 하늘 =================== */
 const SKY={x0:0.04,x1:0.96,y0:0.09,y1:0.74};
 let npcWas=false;
+/* ---- 공유받은 별: ?s=날짜.아이디 로 들어오면 접힌 별을 한 단계씩 직접 펼쳐 봄 (접기의 정확히 역순) ---- */
+let gift=null;const giftBg=[];
+function startGift(day,id){setBase('gift');gift={day,id,P:0,target:0};show('giftHint',false);
+  const fontReady=document.fonts?document.fonts.load(`40px ${FONT}`).catch(()=>{}):Promise.resolve();
+  Promise.all([api('/api/star?d='+encodeURIComponent(day)+'&i='+encodeURIComponent(id)),fontReady]).then(([j])=>{if(!gift||base!=='gift')return;const st=normStar({...j.star,day});
+    gift.st=st;gift.theme=j.theme||'';gift.text=trOf(st.text);gift.G=geomOfText(gift.text);gift.P=gift.G.KE;gift.target=gift.G.KE;drawText(gift.G,gift.text);
+    $('giftHint').textContent=UIT('별을 눌러 펼쳐 보세요');show('giftHint',true);})
+  .catch(()=>{if(!gift)return;gift.missing=true;showSkyMsg([UIT('이 별은 하늘을 떠났어요')]);showGiftCta();});}
+function showGiftCta(){const b=$('giftCta');b.textContent=UIT('나도 답하기');if(!gift||!gift.G)b.style.top=(VH*0.62)+'px';show('giftCta',true);}
+function giftThemeText(){const d=gift.day;let o=-1;for(let k=0;k<4;k++)if(dayKey(-k)===d)o=k;const t=trOf(gift.theme,true);return(o>=0?dayPrefix(o):'')+t;}
+// '나도 답하기': 쪽지는 다시 접히고, 배경 별들은 별똥별로 떠난 뒤, 실제 오늘 하늘의 별들이 차례로 떠오름
+// '나도 답하기': 쪽지만 조용히 다시 접혀 사라지고, 뒤에 이미 떠 있던 오늘 하늘이 그대로 이어짐
+function leaveGift(){if(!gift||gift.leaving)return;gift.leaving=performance.now();['giftHint','giftTheme','giftCta'].forEach(id=>show(id,false));
+  if(gift.G)gift.target=gift.G.KE;
+  setTimeout(()=>{try{history.replaceState(null,'',location.pathname);}catch{}setBase('today');
+    setTimeout(()=>{if(base==='today'&&mode==='idle')pickPaper(Math.floor(Math.random()*COLORS.length));},700);},gift.G?1500:200);}
+function drawGift(dt,now){
+  if(!gift||!gift.G)return;const G=gift.G;gl.clear(gl.DEPTH_BUFFER_BIT);
+  if(gift.P>gift.target)gift.P=Math.max(gift.target,gift.P-dt/0.95*Math.max(1,(gift.P-gift.target)*2.2));
+  else if(gift.P<gift.target)gift.P=Math.min(gift.target,gift.P+dt/0.18);
+  let Mw=viewMatrix(G,gift.P,composeTarget(G),foldView());
+  let dimL=1;if(gift.leaving){const el=(now-gift.leaving)/1000-0.85;if(el>0){const u=Math.min(1,el/0.6),e=u*u*(3-2*u);const fv=foldView();const S=Math.max(0.001,1-e);
+      const[wx,wy]=s2w(fv.cx,fv.cy);Mw=mul(T(wx,wy,0),mul(Sc(S),mul(T(-wx,-wy,0),Mw)));if(u>=1)return;}}
+  drawMesh(G,poseMesh(G,gift.P),Mw,hex2(gift.st.color),1,1,textCut(G,gift.P));
+  const fv=foldView(),fs=foldSize();$('giftHint').style.top=(fv.cy+fs*0.42)+'px';
+  if(!gift.leaving)uiRectNext=gift.done?{L:0,R:VW,T:Math.min(fv.cy-fs*0.6,parseFloat($('giftTheme').style.top)||fv.cy)-14,B:(parseFloat($('giftCta').style.top)||fv.cy+fs*0.6)+30}:{L:fv.cx-fs*0.62,R:fv.cx+fs*0.62,T:fv.cy-fs*0.62,B:fv.cy+fs*0.62};
+  if(gift.P<=KS+0.001&&!gift.done&&!gift.leaving){gift.done=true;show('giftHint',false);
+    if(gift.theme){const t=$('giftTheme');t.textContent=giftThemeText();show('giftTheme',true);}showGiftCta();}
+  if(gift.done&&!gift.leaving){const s=stripScreen(G,Mw,G.tailU0,1);const px=stripH();
+    $('giftTheme').style.top=Math.max(60,s.a[1]-Math.max(78,px*2.6))+'px';$('giftCta').style.top=Math.min(VH-90,s.a[1]+Math.max(60,px*2.2))+'px';}}
+
 const npc={key:'npc',kind:'npc',color:NPC_COLOR,x:0.5,y:0.5,rot:0.1,tx:0,ty:0};
 const layoutKey=()=>VW/VH>=1?'wide':'narrow';let arrange=null;
 function poemSrc(st){const w=config.pos&&Array.isArray(config.pos.wide)&&config.pos.wide[st.i];return(w&&isFinite(w[0])&&isFinite(w[1]))?w:[st.ix,st.iy];}
@@ -693,12 +759,24 @@ function skyFor(day,pool){let m=skyMem.get(day);if(!m){m={shown:new Set(),queue:
     let fresh=pool.filter(s=>!known.has(s.key)).sort((a,b)=>b.t-a.t);
     // 지난 날은 처음 열 때 무작위로 골라 보여주기 (서버는 이미 받은 목록만 사용, 추가 요청 없음)
     if(!m.init&&day!==dayKey()){for(let i=fresh.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[fresh[i],fresh[j]]=[fresh[j],fresh[i]];}}
-    for(const st of fresh){if(st.local||m.shown.size<SHOW)m.shown.add(st.key);else if(m.init)m.queue.unshift(st.key);else m.queue.push(st.key);}}
+    fresh.sort((a,b)=>(SEEN.has(a.key)?1:0)-(SEEN.has(b.key)?1:0));
+    for(const st of fresh){if(st.local||st.owner==='me'||(m.shown.size<SHOW&&!SEEN.has(st.key)))m.shown.add(st.key);else if(m.init)m.queue.unshift(st.key);else m.queue.push(st.key);}}
   m.init=true;return m;}
+function pickNext(m){const i=m.queue.findIndex(k=>!SEEN.has(k));return i<0?null:m.queue.splice(i,1)[0];}
+// 펼쳐 본 별은 닫으면 별똥별이 되어 떠나고, 아직 안 본 별이 대신 나타남
+function vanishStar(st){if(!canVanish(st)||!(base==='today'||base==='day')||st.day!==curSkyDay())return;SEEN.set(st.key,st.day);saveSeen();
+  const m=skyMem.get(st.day);if(!m||!m.shown.has(st.key))return;const ang=(Math.random()<0.5?1:-1)*(0.3+Math.random()*0.3);
+  FX.set(st.key,{type:'fall',swap:m,t0:performance.now(),dx:Math.sin(ang),dy:Math.cos(ang)});setTimeout(()=>checkAllSeen(st.day),3300);}
+// 그날 볼 별을 모두 봤으면 안내 문구를 띄우고 처음부터 다시 등장
+function checkAllSeen(day){const pool=[...stars.values()].filter(s=>s.day===day&&canVanish(s));if(!pool.length||!pool.every(s=>SEEN.has(s.key)))return;
+  for(const s of pool)SEEN.delete(s.key);saveSeen();const m=skyMem.get(day);
+  if(m){const now=performance.now();let n=0;for(const s of pool){if(m.shown.size>=SHOW)break;if(m.shown.has(s.key))continue;m.queue=m.queue.filter(k=>k!==s.key);m.shown.add(s.key);FX.set(s.key,{type:'appear',t0:now+400+(n++)*90});}}
+  if(curSkyDay()===day)showSkyMsg([UIT(day===dayKey()?'오늘의 별을 모두 헤아렸어요':'이 밤의 별을 모두 헤아렸어요')]);}
 function curSkyDay(){return base==='today'?dayKey():base==='day'?viewDay:null;}
 function skyStars(day){const pool=[...stars.values()].filter(s=>s.day===day);const m=skyFor(day,pool);
   return pool.filter(s=>m.shown.has(s.key)||(reading&&reading.st.key===s.key));}
 function visibleStars(){if(base==='landing')return landingStars;
+  if(base==='gift')return skyStars(dayKey());
   if(base==='today'||base==='day'){const a=skyStars(curSkyDay());if(mode==='idle'||mode==='read')a.push(npc);return a;}return[];}
 function emptySpot(){const k=dayKey();const pts=skyStars(k).map(s=>[s.x,s.y]);pts.push([0.5,0.5]);
   let best=[Math.random(),Math.random()],bd=-1;for(let t=0;t<120;t++){const x=Math.random(),y=Math.random()*0.92;let d=9;
@@ -706,9 +784,9 @@ function emptySpot(){const k=dayKey();const pts=skyStars(k).map(s=>[s.x,s.y]);pt
 const sizeOf=st=>starPx()*(st.kind==='npc'?1.25:1);
 /* =================== 화면 전환 =================== */
 let spread=null;
-function setBase(b,day,opt){if(reading)finishRead();const prev=base,prevDay=viewDay;base=b;spread=opt&&opt.spread||null;viewDay=day||null;
+function setBase(b,day,opt){if(reading)finishRead();const prev=base,prevDay=viewDay;base=b;if(b!=='gift'){if(gift&&/[?&]s=/.test(location.search)){try{history.replaceState(null,'',location.pathname);}catch{}}gift=null;['giftHint','giftTheme','giftCta'].forEach(id=>show(id,false));}spread=opt&&opt.spread||null;viewDay=day||null;
   show('landing',b==='landing');show('hTitle',b!=='landing');show('madeBy',b==='landing');updDonate();updJar();$('jarBtn').classList.toggle('tilt',b==='jar');
-  show('backBtn',b==='day');$('fan').classList.toggle('away',b==='jar'||b==='day');show('jarView',b==='jar');
+  show('backBtn',b==='day');$('fan').classList.toggle('away',b==='jar'||b==='day'||b==='gift');show('jarView',b==='jar');
   $('hTitle').textContent=b==='day'?dayTitle(dayOffset(day)):UIT('별 헤는 밤');prefetchTr();if(b==='jar')buildJar(prev==='day'?{gather:prevDay}:true);}
 function hasPast(){for(const st of stars.values())for(let i=1;i<4;i++)if(st.day===dayKey(-i))return true;return false;}
 function updJar(){show('jarBtn',(base==='today'&&hasPast())||base==='jar');}
@@ -794,7 +872,7 @@ function readViews(r){const G=r.G;const[sx,sy]=toPx(r.st);const sz=sizeOf(r.st);
   return{vA:{spx,cx:kx,cy:ky},vB};}
 let readLift=0,delWc={};
 function delW(){const t=$('rDel').textContent||'지우기';if(delWc[t])return delWc[t];tctx.font=`22px ${FONT}`;return delWc[t]=Math.ceil(tctx.measureText(t).width)+6;}
-function hideReadLbls(){['rDel','rPinRow','rOrig','rFull'].forEach(id=>show(id,false));$('rDel').textContent=UIT('지우기');$('rDel').dataset.c='';}
+function hideReadLbls(){['rDel','rPinRow','rOrig','rFull','rShare'].forEach(id=>show(id,false));$('rDel').textContent=UIT('지우기');$('rDel').dataset.c='';}
 function closeRead(){if(!reading)return;reading.dir=-1;hideReadLbls();$('rPin').blur();}
 $('rDel').onclick=async()=>{const st=reading&&reading.st;if(!st)return;
   if(delMode){if(!$('rDel').dataset.c){$('rDel').dataset.c='1';$('rDel').textContent=UIT('정말 지우기');return;}
@@ -905,7 +983,7 @@ function renderTop(list){const box=$('aTop');box.innerHTML='';$('aTopDay').textC
   box.innerHTML=html;}
 /* ---- 방문 통계 ---- */
 const LANG_NAME={ko:'한국어',en:'영어',ja:'일본어',zh:'중국어',es:'스페인어',fr:'프랑스어',de:'독일어',pt:'포르투갈어',vi:'베트남어',th:'태국어',id:'인도네시아어',ru:'러시아어',it:'이탈리아어',etc:'기타'};
-const SRC_NAME={instagram:'인스타그램',threads:'스레드',kakao:'카카오톡',facebook:'페이스북',mobile_web:'모바일 브라우저',desktop_web:'PC 브라우저'};
+const SRC_NAME={share:'공유 링크',instagram:'인스타그램',threads:'스레드',kakao:'카카오톡',facebook:'페이스북',mobile_web:'모바일 브라우저',desktop_web:'PC 브라우저'};
 async function loadStats(){const box=$('aStats');box.innerHTML='<div class="sub">불러오는 중…</div>';
   try{const j=await adminCall('stats');const rows=j.rows||[];const sum=(f)=>rows.reduce((a,r)=>a+f(r),0);
     const agg=(key)=>{const o={};rows.forEach(r=>{for(const[k,v]of Object.entries(r[key]||{}))o[k]=(o[k]||0)+v;});return Object.entries(o).sort((a,b)=>b[1]-a[1]);};
@@ -960,12 +1038,13 @@ glc.addEventListener('pointerdown',e=>{ptr={x:e.clientX,y:e.clientY};
 glc.addEventListener('pointermove',e=>{if(stirPtr&&e.buttons!==0||stirPtr&&e.pointerType==='touch')stirMove(e.clientX,e.clientY);if(mode==='arrange'&&arrange&&arrange.drag>=0)arrange.pts[arrange.drag]=[clamp(e.clientX/VW,0.02,0.98),clamp(e.clientY/VH,0.06,0.94)];});
 addEventListener('pointerup',()=>{stirPtr=null;});addEventListener('pointercancel',()=>{stirPtr=null;});
 glc.addEventListener('pointerup',e=>{if(mode==='arrange'){if(arrange)arrange.drag=-1;ptr=null;return;}const tap=ptr&&Math.hypot(e.clientX-ptr.x,e.clientY-ptr.y)<10;ptr=null;if(!tap)return;
+  if(base==='gift'){if(gift&&gift.G&&!gift.leaving&&gift.target>KS&&gift.P-gift.target<3)gift.target=Math.max(KS,gift.target-1);return;}
   const x=e.clientX,y=e.clientY;
   if(mode==='fold'){foldStep();return;}
   if(mode==='made'||mode==='unfold'||mode==='send')return;
   if(mode==='read'){if(reading&&reading.dir>0&&reading.P<=KS+0.01){
       // 쪽지 아래 버튼(원문 보기, 전문 보기, 지우기) 근처를 살짝 빗나간 터치는 닫지 않음
-      for(const id of['rOrig','rFull','rDel']){const e=$(id);if(e.classList.contains('hide'))continue;const r=e.getBoundingClientRect();if(x>r.left-22&&x<r.right+22&&y>r.top-22&&y<r.bottom+22)return;}
+      for(const id of['rOrig','rFull','rDel','rShare']){const e=$(id);if(e.classList.contains('hide'))continue;const r=e.getBoundingClientRect();if(x>r.left-22&&x<r.right+22&&y>r.top-22&&y<r.bottom+22)return;}
       closeRead();}return;}
   if(mode==='compose'){if(!inp.value.trim())cancelCompose();else inp.focus({preventScroll:true});return;}
   let best=null,bd=1e9;
@@ -1002,8 +1081,8 @@ function scheduleFx(now){if(base==='landing'||base==='jar'||!(mode==='idle'||mod
   if(now>fxNextGlow){const st=list[Math.floor(Math.random()*list.length)];FX.set(st.key,{type:'glow',t0:now,spin:(Math.random()<0.5?1:-1)});fxNextGlow=now+2200+Math.random()*2800;}}
 function glowAt(px,py,r,color,a){if(a<=0.01)return;const[cr,cg,cb]=hex2(color).map(v=>v*255|0);const g=bx.createRadialGradient(px,py,0,px,py,r);
   g.addColorStop(0,`rgba(255,255,248,${0.22*a})`);g.addColorStop(0.35,`rgba(${cr},${cg},${cb},${0.16*a})`);g.addColorStop(1,`rgba(${cr},${cg},${cb},0)`);bx.fillStyle=g;bx.fillRect(px-r,py-r,2*r,2*r);}
-function applyFx(st,now,px,py,size){const f=FX.get(st.key);if(!f)return{px,py,size,dim:1,rot:0};const el=(now-f.t0)/1000;
-  if(f.type==='appear'){const GROW=1.4,T_=4.2;if(el>T_){FX.delete(st.key);return{px,py,size,dim:1,rot:0};}
+function applyFx(st,now,px,py,size){const f=FX.get(st.key);if(!f)return{px,py,size,dim:1,rot:0};const el=(now-f.t0)/1000;if(el<0)return{px,py,size,dim:1,rot:0};
+  if(f.type==='appear'){const GROW=1.4,T_=4.2;if(el<0)return{px,py,size:0,dim:1,rot:0};if(el>T_){FX.delete(st.key);return{px,py,size,dim:1,rot:0};}
     const e=1-Math.pow(1-Math.min(1,el/GROW),3);const glow=el<GROW?Math.sin(PI/2*el/GROW):Math.pow(1-(el-GROW)/(T_-GROW),1.6);
     // 별 보내기 때처럼 별 색의 은은한 후광
     const[cr,cg,cb]=hex2(st.color).map(v=>v*255|0);const gr=size*(1.6+1.4*glow);const g=bx.createRadialGradient(px,py,0,px,py,gr);
@@ -1024,9 +1103,10 @@ function applyFx(st,now,px,py,size){const f=FX.get(st.key);if(!f)return{px,py,si
       bx.fillStyle=`rgba(255,255,240,${0.75*tw})`;bx.beginPath();bx.arc(jx,jy,rr*0.55,0,6.283);bx.fill();
       bx.strokeStyle=`rgba(255,255,240,${0.45*tw})`;bx.lineWidth=0.8;bx.beginPath();bx.moveTo(jx-rr*1.6,jy);bx.lineTo(jx+rr*1.6,jy);bx.moveTo(jx,jy-rr*1.6);bx.lineTo(jx,jy+rr*1.6);bx.stroke();}
     glowAt(x,y,size*1.9,st.color,1.6*(1-u*0.8));return{px:x,py:y,size:size*Math.max(0.02,1-0.95*u*u),dim:1.4-0.2*u,rot:u*1.2};}
+  if(f.noBack)return{px,py,size:0,dim:1,rot:0};
   if(f.swap){const m=f.swap;FX.delete(st.key);if(reading&&reading.st.key===st.key)return{px,py,size,dim:1,rot:0};
     m.shown.delete(st.key);m.queue.push(st.key);
-    if(m.shown.size<SHOW){const nk=m.queue.shift();if(nk){m.shown.add(nk);FX.set(nk,{type:'appear',t0:now});}}
+    if(m.shown.size<SHOW){const nk=pickNext(m);if(nk){m.shown.add(nk);FX.set(nk,{type:'appear',t0:now});}}
     return{px,py,size:0,dim:1,rot:0};}
   if(el<FALL+BACK){const u=(el-FALL)/BACK;const e=1-Math.pow(1-u,3);glowAt(px,py,size*1.4,st.color,Math.sin(PI*u)*0.6);
     return{px,py,size:size*Math.max(0.01,e),dim:1+0.12*Math.sin(PI*u),rot:(1-e)*0.8};}
@@ -1049,6 +1129,7 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;fra
     // 주제별이 (별 보내기 등으로) 잠시 사라졌다 다시 나타날 때는 은은한 빛과 함께 천천히 떠오르게
     if(npcOn&&!npcWas&&!(spread&&base==='day'))FX.set(npc.key,{type:'appear',t0:now});npcWas=npcOn;
     for(const st of vs){if(reading&&reading.st.key===st.key)continue;drawSkyStar(st,now);}}
+  if(base==='gift')drawGift(dt,now);
   if(base==='jar'&&jarClosing){const sp=starPx()*0.62;const tt=(now-jarClosing)/1000;
     for(const pile of jarCols)for(const p of pile){const u=clamp((tt-p.rdelay)/0.6,0,1);if(u>=1)continue;const e=u*u;
       const c1x=p.px+(p.cx-p.px)*0.6,c1y=Math.min(p.py,p.cy)-VH*0.06;const x=(1-e)*(1-e)*p.px+2*(1-e)*e*c1x+e*e*p.cx,y=(1-e)*(1-e)*p.py+2*(1-e)*e*c1y+e*e*p.cy;
@@ -1091,7 +1172,7 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;fra
       else if(r.f>=1)r.P=Math.max(KS,r.P-dt/0.28);}
     // 닫기: 꼬리를 감은 뒤, 별로 부풀면서 동시에 제자리로 돌아감
     else{const PK=G.KP+1;if(r.P<PK)r.P=Math.min(PK,r.P+dt/0.14);
-      else{r.P=Math.min(G.KE,r.P+dt/0.12);r.f=Math.max(0,r.f-dt/0.7);if(r.f<=0&&r.P>=G.KE)finishRead();}}
+      else{r.P=Math.min(G.KE,r.P+dt/0.12);r.f=Math.max(0,r.f-dt/0.7);if(r.f<=0&&r.P>=G.KE){const cs=r.st;finishRead();vanishStar(cs);}}}
     if(reading){const m=poseMesh(G,r.P);const[px,py]=toPx(st);const{vA,vB}=readViews(r);
       const Ms=starM(px,py,sizeOf(st),st.rot,st.tx,st.ty),Mw=viewMatrix(G,r.P,vA,vB);const ef=r.f*r.f*r.f*(r.f*(r.f*6-15)+10);const Mx=lerpM(Ms,Mw,ef);
       drawMesh(G,m,Mx,hex2(st.color),1,1,textCut(G,r.P));
@@ -1107,6 +1188,8 @@ function frame(now){const dt=Math.min(.05,(now-last)/1000);last=now;time+=dt;fra
         const rf=$('rFull'),rfOn=st.kind==='poem'&&poemRank(st)===landingStars.length-1;show('rFull',rfOn);
         if(rfOn){rf.textContent=UIT('전문 보기');rf.href=KO_VIEW()?POEM_URL.ko:POEM_URL.en;const w_=rf.offsetWidth||90;rf.style.transform='translate(-50%,-50%)';
           rf.style.left=clamp((s.a[0]+s.b[0])/2,w_/2+10,VW-w_/2-10)+'px';rf.style.top=(by-4)+'px';}
+        const sh=$('rShare'),shOn=canShare(st)&&!pinOn_;show('rShare',shOn);
+        if(shOn){sh.style.left=k[0]+'px';sh.style.top=k[1]+'px';sh.setAttribute('aria-label',UIT('공유하기'));}
         let tgt=0;if(!rp.classList.contains('hide')){const vv=window.visualViewport;const vb=vv?vv.offsetTop+vv.height:VH;
           const need=rp.getBoundingClientRect().bottom-(vb-18);tgt=Math.max(0,readLift+need);}
         readLift+=(tgt-readLift)*Math.min(1,dt*7);if(Math.abs(tgt-readLift)<0.5)readLift=tgt;}
@@ -1159,11 +1242,15 @@ setTimeout(()=>loadBuf(),1200);
 document.addEventListener('visibilitychange',()=>{if(!soundOn)return;if(document.hidden){if(actx)actx.suspend();if(!audioEl.paused)audioEl.pause();}
   else{if(actx)actx.resume().catch(()=>{});if(!asrc)audioEl.play().catch(()=>{});}});
 resize();setBase('landing');requestAnimationFrame(frame);
-const refont=()=>{geomCache.clear();if(reading)drawText(reading.G=geomOfText(readText(reading.st)),readText(reading.st));
+const refont=()=>{geomCache.clear();if(gift&&gift.G){const fr=(gift.G.KE-gift.P)/Math.max(1,gift.G.KE-KS);gift.G=geomOfText(gift.text);gift.P=gift.G.KE-fr*(gift.G.KE-KS);gift.target=gift.P<=KS+0.001?KS:Math.max(KS,Math.round(gift.target));drawText(gift.G,gift.text);}if(reading)drawText(reading.G=geomOfText(readText(reading.st)),readText(reading.st));
   else if(work){work.G=geomOfText(mode==='compose'?inp.value:work.text);if(mode!=='compose')drawText(work.G,work.text);}};
 document.fonts&&document.fonts.load(`40px ${FONT}`).then(refont).catch(()=>{});
 window.__dbg={mode:()=>mode,pick:i=>pickPaper(i),type:(t,p)=>{inp.value=t;$('pin').value=p||'';syncSlots('pin');onType();},fold:()=>$('foldLbl').click(),step:()=>foldStep(),
-  send:()=>$('sendBtn').click(),fall:()=>{fxNextFall=0;},readFirst:(i)=>{const v=visibleStars();if(v.length)startRead(v[i||0]);},setBase:(b,d)=>setBase(b,d),clickDay:i=>document.querySelectorAll('.day')[i].click(),dayKey:o=>dayKey(o),P:()=>work&&work.P,lift:()=>readLift,edges:()=>{const P=visibleStars().map(toPx);return[Math.round(Math.min(...P.map(p=>p[0]))),Math.round(Math.max(...P.map(p=>p[0]))),Math.round(Math.min(...P.map(p=>p[1])))];},minD:()=>{const L=visibleStars(),P=L.map(toPx);let m=1e9;for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++)m=Math.min(m,Math.hypot(P[i][0]-P[j][0],P[i][1]-P[j][1]));return Math.round(m);},exp:(t,c)=>savePaper({text:t,color:c,day:'x'}),vis:()=>{const d=curSkyDay(),m=d&&skyMem.get(d);return[visibleStars().length,m&&m.queue.length,[...FX.values()].filter(f=>f.swap||f.type==='appear').length];},rd:()=>reading&&[reading.f,reading.P,reading.dir],readLow:()=>{let b=null;for(const st of visibleStars()){const y=toPx(st)[1];if(y<VH-60&&(!b||y>toPx(b)[1]))b=st;}if(b){b.owner='me';startRead(b);}return b&&toPx(b);}};
+  send:()=>$('sendBtn').click(),fall:()=>{fxNextFall=0;},readFirst:(i)=>{const v=visibleStars();if(v.length)startRead(v[i||0]);},setBase:(b,d)=>setBase(b,d),clickDay:i=>document.querySelectorAll('.day')[i].click(),dayKey:o=>dayKey(o),P:()=>work&&work.P,lift:()=>readLift,seenAll:d=>{for(const st of stars.values())if(st.day===d&&canVanish(st))SEEN.set(st.key,d);checkAllSeen(d);return SEEN.size;},seenN:()=>SEEN.size,edges:()=>{const P=visibleStars().map(toPx);return[Math.round(Math.min(...P.map(p=>p[0]))),Math.round(Math.max(...P.map(p=>p[0]))),Math.round(Math.min(...P.map(p=>p[1])))];},minD:()=>{const L=visibleStars(),P=L.map(toPx);let m=1e9;for(let i=0;i<L.length;i++)for(let j=i+1;j<L.length;j++)m=Math.min(m,Math.hypot(P[i][0]-P[j][0],P[i][1]-P[j][1]));return Math.round(m);},exp:(t,c)=>savePaper({text:t,color:c,day:'x'}),vis:()=>{const d=curSkyDay(),m=d&&skyMem.get(d);return[visibleStars().length,m&&m.queue.length,[...FX.values()].filter(f=>f.swap||f.type==='appear').length];},rd:()=>reading&&[reading.f,reading.P,reading.dir],readLow:()=>{let b=null;for(const st of visibleStars()){const y=toPx(st)[1];if(y<VH-60&&(!b||y>toPx(b)[1]))b=st;}if(b){b.owner='me';startRead(b);}return b&&toPx(b);}};
+$('giftCta').addEventListener('pointerdown',e=>e.stopPropagation());
+$('giftCta').onclick=()=>leaveGift();
+{const m=/^(\d{4}-\d{2}-\d{2})\.([A-Za-z0-9]{4,40})$/.exec(new URLSearchParams(location.search).get('s')||'');if(m)startGift(m[1],m[2]);}
+if(window.__GIFT_DEMO)startGift(dayKey(),window.__GIFT_DEMO);
 applyUI();
 })();
 </script>

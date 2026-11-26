@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     const b = req.body || {};
     const lang = LANGS.test(String(b.lang || '')) ? String(b.lang) : 'etc';
     const ua = String(req.headers['user-agent'] || '');
-    const src = /Instagram/i.test(ua) ? 'instagram' : /Barcelona|Threads/i.test(ua) ? 'threads' : /KAKAOTALK/i.test(ua) ? 'kakao'
+    const src = b.ref === 'share' ? 'share' : /Instagram/i.test(ua) ? 'instagram' : /Barcelona|Threads/i.test(ua) ? 'threads' : /KAKAOTALK/i.test(ua) ? 'kakao'
       : /FBAN|FBAV/i.test(ua) ? 'facebook' : /Mobi|Android|iPhone/i.test(ua) ? 'mobile_web' : 'desktop_web';
     const who = crypto.createHash('sha256').update(`${SALT}|${day}|${ip}|${ua}`).digest('base64url').slice(0, 16);
     await pipeline([
