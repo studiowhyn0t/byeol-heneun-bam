@@ -28,7 +28,7 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 #langBtn{position:fixed;left:14px;bottom:14px;z-index:5;display:flex;align-items:center;gap:7px;font-size:22px;color:rgba(255,255,255,.4);padding:6px}
 #langBtn i{font-style:normal;color:rgba(255,255,255,.3)}#langBtn span.on{color:rgba(255,255,255,.9);text-decoration:underline;text-underline-offset:4px}
 #madeBy{position:fixed;left:18px;top:12px;z-index:5;font-size:22px;line-height:25px;color:rgba(255,255,255,.85);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
-#donateBtn{position:fixed;left:84px;top:15px;z-index:5;font-size:17px;line-height:20px;color:rgba(255,255,255,.5);text-decoration:underline;text-underline-offset:3px;white-space:nowrap}
+#donateBtn{position:fixed;left:84px;top:12px;z-index:5;font-size:22px;line-height:25px;color:rgba(255,255,255,.7);text-decoration:underline;text-underline-offset:4px;white-space:nowrap}
 #careModal{position:fixed;inset:0;z-index:12;display:flex;align-items:center;justify-content:center;padding:24px;background:transparent}
 #careModal.hide{display:none}
 #careModal p{margin:0;max-width:min(520px,88vw);text-align:center;font-size:23px;line-height:1.7;color:rgba(255,255,255,.88);word-break:keep-all;overflow-wrap:anywhere;
@@ -650,7 +650,7 @@ let DONATE='',DONATE_INT='';
 function updDonate(){const url=KO_VIEW()?DONATE:DONATE_INT;const on=!!url&&base==='landing';const d=$('donateBtn');
   d.textContent=UIT('후원하기');$('donateMsg').innerHTML='';$('donateMsg').append(UIT('보태주신 마음은 번역 기능 및 사이트 운영에 활용하겠습니다.'),document.createElement('br'),UIT('이 공간이 다양한 분들의 따뜻한 곳으로 남을 수 있도록요!'));
   $('donateGo').textContent=UIT('후원하러 가기');$('donateClose').textContent=UIT('닫기');
-  if(on){$('donateGo').href=url;const r=$('madeBy').getBoundingClientRect();d.style.left=Math.round((r.right||62)+14)+'px';}show('donateBtn',on);}
+  if(on){$('donateGo').href=url;const r=$('madeBy').getBoundingClientRect();d.style.left=Math.round((r.right||62)+20)+'px';}show('donateBtn',on);}
 /* ---- 첫 화면 문장 돌아가며 보여주기: 안내 / 오늘 모인 별 수 / 다음 밤하늘까지 남은 시간 ---- */
 let TODAY_COUNT=0,landIdx=0;
 const LAND_FMT={ko:[n=>`오늘 밤 별이 ${n}개 모였어요`,(h,m)=>h?`${h}시간 ${m}분`:`${m}분`,d=>`다음 밤하늘로 바뀌기 ${d} 전`],
