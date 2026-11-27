@@ -2,7 +2,7 @@
 <html lang="ko">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
 <title>별 헤는 밤</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Nanum+Pen+Script&display=swap" rel="stylesheet">
@@ -10,7 +10,7 @@
 @font-face{font-family:"GyuRi";src:url("fonts/gyuri.ttf") format("truetype");font-display:swap}
 :root{--noise:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='4' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .14 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>")}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
-html,body{margin:0;height:100%;overflow:hidden;background:#000;color:rgba(255,255,255,.88);font-family:"GyuRi","Nanum Pen Script",cursive;touch-action:none;user-select:none;-webkit-user-select:none}
+html,body{-webkit-text-size-adjust:100%;text-size-adjust:100%;margin:0;height:100%;overflow:hidden;background:#000;color:rgba(255,255,255,.88);font-family:"GyuRi","Nanum Pen Script",cursive;touch-action:none;user-select:none;-webkit-user-select:none}
 canvas{position:fixed;inset:0;width:100%;height:100%;display:block}
 #gl{z-index:1}
 button{font-family:inherit;font-size:inherit;color:inherit;background:none;border:0;padding:0;cursor:pointer}
@@ -18,7 +18,8 @@ button{font-family:inherit;font-size:inherit;color:inherit;background:none;borde
 .fade{transition:opacity .5s}
 #landing{position:fixed;left:0;right:0;top:50%;transform:translateY(-58%);z-index:2;text-align:center;pointer-events:none}
 #landing h1{margin:0;font-weight:400;font-size:clamp(40px,8vw,62px);letter-spacing:2px}
-#landing p{margin:10px 0 0;font-size:clamp(20px,3.6vw,25px);color:rgba(255,255,255,.6)}
+#landing p{margin:10px 0 0;font-size:clamp(17px,4.6vw,25px);line-height:1.45;color:rgba(255,255,255,.6);transition:opacity .45s ease;min-height:1.45em;padding:0 12px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+#landing p.swap{opacity:0}
 #hTitle{position:fixed;left:18px;top:14px;z-index:5;font-size:27px;color:rgba(255,255,255,.85)}
 #topR{position:fixed;right:16px;top:12px;z-index:5;display:flex;gap:14px;align-items:center}
 #jarBtn{width:30px;height:36px;transition:transform .5s}
@@ -536,10 +537,15 @@ function composeTarget(G){const spx=stripH()/WID;return{spx,cx:VW/2-G.bbKS.cx*sp
 function foldView(){return{spx:foldSize()*0.92/3,cx:VW/2,cy:VH*0.44};}
 function starM(px,py,size,rot,tx,ty,z){const[wx,wy]=s2w(px,py);return chainM(T(wx,wy,z||0),RX(tx),RY(ty),RZ(rot),Sc(size/(2*R)*visH/VH),FLIP);}
 function stripScreen(G,Mw,u0,u1){const a=mProj(Mw,...G.uToPt(u0)),b=mProj(Mw,...G.uToPt(u1));return{a,b,len:Math.hypot(b[0]-a[0],b[1]-a[1]),ang:Math.atan2(b[1]-a[1],b[0]-a[0])};}
-function resize(){DPR=Math.min(2,devicePixelRatio||1);VW=innerWidth;VH=innerHeight;for(const c of[glc,bgc]){c.width=VW*DPR;c.height=VH*DPR;}
+function resize(){DPR=Math.min(2,devicePixelRatio||1);VW=Math.max(1,innerWidth||document.documentElement.clientWidth);VH=Math.max(1,innerHeight||document.documentElement.clientHeight);for(const c of[glc,bgc]){c.width=VW*DPR;c.height=VH*DPR;}
   visW=visH*VW/VH;const f=1/Math.tan(FOV/2),n=1,fa=40;const P=new Float32Array(16);
   P[0]=f/(VW/VH);P[5]=f;P[10]=(fa+n)/(n-fa);P[11]=-1;P[14]=2*fa*n/(n-fa);VP=mul(P,T(0,0,-CAMD));layoutFan();if(base==='jar')buildJar(false);}
 addEventListener('resize',resize);
+// 카카오톡 등 앱 안 브라우저: 처음 크기를 늦게 알려주거나 주소창이 접히며 높이가 바뀌는 경우 대비 (글 입력 중엔 키보드 때문이므로 무시)
+let rzT=0;const softResize=()=>{clearTimeout(rzT);rzT=setTimeout(()=>{const a=document.activeElement;if(a&&(a.tagName==='INPUT'||a.tagName==='TEXTAREA'))return;
+  if(Math.abs(innerWidth-VW)>1||Math.abs(innerHeight-VH)>1)resize();},120);};
+addEventListener('orientationchange',()=>setTimeout(resize,300));if(window.visualViewport)visualViewport.addEventListener('resize',softResize);
+addEventListener('load',()=>{setTimeout(softResize,300);setTimeout(softResize,1200);});
 /* =================== 날짜 =================== */
 const fmtDay=d=>new Intl.DateTimeFormat('en-CA',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit'}).format(d);
 const dayKey=(off=0)=>fmtDay(new Date(Date.now()+off*86400000));
@@ -585,7 +591,7 @@ async function loadState(){try{const j=await api('/api/state');const seen=new Se
     for(const it of MYH){const k=it.day+':'+it.id;if(gone.has(k))continue;seen.add(k);if(!stars.has(k)){const st=normStar(it);st.owner='me';st.myHidden=true;stars.set(k,st);}}
     for(const k of[...stars.keys()])if(!seen.has(k)&&!stars.get(k).local)stars.delete(k);
     config={lines:Array.isArray(j.config&&j.config.lines)?j.config.lines:[],themes:(j.config&&j.config.themes)||{},pos:(j.config&&j.config.pos)||{}};
-    DONATE=(j.donate&&typeof j.donate.kakao==='string')?j.donate.kakao:'';DONATE_INT=(j.donate&&typeof j.donate.kofi==='string')?j.donate.kofi:'';updDonate();onConfig();updJar();if(base==='jar'&&!jarClosing)buildJar(false);prefetchTr();}catch(e){if(!loadState.warned){loadState.warned=1;toast('하늘을 불러오지 못했어요');}}}
+    TODAY_COUNT=Number(j.count)||0;DONATE=(j.donate&&typeof j.donate.kakao==='string')?j.donate.kakao:'';DONATE_INT=(j.donate&&typeof j.donate.kofi==='string')?j.donate.kofi:'';updDonate();onConfig();updJar();if(base==='jar'&&!jarClosing)buildJar(false);prefetchTr();}catch(e){if(!loadState.warned){loadState.warned=1;toast('하늘을 불러오지 못했어요');}}}
 const wq={};function queue(key,fn){wq[key]=(wq[key]||Promise.resolve()).then(fn,fn);return wq[key];}
 async function saveStar(item,pin){try{const j=await api('/api/stars',{text:item.text,color:item.color,x:item.x,y:item.y,rot:item.rot,tx:item.tx,ty:item.ty,pin});
     MINE.add(j.id);saveMine();if(j.hidden){MYH.push({...item,id:j.id,day:j.day,t:j.t});saveMYH();}
@@ -645,7 +651,31 @@ function updDonate(){const url=KO_VIEW()?DONATE:DONATE_INT;const on=!!url&&base=
   d.textContent=UIT('후원하기');$('donateMsg').innerHTML='';$('donateMsg').append(UIT('보태주신 마음은 번역 기능 및 사이트 운영에 활용하겠습니다.'),document.createElement('br'),UIT('이 공간이 다양한 분들의 따뜻한 곳으로 남을 수 있도록요!'));
   $('donateGo').textContent=UIT('후원하러 가기');$('donateClose').textContent=UIT('닫기');
   if(on){$('donateGo').href=url;const r=$('madeBy').getBoundingClientRect();d.style.left=Math.round((r.right||62)+14)+'px';}show('donateBtn',on);}
-function applyUI(){document.title=UIT('별 헤는 밤');$('madeBy').textContent=UIT('만든 이');setTimeout(updDonate,0);const L=$('landing');L.querySelector('h1').textContent=UIT('별 헤는 밤');L.querySelector('p').textContent=UIT('색지를 골라 글을 시작하세요.');
+/* ---- 첫 화면 문장 돌아가며 보여주기: 안내 / 오늘 모인 별 수 / 다음 밤하늘까지 남은 시간 ---- */
+let TODAY_COUNT=0,landIdx=0;
+const LAND_FMT={ko:[n=>`오늘 밤 별이 ${n}개 모였어요`,(h,m)=>h?`${h}시간 ${m}분`:`${m}분`,d=>`다음 밤하늘로 바뀌기 ${d} 전`],
+  en:[n=>`${n} ${n===1?'star has':'stars have'} gathered tonight`,(h,m)=>h?`${h}h ${m}m`:`${m}m`,d=>`${d} until the next night sky`],
+  ja:[n=>`今夜は星が${n}個集まりました`,(h,m)=>h?`${h}時間${m}分`:`${m}分`,d=>`次の夜空まであと${d}`],
+  zhs:[n=>`今晚已聚集了${n}颗星星`,(h,m)=>h?`${h}小时${m}分`:`${m}分`,d=>`距离下一片夜空还有${d}`],
+  zht:[n=>`今晚已聚集了${n}顆星星`,(h,m)=>h?`${h}小時${m}分`:`${m}分`,d=>`距離下一片夜空還有${d}`],
+  es:[n=>`Esta noche se han reunido ${n} estrellas`,(h,m)=>h?`${h} h ${m} min`:`${m} min`,d=>`Faltan ${d} para el próximo cielo`],
+  fr:[n=>`${n} étoiles se sont réunies ce soir`,(h,m)=>h?`${h} h ${m} min`:`${m} min`,d=>`Prochain ciel dans ${d}`],
+  de:[n=>`Heute Nacht haben sich ${n} Sterne versammelt`,(h,m)=>h?`${h} Std. ${m} Min.`:`${m} Min.`,d=>`Noch ${d} bis zum nächsten Nachthimmel`],
+  pt:[n=>`${n} estrelas se reuniram esta noite`,(h,m)=>h?`${h} h ${m} min`:`${m} min`,d=>`Faltam ${d} para o próximo céu`],
+  vi:[n=>`Đêm nay đã có ${n} ngôi sao`,(h,m)=>h?`${h} giờ ${m} phút`:`${m} phút`,d=>`Còn ${d} nữa đến bầu trời đêm mới`],
+  th:[n=>`คืนนี้มีดาวมารวมกัน ${n} ดวงแล้ว`,(h,m)=>h?`${h} ชั่วโมง ${m} นาที`:`${m} นาที`,d=>`อีก ${d} จะถึงท้องฟ้าคืนใหม่`],
+  id:[n=>`Malam ini sudah terkumpul ${n} bintang`,(h,m)=>h?`${h} jam ${m} menit`:`${m} menit`,d=>`${d} lagi menuju langit malam berikutnya`],
+  ru:[n=>`Сегодня ночью собралось звёзд: ${n}`,(h,m)=>h?`${h} ч ${m} мин`:`${m} мин`,d=>`До следующего ночного неба: ${d}`],
+  it:[n=>`Stanotte si sono riunite ${n} stelle`,(h,m)=>h?`${h} h ${m} min`:`${m} min`,d=>`Mancano ${d} al prossimo cielo`]};
+function landLines(){const F=LAND_FMT[LMODE==='all'?'en':ALT_UI]||LAND_FMT.en;const L=[UIT('색지를 골라 글을 시작하세요.')];
+  const n=Math.max(TODAY_COUNT,[...stars.values()].filter(s=>s.day===dayKey()).length);if(n>0)L.push(F[0](n));
+  // 한국 시각 자정에 다음 밤하늘(새 주제)로 바뀜
+  const now=Date.now(),kst=new Date(now+9*3600e3),mid=Date.UTC(kst.getUTCFullYear(),kst.getUTCMonth(),kst.getUTCDate()+1)-9*3600e3;
+  const left=Math.max(0,Math.ceil((mid-now)/60000));L.push(F[2](F[1](Math.floor(left/60),left%60)));return L;}
+function landTick(adv){const p=$('landing').querySelector('p');const L=landLines();if(adv)landIdx=(landIdx+1)%L.length;if(landIdx>=L.length)landIdx=0;
+  if(!adv){p.textContent=L[landIdx];return;}p.classList.add('swap');setTimeout(()=>{p.textContent=L[landIdx];p.classList.remove('swap');},450);}
+setInterval(()=>{if(base==='landing'&&!document.hidden)landTick(true);},4800);
+function applyUI(){document.title=UIT('별 헤는 밤');$('madeBy').textContent=UIT('만든 이');setTimeout(updDonate,0);const L=$('landing');L.querySelector('h1').textContent=UIT('별 헤는 밤');landTick(false);
   $('hTitle').textContent=base==='day'?dayTitle(dayOffset(viewDay)):UIT('별 헤는 밤');$('sndBtn').textContent=UIT(soundOn?'소리 끄기':'소리 켜기');$('backBtn').textContent=UIT('돌아가기');
   inp.placeholder=UIT('여기에 적으세요.');$('foldLbl').textContent=UIT('접기');$('pinRow').firstChild.textContent=UIT('삭제 비밀번호:')+' ';$('rPinRow').firstChild.textContent=UIT('삭제 비밀번호:')+' ';
   $('rPinGo').textContent=UIT('확인');$('hint').textContent=UIT('종이를 눌러 한 번씩 감아 접어요');$('reopenBtn').textContent=UIT('다시 펼치기');$('sendBtn').textContent=UIT('보내기');
@@ -1070,7 +1100,7 @@ function scheduleFx(now){if(base==='landing'||base==='jar'||!(mode==='idle'||mod
   const list=visibleStars().filter(st=>!(reading&&reading.st.key===st.key)&&!FX.has(st.key));if(!list.length)return;
   const day=curSkyDay(),m=day&&skyMem.get(day);
   if(m&&(m.queue.length||m.shown.size>SHOW)){
-    if(now>fxNextSwap){const c=list.filter(st=>st.kind!=='npc'&&!st.local);let busy=0;for(const f of FX.values())if(f.swap)busy++;
+    if(now>fxNextSwap){const c=list.filter(st=>st.kind!=='npc'&&!st.local&&SEEN.has(st.key));let busy=0;for(const f of FX.values())if(f.swap)busy++;
       if(c.length&&busy<3){const st=c[Math.floor(Math.random()*c.length)];const ang=(Math.random()<0.5?1:-1)*(0.3+Math.random()*0.3);
         FX.set(st.key,{type:'fall',swap:m,t0:now,dx:Math.sin(ang),dy:Math.cos(ang)});}
       fxNextSwap=now+2600+Math.random()*2600;}

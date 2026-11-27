@@ -23,7 +23,7 @@ async function build() {
   const days = [0, 1, 2, 3].map(o => kstDay(-o));
   const idLists = await Promise.all(days.map((d, i) => recentIds(d, KEEP[i])));
   const cmds = days.map((d, i) => idLists[i].length ? ['HMGET', 'd:' + d, ...idLists[i]] : ['GET', 'none:x']);
-  cmds.push(['GET', 'config']);
+  cmds.push(['GET', 'config'], ['HLEN', 'd:' + days[0]]);
   const results = await pipeline(cmds);
   const stars = [];
   days.forEach((d, i) => {
@@ -39,7 +39,7 @@ async function build() {
   // 해외용 Ko-fi 링크 (환경변수 DONATE_KOFI_URL, ko-fi.com 주소만 허용)
   const kf = String(process.env.DONATE_KOFI_URL || '').trim();
   if (/^https:\/\/ko-fi\.com\/[A-Za-z0-9_]+\/?$/.test(kf)) donate.kofi = kf;
-  return { today: days[0], stars, config, donate };
+  return { today: days[0], stars, config, donate, count: Number(results[days.length + 1]) || 0 };
 }
 
 export default async function handler(req, res) {
